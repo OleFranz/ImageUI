@@ -1,0 +1,9 @@
+[project]
+name = "SimpleGUI"
+version = "0.1"
+description = "A package for easily creating UIs in Python, mainly using OpenCV's drawing functions."
+readme = "README.md"
+requires-python = ">=3.9"
+authors = [{ "name" = "Glas42" }]
+license = { file = "LICENSE" }
+dependencies = ["opencv-python"]
