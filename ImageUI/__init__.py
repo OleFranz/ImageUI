@@ -1,1 +1,1 @@
-from .ImageUI import Test
+from .ImageUI import *
