@@ -89,5 +89,5 @@ def SaveCache():
     if settings.DestinationLanguage != settings.SourceLanguage:
         if os.path.exists(os.path.join(settings.CachePath, "Translations")) == False:
             os.makedirs(os.path.join(settings.CachePath, "Translations"))
-        with open(os.path.join(settings.CachePath, f"Translations/{settings.DestinationLanguage}.json", "w")) as f:
+        with open(os.path.join(settings.CachePath, f"Translations/{settings.DestinationLanguage}.json"), "w") as f:
             json.dump(TRANSLATION_CACHE, f, indent=4)

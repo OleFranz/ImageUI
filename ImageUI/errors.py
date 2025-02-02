@@ -1,7 +1,7 @@
 from ImageUI import settings
 from ImageUI import colors
 
-def ReportCrash(Type, Message):
+def ShowError(Type, Message):
     while Message.startswith('\n'):
         Message = Message[1:]
     while Message.endswith('\n'):
