@@ -15,8 +15,24 @@ TRANSLATING = False
 TRANSLATION_CACHE = {}
 
 
-def Initialize(SourceLanguage=None, DestinationLanguage=None):
+# MARK: SetTranslator
+def SetTranslator(SourceLanguage:str, DestinationLanguage:str):
+    """
+    All the text from the UI will be translated. Available languages can be listed with ImageUI.translations.GetTranslatorLanguages().
+
+    Parameters
+    ----------
+    SourceLanguage : str
+        The source language.
+    DestinationLanguage : str
+        The destination language.
+
+    Returns
+    -------
+    None
+    """
     try:
+        1/0
         global Translator, TRANSLATION_CACHE
         if SourceLanguage != None:
             settings.SourceLanguage = SourceLanguage
@@ -35,10 +51,10 @@ def Initialize(SourceLanguage=None, DestinationLanguage=None):
                 DestinationLanguageIsValid = True
                 break
         if SourceLanguageIsValid == False:
-            errors.ShowError("Translate - Error in function Initialize.", "Source language not found. Use GetAvailableLanguages() to list available languages.")
+            errors.ShowError("Translate - Error in function Initialize.", "Source language not found. Use ImageUI.translations.GetAvailableLanguages() to list available languages.")
             return
         if DestinationLanguageIsValid == False:
-            errors.ShowError("Translate - Error in function Initialize.", "Destination language not found. Use GetAvailableLanguages() to list available languages.")
+            errors.ShowError("Translate - Error in function Initialize.", "Destination language not found. Use ImageUI.translations.GetAvailableLanguages() to list available languages.")
             return
 
         Translator = GoogleTranslator(source=settings.SourceLanguage, target=settings.DestinationLanguage)
@@ -97,7 +113,40 @@ def Translate(Text):
         return Text
 
 
+# MARK: ManualTranslation
+def ManualTranslation(Text, Translation):
+    """
+    Manually translate a text.
+
+    Parameters
+    ----------
+    Text : str
+        The text to translate.
+    Translation : str
+        The translated text.
+
+    Returns
+    -------
+    None
+    """
+    try:
+        global TRANSLATION_CACHE
+        TRANSLATION_CACHE[Text] = unidecode.unidecode(Translation)
+        variables.ForceSingleRender = True
+    except:
+        errors.ShowError("Translate - Error in function ManualTranslation.", str(traceback.format_exc()))
+
+
+# MARK: GetAvailableLanguages
 def GetAvailableLanguages():
+    """
+    Returns the available languages.
+
+    Returns
+    -------
+    dict
+        The available languages.
+    """
     try:
         Languages = GoogleTranslator().get_supported_languages(as_dict=True)
         FormattedLanguages = {}
@@ -112,7 +161,15 @@ def GetAvailableLanguages():
         return {}
 
 
+# MARK: SaveCache
 def SaveCache():
+    """
+    Save the translation cache. Will be automatically called when using ImageUI.Exit()
+
+    Returns
+    -------
+    None
+    """
     try:
         if settings.DestinationLanguage != settings.SourceLanguage:
             if os.path.exists(os.path.join(settings.CachePath, "Translations")) == False:

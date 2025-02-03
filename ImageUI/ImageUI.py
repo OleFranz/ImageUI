@@ -1,4 +1,5 @@
-from ImageUI import translate
+from ImageUI import translations
+from ImageUI import variables
 from ImageUI import elements
 from ImageUI import settings
 from ImageUI import colors
@@ -9,49 +10,15 @@ import traceback
 import win32gui
 import ctypes
 import mouse
+import time
 
 
-# MARK: SetTranslator
-def SetTranslator(SourceLanguage=None, DestinationLanguage=None):
-    """
-    All the text from the UI will be translated. Available languages can be listed with GetTranslatorLanguages().
-
-    Parameters
-    ----------
-    SourceLanguage : str
-        The source language.
-    DestinationLanguage : str
-        The destination language.
-
-    Returns
-    -------
-    None
-    """
-    translate.Initialize(SourceLanguage, DestinationLanguage)
-
-
-# MARK: GetTranslatorLanguages
-def GetTranslatorLanguages():
-    """
-    Returns the available languages.
-
-    Returns
-    -------
-    dict
-        The available languages.
-    """
-    return translate.GetAvailableLanguages()
-
-
-# MARK: Button
-def Button(Frame:np.ndarray, Text:str, X1:int, Y1:int, X2:int, Y2:int, Selected:bool = False, FontSize:float = settings.FontSize, RoundCorners:float = settings.CornerRoundness, TextColor:tuple = colors.TEXT_COLOR, Color:tuple = colors.BUTTON_COLOR, HoverColor:tuple = colors.BUTTON_HOVER_COLOR, SelectedColor:tuple = colors.BUTTON_SELECTED_COLOR, SelectedHoverColor:tuple = colors.BUTTON_SELECTED_HOVER_COLOR):
+def Button(Text:str, X1:int, Y1:int, X2:int, Y2:int, Selected:bool = False, FontSize:float = settings.FontSize, RoundCorners:float = settings.CornerRoundness, TextColor:tuple = colors.TEXT_COLOR, Color:tuple = colors.BUTTON_COLOR, HoverColor:tuple = colors.BUTTON_HOVER_COLOR, SelectedColor:tuple = colors.BUTTON_SELECTED_COLOR, SelectedHoverColor:tuple = colors.BUTTON_SELECTED_HOVER_COLOR):
     """
     Creates a button.
 
     Parameters
     ----------
-    Frame : np.ndarray
-        The frame on which the button will be drawn.
     Text : str
         The text of the button.
     X1 : int
@@ -86,22 +53,39 @@ def Button(Frame:np.ndarray, Text:str, X1:int, Y1:int, X2:int, Y2:int, Selected:
         2. Pressed: Whether the button is currently pressed.
         3. Hovered: Whether the button is currently hovered.
     """
-    return elements.Button(Frame, Text, X1, Y1, X2, Y2, Selected, FontSize, RoundCorners, TextColor, Color, HoverColor, SelectedColor, SelectedHoverColor)
+    variables.Elements.append(["Button",
+                               None,
+                               {"Text": Text,
+                                "X1": X1,
+                                "Y1": Y1,
+                                "X2": X2,
+                                "Y2": Y2,
+                                "Selected": Selected,
+                                "FontSize": FontSize,
+                                "RoundCorners": RoundCorners,
+                                "TextColor": TextColor,
+                                "Color": Color,
+                                "HoverColor": HoverColor,
+                                "SelectedColor": SelectedColor,
+                                "SelectedHoverColor": SelectedHoverColor}])
 
 
 # MARK: Update
-def Update(WindowHWND:int):
+def Update(WindowHWND:int, Frame:np.ndarray):
     """
     Updates the UI.
 
     Parameters
     ----------
     WindowHWND : int
-        The handle of the window.
+        The handle of the window which is showing the UI.
+    Frame : np.ndarray
+        The frame on which the ui will be drawn.
 
     Returns
     -------
-    None
+    np.ndarray
+        The new frame with the UI drawn on it.
     """
     try:
         RECT = win32gui.GetClientRect(WindowHWND)
@@ -123,6 +107,8 @@ def Update(WindowHWND:int):
         ForegroundWindow = ctypes.windll.user32.GetForegroundWindow() == WindowHWND
         LeftClicked = ctypes.windll.user32.GetKeyState(0x01) & 0x8000 != 0 and ForegroundWindow
         RightClicked = ctypes.windll.user32.GetKeyState(0x02) & 0x8000 != 0 and ForegroundWindow
+        LastLeftClicked = states.LeftClicked
+        LastRightClicked = states.RightClicked
         states.ForegroundWindow = ForegroundWindow
         states.FrameWidth = WindowWidth
         states.FrameHeight = WindowHeight
@@ -132,6 +118,51 @@ def Update(WindowHWND:int):
         states.LastRightClicked = states.RightClicked
         states.LeftClicked = LeftClicked
         states.RightClicked = RightClicked
+
+
+        RenderFrame = False
+
+        for Area in variables.Areas:
+            if Area[0] != "Label":
+                if (Area[1] <= MouseX * WindowWidth <= Area[3] and Area[2] <= MouseY * WindowHeight <= Area[4]) != Area[5]:
+                    Area = (Area[1], Area[2], Area[3], Area[4], not Area[5])
+                    RenderFrame = True
+
+        if ForegroundWindow == False and variables.CachedFrame is not None:
+            RenderFrame = False
+
+        if variables.Elements != variables.LastElements:
+            RenderFrame = True
+
+        if RenderFrame or variables.ForceSingleRender or LastLeftClicked != LeftClicked:
+            variables.ForceSingleRender = False
+
+            variables.Frame = Frame.copy()
+            variables.Areas = []
+
+            for Item in variables.Elements:
+                ItemType = Item[0]
+                ItemFunction = Item[1]
+
+                if ItemType == "Button":
+                    Clicked, Pressed, Hovered = elements.Button(**Item[2])
+                    variables.Areas.append((ItemType, Item[2]["X1"], Item[2]["Y1"], Item[2]["X2"], Item[2]["Y2"], Pressed or Hovered))
+
+                    if Clicked:
+                        if ItemFunction is not None:
+                            ItemFunction()
+                        else:
+                            variables.ForceSingleRender = True
+
+            variables.CachedFrame = variables.Frame.copy()
+            variables.LastElements = variables.Elements
+
+            if settings.DevelopmentMode:
+                print(f"New Frame Rendered! ({round(time.time(), 1)})")
+
+        variables.Elements = []
+
+        return variables.CachedFrame
     except:
         errors.ShowError("ImageUI - Error in function Update.", str(traceback.format_exc()))
 
@@ -145,4 +176,4 @@ def Exit():
     -------
     None
     """
-    translate.SaveCache()
+    translations.SaveCache()

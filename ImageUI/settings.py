@@ -2,10 +2,10 @@ import tempfile
 import cv2
 import os
 
-SourceLanguage = "en"
-DestinationLanguage = "en"
-DevelopmentMode = False
-CachePath = os.path.join(tempfile.gettempdir(), "ImageUI-Cache")
+SourceLanguage:str = "en"
+DestinationLanguage:str = "en"
+DevelopmentMode:bool = False
+CachePath:str = os.path.join(tempfile.gettempdir(), "ImageUI-Cache")
 
 FontSize:float = 11
 FontType:int = cv2.FONT_HERSHEY_SIMPLEX

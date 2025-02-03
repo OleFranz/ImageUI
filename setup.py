@@ -2,7 +2,7 @@ from setuptools import setup, find_packages
 
 setup(
     name="ImageUI",
-    version="0.3",
+    version="0.4",
     description="A package for easily creating UIs in Python, mainly using OpenCV's drawing functions.",
     long_description=open("README.md").read(),
     author="Glas42",
