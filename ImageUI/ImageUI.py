@@ -13,7 +13,7 @@ import mouse
 import time
 
 
-def Button(Text:str, X1:int, Y1:int, X2:int, Y2:int, Selected:bool = False, FontSize:float = settings.FontSize, RoundCorners:float = settings.CornerRoundness, TextColor:tuple = colors.TEXT_COLOR, Color:tuple = colors.BUTTON_COLOR, HoverColor:tuple = colors.BUTTON_HOVER_COLOR, SelectedColor:tuple = colors.BUTTON_SELECTED_COLOR, SelectedHoverColor:tuple = colors.BUTTON_SELECTED_HOVER_COLOR):
+def Button(Text:str, X1:int, Y1:int, X2:int, Y2:int, Layer:int = 0, Selected:bool = False, FontSize:float = settings.FontSize, RoundCorners:float = settings.CornerRoundness, TextColor:tuple = colors.TEXT_COLOR, Color:tuple = colors.BUTTON_COLOR, HoverColor:tuple = colors.BUTTON_HOVER_COLOR, SelectedColor:tuple = colors.BUTTON_SELECTED_COLOR, SelectedHoverColor:tuple = colors.BUTTON_SELECTED_HOVER_COLOR):
     """
     Creates a button.
 
@@ -29,6 +29,8 @@ def Button(Text:str, X1:int, Y1:int, X2:int, Y2:int, Selected:bool = False, Font
         The x coordinate of the bottom right corner.
     Y2 : int
         The y coordinate of the bottom right corner.
+    Layer : int
+        The layer of the button in the UI.
     Selected : bool
         Whether the button is selected.
     FontSize : float
@@ -55,6 +57,7 @@ def Button(Text:str, X1:int, Y1:int, X2:int, Y2:int, Selected:bool = False, Font
     """
     variables.Elements.append(["Button",
                                None,
+                               Layer,
                                {"Text": Text,
                                 "X1": X1,
                                 "Y1": Y1,
@@ -137,6 +140,8 @@ def Update(WindowHWND:int, Frame:np.ndarray):
         if RenderFrame or variables.ForceSingleRender or LastLeftClicked != LeftClicked:
             variables.ForceSingleRender = False
 
+            variables.Elements = sorted(variables.Elements, key=lambda Item: Item[2])
+
             variables.Frame = Frame.copy()
             variables.Areas = []
 
@@ -145,8 +150,8 @@ def Update(WindowHWND:int, Frame:np.ndarray):
                 ItemFunction = Item[1]
 
                 if ItemType == "Button":
-                    Clicked, Pressed, Hovered = elements.Button(**Item[2])
-                    variables.Areas.append((ItemType, Item[2]["X1"], Item[2]["Y1"], Item[2]["X2"], Item[2]["Y2"], Pressed or Hovered))
+                    Clicked, Pressed, Hovered = elements.Button(**Item[3])
+                    variables.Areas.append((ItemType, Item[3]["X1"], Item[3]["Y1"], Item[3]["X2"], Item[3]["Y2"], Pressed or Hovered))
 
                     if Clicked:
                         if ItemFunction is not None:

@@ -1,10 +1,8 @@
 from ImageUI import translations
 from ImageUI import variables
 from ImageUI import settings
-from ImageUI import colors
 from ImageUI import errors
 from ImageUI import states
-import numpy as np
 import traceback
 import cv2
 
@@ -32,12 +30,12 @@ def CalculateTextSize(Text:str, TextWidth:int, FontSize:float = settings.FontSiz
         5. The height of the text.
     """
     try:
-        CurrentFontSize = 1
+        CurrentFontSize = 0.01
         Textsize, _ = cv2.getTextSize(Text, settings.FontType, CurrentFontSize, 1)
         WidthCurrentText, HeightCurrentText = Textsize
         MaxCountCurrentText = 3
         while WidthCurrentText != TextWidth or HeightCurrentText > FontSize:
-            CurrentFontSize *= min(TextWidth / Textsize[0], FontSize / Textsize[1])
+            CurrentFontSize *= min(TextWidth / abs(Textsize[0]) if Textsize[0] != 0 else 1, FontSize / abs(Textsize[1]) if Textsize[1] != 0 else 1)
             Textsize, _ = cv2.getTextSize(Text, settings.FontType, CurrentFontSize, 1)
             MaxCountCurrentText -= 1
             if MaxCountCurrentText <= 0:
