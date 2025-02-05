@@ -1,4 +1,5 @@
 Frame = None
+LastFrame = None
 CachedFrame = None
 Areas = []
 Elements = []

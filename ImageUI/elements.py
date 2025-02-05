@@ -49,30 +49,30 @@ def CalculateTextSize(Text:str, TextWidth:int, FontSize:float = settings.FontSiz
         return "", 1, 1, 100, 100
 
 
-def Button(Text, X1, Y1, X2, Y2, Selected, FontSize, RoundCorners, TextColor, Color, HoverColor, SelectedColor, SelectedHoverColor):
+def Button(Text, X1, Y1, X2, Y2, Layer, Selected, FontSize, RoundCorners, TextColor, Color, HoverColor, SelectedColor, SelectedHoverColor):
     try:
         Text = translations.Translate(Text)
-        if X1 <= states.MouseX * variables.Frame.shape[1] <= X2 and Y1 <= states.MouseY * variables.Frame.shape[0] <= Y2 and states.ForegroundWindow:
+        if X1 <= states.MouseX * variables.Frame.shape[1] <= X2 and Y1 <= states.MouseY * variables.Frame.shape[0] <= Y2 and states.ForegroundWindow and states.TopMostLayer == Layer:
             Hovered = True
         else:
             Hovered = False
         if Selected == True:
             if Hovered == True:
-                cv2.rectangle(variables.Frame, (round(X1 + RoundCorners / 2), round(Y1 + RoundCorners / 2)), (round(X2 - RoundCorners / 2), round(Y2 - RoundCorners / 2)), SelectedHoverColor, RoundCorners, cv2.LINE_AA)
-                cv2.rectangle(variables.Frame, (round(X1 + RoundCorners / 2), round(Y1 + RoundCorners / 2)), (round(X2 - RoundCorners / 2), round(Y2 - RoundCorners / 2)), SelectedHoverColor,  - 1, cv2.LINE_AA)
+                cv2.rectangle(variables.Frame, (round(X1 + RoundCorners / 2), round(Y1 + RoundCorners / 2)), (round(X2 - RoundCorners / 2), round(Y2 - RoundCorners / 2)), SelectedHoverColor, RoundCorners, settings.RectangleLineType)
+                cv2.rectangle(variables.Frame, (round(X1 + RoundCorners / 2), round(Y1 + RoundCorners / 2)), (round(X2 - RoundCorners / 2), round(Y2 - RoundCorners / 2)), SelectedHoverColor,  - 1, settings.RectangleLineType)
             else:
-                cv2.rectangle(variables.Frame, (round(X1 + RoundCorners / 2), round(Y1 + RoundCorners / 2)), (round(X2 - RoundCorners / 2), round(Y2 - RoundCorners / 2)), SelectedColor, RoundCorners, cv2.LINE_AA)
-                cv2.rectangle(variables.Frame, (round(X1 + RoundCorners / 2), round(Y1 + RoundCorners / 2)), (round(X2 - RoundCorners / 2), round(Y2 - RoundCorners / 2)), SelectedColor,  - 1, cv2.LINE_AA)
+                cv2.rectangle(variables.Frame, (round(X1 + RoundCorners / 2), round(Y1 + RoundCorners / 2)), (round(X2 - RoundCorners / 2), round(Y2 - RoundCorners / 2)), SelectedColor, RoundCorners, settings.RectangleLineType)
+                cv2.rectangle(variables.Frame, (round(X1 + RoundCorners / 2), round(Y1 + RoundCorners / 2)), (round(X2 - RoundCorners / 2), round(Y2 - RoundCorners / 2)), SelectedColor,  - 1, settings.RectangleLineType)
         elif Hovered == True:
-            cv2.rectangle(variables.Frame, (round(X1 + RoundCorners / 2), round(Y1 + RoundCorners / 2)), (round(X2 - RoundCorners / 2), round(Y2 - RoundCorners / 2)), HoverColor, RoundCorners, cv2.LINE_AA)
-            cv2.rectangle(variables.Frame, (round(X1 + RoundCorners / 2), round(Y1 + RoundCorners / 2)), (round(X2 - RoundCorners / 2), round(Y2 - RoundCorners / 2)), HoverColor,  - 1, cv2.LINE_AA)
+            cv2.rectangle(variables.Frame, (round(X1 + RoundCorners / 2), round(Y1 + RoundCorners / 2)), (round(X2 - RoundCorners / 2), round(Y2 - RoundCorners / 2)), HoverColor, RoundCorners, settings.RectangleLineType)
+            cv2.rectangle(variables.Frame, (round(X1 + RoundCorners / 2), round(Y1 + RoundCorners / 2)), (round(X2 - RoundCorners / 2), round(Y2 - RoundCorners / 2)), HoverColor,  - 1, settings.RectangleLineType)
         else:
-            cv2.rectangle(variables.Frame, (round(X1 + RoundCorners / 2), round(Y1 + RoundCorners / 2)), (round(X2 - RoundCorners / 2), round(Y2 - RoundCorners / 2)), Color, RoundCorners, cv2.LINE_AA)
-            cv2.rectangle(variables.Frame, (round(X1 + RoundCorners / 2), round(Y1 + RoundCorners / 2)), (round(X2 - RoundCorners / 2), round(Y2 - RoundCorners / 2)), Color,  - 1, cv2.LINE_AA)
+            cv2.rectangle(variables.Frame, (round(X1 + RoundCorners / 2), round(Y1 + RoundCorners / 2)), (round(X2 - RoundCorners / 2), round(Y2 - RoundCorners / 2)), Color, RoundCorners, settings.RectangleLineType)
+            cv2.rectangle(variables.Frame, (round(X1 + RoundCorners / 2), round(Y1 + RoundCorners / 2)), (round(X2 - RoundCorners / 2), round(Y2 - RoundCorners / 2)), Color,  - 1, settings.RectangleLineType)
         Text, FontSize, Thickness, Width, Height = CalculateTextSize(Text, round((X2 - X1)), FontSize)
-        cv2.putText(variables.Frame, Text, (round(X1 + (X2 - X1) / 2 - Width / 2), round(Y1 + (Y2 - Y1) / 2 + Height / 2)), settings.FontType, FontSize, TextColor, Thickness, cv2.LINE_AA)
+        cv2.putText(variables.Frame, Text, (round(X1 + (X2 - X1) / 2 - Width / 2), round(Y1 + (Y2 - Y1) / 2 + Height / 2)), settings.FontType, FontSize, TextColor, Thickness, settings.TextLineType)
         if X1 <= states.MouseX * variables.Frame.shape[1] <= X2 and Y1 <= states.MouseY * variables.Frame.shape[0] <= Y2 and states.LeftClicked == False and states.LastLeftClicked == True:
-            return True, states.LeftClicked and Hovered, Hovered
+            return states.ForegroundWindow and states.TopMostLayer == Layer, states.LeftClicked and Hovered, Hovered
         else:
             return False, states.LeftClicked and Hovered, Hovered
     except:

@@ -5,8 +5,12 @@ FrameHeight = 0
 MouseX = 0
 MouseY = 0
 
+TopMostLayer = 0
+
 LeftClicked = False
 RightClicked = False
 LastLeftClicked = False
 LastRightClicked = False
+
 ForegroundWindow = False
+LastForegroundWindow = False

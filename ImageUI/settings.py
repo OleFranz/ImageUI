@@ -19,6 +19,8 @@ LineType:int = cv2.LINE_AA
 """The cv2.LINE_{?} line type to use."""
 TextLineType:int = cv2.LINE_AA
 """The cv2.LINE_{?} line type to use for text."""
+CircleLineType:int = cv2.LINE_AA
+"""The cv2.LINE_{?} line type to use for circles."""
 RectangleLineType:int = cv2.LINE_AA
 """The cv2.LINE_{?} line type to use for rectangles."""
 CornerRoundness:float = 5

@@ -13,7 +13,7 @@ import mouse
 import time
 
 
-def Button(Text:str, X1:int, Y1:int, X2:int, Y2:int, Layer:int = 0, Selected:bool = False, FontSize:float = settings.FontSize, RoundCorners:float = settings.CornerRoundness, TextColor:tuple = colors.TEXT_COLOR, Color:tuple = colors.BUTTON_COLOR, HoverColor:tuple = colors.BUTTON_HOVER_COLOR, SelectedColor:tuple = colors.BUTTON_SELECTED_COLOR, SelectedHoverColor:tuple = colors.BUTTON_SELECTED_HOVER_COLOR):
+def Button(Text:str, X1:int, Y1:int, X2:int, Y2:int, Layer:int = 0, Function:callable = None, Selected:bool = False, FontSize:float = settings.FontSize, RoundCorners:float = settings.CornerRoundness, TextColor:tuple = colors.TEXT_COLOR, Color:tuple = colors.BUTTON_COLOR, HoverColor:tuple = colors.BUTTON_HOVER_COLOR, SelectedColor:tuple = colors.BUTTON_SELECTED_COLOR, SelectedHoverColor:tuple = colors.BUTTON_SELECTED_HOVER_COLOR):
     """
     Creates a button.
 
@@ -31,6 +31,8 @@ def Button(Text:str, X1:int, Y1:int, X2:int, Y2:int, Layer:int = 0, Selected:boo
         The y coordinate of the bottom right corner.
     Layer : int
         The layer of the button in the UI.
+    Function : function
+        The function to call when the button is clicked. Supports lambdas.
     Selected : bool
         Whether the button is selected.
     FontSize : float
@@ -55,22 +57,25 @@ def Button(Text:str, X1:int, Y1:int, X2:int, Y2:int, Layer:int = 0, Selected:boo
         2. Pressed: Whether the button is currently pressed.
         3. Hovered: Whether the button is currently hovered.
     """
-    variables.Elements.append(["Button",
-                               None,
-                               Layer,
-                               {"Text": Text,
-                                "X1": X1,
-                                "Y1": Y1,
-                                "X2": X2,
-                                "Y2": Y2,
-                                "Selected": Selected,
-                                "FontSize": FontSize,
-                                "RoundCorners": RoundCorners,
-                                "TextColor": TextColor,
-                                "Color": Color,
-                                "HoverColor": HoverColor,
-                                "SelectedColor": SelectedColor,
-                                "SelectedHoverColor": SelectedHoverColor}])
+    try:
+        variables.Elements.append(["Button",
+                                Function,
+                                {"Text": Text,
+                                    "X1": X1,
+                                    "Y1": Y1,
+                                    "X2": X2,
+                                    "Y2": Y2,
+                                    "Layer": Layer,
+                                    "Selected": Selected,
+                                    "FontSize": FontSize,
+                                    "RoundCorners": RoundCorners,
+                                    "TextColor": TextColor,
+                                    "Color": Color,
+                                    "HoverColor": HoverColor,
+                                    "SelectedColor": SelectedColor,
+                                    "SelectedHoverColor": SelectedHoverColor}])
+    except:
+        errors.ShowError("ImageUI - Error in function Button.", str(traceback.format_exc()))
 
 
 # MARK: Update
@@ -112,35 +117,41 @@ def Update(WindowHWND:int, Frame:np.ndarray):
         RightClicked = ctypes.windll.user32.GetKeyState(0x02) & 0x8000 != 0 and ForegroundWindow
         LastLeftClicked = states.LeftClicked
         LastRightClicked = states.RightClicked
-        states.ForegroundWindow = ForegroundWindow
         states.FrameWidth = WindowWidth
         states.FrameHeight = WindowHeight
         states.MouseX = MouseX
         states.MouseY = MouseY
-        states.LastLeftClicked = states.LeftClicked
-        states.LastRightClicked = states.RightClicked
-        states.LeftClicked = LeftClicked
-        states.RightClicked = RightClicked
+        states.LastLeftClicked = states.LeftClicked if ForegroundWindow else False
+        states.LastRightClicked = states.RightClicked if ForegroundWindow else False
+        states.LeftClicked = LeftClicked if ForegroundWindow else False
+        states.RightClicked = RightClicked if ForegroundWindow else False
+        if LastLeftClicked == False and LeftClicked == False and LastRightClicked == False and RightClicked == False:
+            states.ForegroundWindow = ForegroundWindow
 
 
         RenderFrame = False
 
         for Area in variables.Areas:
             if Area[0] != "Label":
-                if (Area[1] <= MouseX * WindowWidth <= Area[3] and Area[2] <= MouseY * WindowHeight <= Area[4]) != Area[5]:
+                if (Area[1] <= MouseX * WindowWidth <= Area[3] and Area[2] <= MouseY * WindowHeight <= Area[4]) != Area[6] and Area[5] == states.TopMostLayer:
                     Area = (Area[1], Area[2], Area[3], Area[4], not Area[5])
                     RenderFrame = True
 
         if ForegroundWindow == False and variables.CachedFrame is not None:
             RenderFrame = False
 
-        if variables.Elements != variables.LastElements:
+        if np.array_equal(Frame, variables.LastFrame) == False:
+            RenderFrame = True
+        variables.LastFrame = Frame.copy()
+
+        if [[Item[0], Item[2]] for Item in variables.Elements] != [[Item[0], Item[2]] for Item in variables.LastElements]:
             RenderFrame = True
 
         if RenderFrame or variables.ForceSingleRender or LastLeftClicked != LeftClicked:
             variables.ForceSingleRender = False
 
-            variables.Elements = sorted(variables.Elements, key=lambda Item: Item[2])
+            variables.Elements = sorted(variables.Elements, key=lambda Item: Item[2]["Layer"])
+            states.TopMostLayer = variables.Elements[-1][2]["Layer"] if len(variables.Elements) > 0 else 0
 
             variables.Frame = Frame.copy()
             variables.Areas = []
@@ -150,14 +161,13 @@ def Update(WindowHWND:int, Frame:np.ndarray):
                 ItemFunction = Item[1]
 
                 if ItemType == "Button":
-                    Clicked, Pressed, Hovered = elements.Button(**Item[3])
-                    variables.Areas.append((ItemType, Item[3]["X1"], Item[3]["Y1"], Item[3]["X2"], Item[3]["Y2"], Pressed or Hovered))
+                    Clicked, Pressed, Hovered = elements.Button(**Item[2])
+                    variables.Areas.append((ItemType, Item[2]["X1"], Item[2]["Y1"], Item[2]["X2"], Item[2]["Y2"], Item[2]["Layer"], Pressed or Hovered))
 
                     if Clicked:
                         if ItemFunction is not None:
                             ItemFunction()
-                        else:
-                            variables.ForceSingleRender = True
+                        variables.ForceSingleRender = True
 
             variables.CachedFrame = variables.Frame.copy()
             variables.LastElements = variables.Elements
@@ -170,6 +180,7 @@ def Update(WindowHWND:int, Frame:np.ndarray):
         return variables.CachedFrame
     except:
         errors.ShowError("ImageUI - Error in function Update.", str(traceback.format_exc()))
+        return Frame
 
 
 # MARK: Exit
