@@ -32,7 +32,6 @@ def SetTranslator(SourceLanguage:str, DestinationLanguage:str):
     None
     """
     try:
-        1/0
         global Translator, TRANSLATION_CACHE
         if SourceLanguage != None:
             settings.SourceLanguage = SourceLanguage

@@ -13,6 +13,50 @@ import mouse
 import time
 
 
+# MARK: Label
+def Label(Text:str, X1:int, Y1:int, X2:int, Y2:int, Layer:int = 0, FontSize:float = settings.FontSize, TextColor:tuple = colors.TEXT_COLOR):
+    """
+    Creates a label.
+
+    Parameters
+    ----------
+    Text : str
+        The text of the label.
+    X1 : int
+        The x coordinate of the top left corner.
+    Y1 : int
+        The y coordinate of the top left corner.
+    X2 : int
+        The x coordinate of the bottom right corner.
+    Y2 : int
+        The y coordinate of the bottom right corner.
+    Layer : int
+        The layer of the label in the UI.
+    FontSize : float
+        The font size of the text.
+    TextColor : tuple
+        The color of the text.
+
+    Returns
+    -------
+    None
+    """
+    try:
+        variables.Elements.append(["Label",
+                                   None,
+                                   {"Text": Text,
+                                       "X1": X1,
+                                       "Y1": Y1,
+                                       "X2": X2,
+                                       "Y2": Y2,
+                                       "Layer": Layer,
+                                       "FontSize": FontSize,
+                                       "TextColor": TextColor}])
+    except:
+        errors.ShowError("ImageUI - Error in function Label.", str(traceback.format_exc()))
+
+
+# MARK: Button
 def Button(Text:str, X1:int, Y1:int, X2:int, Y2:int, Layer:int = 0, Function:callable = None, Selected:bool = False, FontSize:float = settings.FontSize, RoundCorners:float = settings.CornerRoundness, TextColor:tuple = colors.TEXT_COLOR, Color:tuple = colors.BUTTON_COLOR, HoverColor:tuple = colors.BUTTON_HOVER_COLOR, SelectedColor:tuple = colors.BUTTON_SELECTED_COLOR, SelectedHoverColor:tuple = colors.BUTTON_SELECTED_HOVER_COLOR):
     """
     Creates a button.
@@ -59,21 +103,21 @@ def Button(Text:str, X1:int, Y1:int, X2:int, Y2:int, Layer:int = 0, Function:cal
     """
     try:
         variables.Elements.append(["Button",
-                                Function,
-                                {"Text": Text,
-                                    "X1": X1,
-                                    "Y1": Y1,
-                                    "X2": X2,
-                                    "Y2": Y2,
-                                    "Layer": Layer,
-                                    "Selected": Selected,
-                                    "FontSize": FontSize,
-                                    "RoundCorners": RoundCorners,
-                                    "TextColor": TextColor,
-                                    "Color": Color,
-                                    "HoverColor": HoverColor,
-                                    "SelectedColor": SelectedColor,
-                                    "SelectedHoverColor": SelectedHoverColor}])
+                                   Function,
+                                   {"Text": Text,
+                                       "X1": X1,
+                                       "Y1": Y1,
+                                       "X2": X2,
+                                       "Y2": Y2,
+                                       "Layer": Layer,
+                                       "Selected": Selected,
+                                       "FontSize": FontSize,
+                                       "RoundCorners": RoundCorners,
+                                       "TextColor": TextColor,
+                                       "Color": Color,
+                                       "HoverColor": HoverColor,
+                                       "SelectedColor": SelectedColor,
+                                       "SelectedHoverColor": SelectedHoverColor}])
     except:
         errors.ShowError("ImageUI - Error in function Button.", str(traceback.format_exc()))
 
@@ -160,7 +204,11 @@ def Update(WindowHWND:int, Frame:np.ndarray):
                 ItemType = Item[0]
                 ItemFunction = Item[1]
 
-                if ItemType == "Button":
+                if ItemType == "Label":
+                    elements.Label(**Item[2])
+                    variables.Areas.append((ItemType, Item[2]["X1"], Item[2]["Y1"], Item[2]["X2"], Item[2]["Y2"], Item[2]["Layer"]))
+
+                elif ItemType == "Button":
                     Clicked, Pressed, Hovered = elements.Button(**Item[2])
                     variables.Areas.append((ItemType, Item[2]["X1"], Item[2]["Y1"], Item[2]["X2"], Item[2]["Y2"], Item[2]["Layer"], Pressed or Hovered))
 

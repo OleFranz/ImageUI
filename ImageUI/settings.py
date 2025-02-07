@@ -11,7 +11,7 @@ DevelopmentMode:bool = False
 CachePath:str = os.path.join(tempfile.gettempdir(), "ImageUI-Cache")
 """The path to the cache directory, things like translations are saved there."""
 
-FontSize:float = 10
+FontSize:float = 13
 """The font size of the UI elements."""
 FontType:int = cv2.FONT_HERSHEY_SIMPLEX
 """The cv2.FONT_{?} font type to use."""
