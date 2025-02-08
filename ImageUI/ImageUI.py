@@ -14,7 +14,7 @@ import time
 
 
 # MARK: Label
-def Label(Text:str, X1:int, Y1:int, X2:int, Y2:int, Layer:int = 0, FontSize:float = settings.FontSize, TextColor:tuple = colors.TEXT_COLOR):
+def Label(Text:str, X1:int, Y1:int, X2:int, Y2:int, Align:str = "Center", AlignPadding:int = 10, Layer:int = 0, FontSize:float = settings.FontSize, TextColor:tuple = colors.TEXT_COLOR):
     """
     Creates a label.
 
@@ -30,6 +30,10 @@ def Label(Text:str, X1:int, Y1:int, X2:int, Y2:int, Layer:int = 0, FontSize:floa
         The x coordinate of the bottom right corner.
     Y2 : int
         The y coordinate of the bottom right corner.
+    Align : str
+        The alignment of the text. (Left, Right, Center)
+    AlignPadding : int
+        The padding of the text when aligned left or right.
     Layer : int
         The layer of the label in the UI.
     FontSize : float
@@ -49,6 +53,8 @@ def Label(Text:str, X1:int, Y1:int, X2:int, Y2:int, Layer:int = 0, FontSize:floa
                                        "Y1": Y1,
                                        "X2": X2,
                                        "Y2": Y2,
+                                       "Align": Align,
+                                       "AlignPadding": AlignPadding,
                                        "Layer": Layer,
                                        "FontSize": FontSize,
                                        "TextColor": TextColor}])
@@ -57,7 +63,7 @@ def Label(Text:str, X1:int, Y1:int, X2:int, Y2:int, Layer:int = 0, FontSize:floa
 
 
 # MARK: Button
-def Button(Text:str, X1:int, Y1:int, X2:int, Y2:int, Layer:int = 0, Function:callable = None, Selected:bool = False, FontSize:float = settings.FontSize, RoundCorners:float = settings.CornerRoundness, TextColor:tuple = colors.TEXT_COLOR, Color:tuple = colors.BUTTON_COLOR, HoverColor:tuple = colors.BUTTON_HOVER_COLOR, SelectedColor:tuple = colors.BUTTON_SELECTED_COLOR, SelectedHoverColor:tuple = colors.BUTTON_SELECTED_HOVER_COLOR):
+def Button(Text:str, X1:int, Y1:int, X2:int, Y2:int, Layer:int = 0, OnPress:callable = None, Selected:bool = False, FontSize:float = settings.FontSize, RoundCorners:float = settings.CornerRoundness, TextColor:tuple = colors.TEXT_COLOR, Color:tuple = colors.BUTTON_COLOR, HoverColor:tuple = colors.BUTTON_HOVER_COLOR, SelectedColor:tuple = colors.BUTTON_SELECTED_COLOR, SelectedHoverColor:tuple = colors.BUTTON_SELECTED_HOVER_COLOR):
     """
     Creates a button.
 
@@ -75,7 +81,7 @@ def Button(Text:str, X1:int, Y1:int, X2:int, Y2:int, Layer:int = 0, Function:cal
         The y coordinate of the bottom right corner.
     Layer : int
         The layer of the button in the UI.
-    Function : function
+    OnPress : callable
         The function to call when the button is clicked. Supports lambdas.
     Selected : bool
         Whether the button is selected.
@@ -103,23 +109,98 @@ def Button(Text:str, X1:int, Y1:int, X2:int, Y2:int, Layer:int = 0, Function:cal
     """
     try:
         variables.Elements.append(["Button",
-                                   Function,
+                                   OnPress,
                                    {"Text": Text,
-                                       "X1": X1,
-                                       "Y1": Y1,
-                                       "X2": X2,
-                                       "Y2": Y2,
-                                       "Layer": Layer,
-                                       "Selected": Selected,
-                                       "FontSize": FontSize,
-                                       "RoundCorners": RoundCorners,
-                                       "TextColor": TextColor,
-                                       "Color": Color,
-                                       "HoverColor": HoverColor,
-                                       "SelectedColor": SelectedColor,
-                                       "SelectedHoverColor": SelectedHoverColor}])
+                                    "X1": X1,
+                                    "Y1": Y1,
+                                    "X2": X2,
+                                    "Y2": Y2,
+                                    "Layer": Layer,
+                                    "Selected": Selected,
+                                    "FontSize": FontSize,
+                                    "RoundCorners": RoundCorners,
+                                    "TextColor": TextColor,
+                                    "Color": Color,
+                                    "HoverColor": HoverColor,
+                                    "SelectedColor": SelectedColor,
+                                    "SelectedHoverColor": SelectedHoverColor}])
     except:
         errors.ShowError("ImageUI - Error in function Button.", str(traceback.format_exc()))
+
+
+# MARK: Switch
+def Switch(Text:str, X1:int, Y1:int, X2:int, Y2:int, State:bool = False, SwitchWidth:int = 40, SwitchHeight:int = 20, TextPadding:int = 5, Layer:int = 0, OnChange:callable = None, FontSize:float = settings.FontSize, TextColor:tuple = colors.TEXT_COLOR, SwitchColor=colors.SWITCH_COLOR, SwitchKnobColor=colors.SWITCH_KNOB_COLOR, SwitchHoverColor=colors.SWITCH_HOVER_COLOR, SwitchEnabledColor=colors.SWITCH_ENABLED_COLOR, SwitchEnabledHoverColor=colors.SWITCH_ENABLED_HOVER_COLOR):
+    """
+    Creates a switch.
+
+    Parameters
+    ----------
+    Text : str
+        The text of the switch.
+    X1 : int
+        The x coordinate of the top left corner.
+    Y1 : int
+        The y coordinate of the top left corner.
+    X2 : int
+        The x coordinate of the bottom right corner.
+    Y2 : int
+        The y coordinate of the bottom right corner.
+    State : bool
+        The state of the switch.
+    SwitchWidth : int
+        The width of the switch.
+    SwitchHeight : int
+        The height of the switch.
+    TextPadding : int
+        The padding between the text and the switch.
+    Layer : int
+        The layer of the switch in the UI.
+    OnChange : callable
+        The function to call when the switch is changed. Supports lambdas.
+    FontSize : float
+        The font size of the text.
+    TextColor : tuple
+        The color of the text.
+    SwitchColor : tuple
+        The color of the switch.
+    SwitchKnobColor : tuple
+        The color of the switch knob.
+    SwitchHoverColor : tuple
+        The color of the switch when hovered.
+    SwitchEnabledColor : tuple
+        The color of the switch when enabled.
+    SwitchEnabledHoverColor : tuple
+        The color of the switch when enabled and hovered.
+
+    Returns
+    -------
+    tuple of (bool, bool, bool)
+        1. Clicked: Whether the switch was changed.
+        2. Pressed: Whether the switch is currently pressed.
+        3. Hovered: Whether the switch is currently hovered.
+    """
+    try:
+        variables.Elements.append(["Switch",
+                                   OnChange,
+                                   {"Text": Text,
+                                    "X1": X1,
+                                    "Y1": Y1,
+                                    "X2": X2,
+                                    "Y2": Y2,
+                                    "State": State,
+                                    "SwitchWidth": SwitchWidth,
+                                    "SwitchHeight": SwitchHeight,
+                                    "TextPadding": TextPadding,
+                                    "Layer": Layer,
+                                    "FontSize": FontSize,
+                                    "TextColor": TextColor,
+                                    "SwitchColor": SwitchColor,
+                                    "SwitchKnobColor": SwitchKnobColor,
+                                    "SwitchHoverColor": SwitchHoverColor,
+                                    "SwitchEnabledColor": SwitchEnabledColor,
+                                    "SwitchEnabledHoverColor": SwitchEnabledHoverColor}])
+    except:
+        errors.ShowError("ImageUI - Error in function Switch.", str(traceback.format_exc()))
 
 
 # MARK: Update
@@ -213,6 +294,15 @@ def Update(WindowHWND:int, Frame:np.ndarray):
                     variables.Areas.append((ItemType, Item[2]["X1"], Item[2]["Y1"], Item[2]["X2"], Item[2]["Y2"], Item[2]["Layer"], Pressed or Hovered))
 
                     if Clicked:
+                        if ItemFunction is not None:
+                            ItemFunction()
+                        variables.ForceSingleRender = True
+
+                elif ItemType == "Switch":
+                    Changed, Pressed, Hovered = elements.Switch(**Item[2])
+                    variables.Areas.append((ItemType, Item[2]["X1"], Item[2]["Y1"], Item[2]["X2"], Item[2]["Y2"], Item[2]["Layer"], Pressed or Hovered))
+
+                    if Changed:
                         if ItemFunction is not None:
                             ItemFunction()
                         variables.ForceSingleRender = True

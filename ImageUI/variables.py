@@ -1,7 +1,11 @@
 Frame = None
 LastFrame = None
 CachedFrame = None
+ForceSingleRender = False
+
 Areas = []
 Elements = []
 LastElements = []
-ForceSingleRender = False
+
+Fonts = {}
+Switches = {}

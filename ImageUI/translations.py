@@ -4,7 +4,6 @@ from ImageUI import settings
 from ImageUI import errors
 import threading
 import traceback
-import unidecode
 import json
 import time
 import os
@@ -15,8 +14,8 @@ TRANSLATING = False
 TRANSLATION_CACHE = {}
 
 
-# MARK: SetTranslator
-def SetTranslator(SourceLanguage:str, DestinationLanguage:str):
+# MARK: Initialize
+def Initialize(SourceLanguage:str, DestinationLanguage:str):
     """
     All the text from the UI will be translated. Available languages can be listed with ImageUI.translations.GetTranslatorLanguages().
 
@@ -33,26 +32,27 @@ def SetTranslator(SourceLanguage:str, DestinationLanguage:str):
     """
     try:
         global Translator, TRANSLATION_CACHE
-        if SourceLanguage != None:
-            settings.SourceLanguage = SourceLanguage
-        if DestinationLanguage != None:
-            settings.DestinationLanguage = DestinationLanguage
 
         Languages = GetAvailableLanguages()
 
         SourceLanguageIsValid = False
         DestinationLanguageIsValid = False
         for Language in Languages:
-            if str(Languages[Language]) == str(settings.SourceLanguage):
+            if str(Languages[Language]) == SourceLanguage:
                 SourceLanguageIsValid = True
                 break
-            if str(Languages[Language]) == str(settings.DestinationLanguage):
+        for Language in Languages:
+            if str(Languages[Language]) == DestinationLanguage:
                 DestinationLanguageIsValid = True
                 break
-        if SourceLanguageIsValid == False:
+        if SourceLanguageIsValid:
+            settings.SourceLanguage = SourceLanguage
+        else:
             errors.ShowError("Translate - Error in function Initialize.", "Source language not found. Use ImageUI.translations.GetAvailableLanguages() to list available languages.")
             return
-        if DestinationLanguageIsValid == False:
+        if DestinationLanguageIsValid:
+            settings.DestinationLanguage = DestinationLanguage
+        else:
             errors.ShowError("Translate - Error in function Initialize.", "Destination language not found. Use ImageUI.translations.GetAvailableLanguages() to list available languages.")
             return
 
@@ -78,7 +78,7 @@ def TranslateThread(Text):
             time.sleep(0.1)
         TRANSLATING = True
         Translation = Translator.translate(Text)
-        TRANSLATION_CACHE[Text] = unidecode.unidecode(Translation)
+        TRANSLATION_CACHE[Text] = Translation
         variables.ForceSingleRender = True
         TRANSLATING = False
         return Translation
@@ -130,7 +130,7 @@ def ManualTranslation(Text, Translation):
     """
     try:
         global TRANSLATION_CACHE
-        TRANSLATION_CACHE[Text] = unidecode.unidecode(Translation)
+        TRANSLATION_CACHE[Text] = Translation
         variables.ForceSingleRender = True
     except:
         errors.ShowError("Translate - Error in function ManualTranslation.", str(traceback.format_exc()))
