@@ -14,7 +14,7 @@ import time
 
 
 # MARK: Label
-def Label(Text:str, X1:int, Y1:int, X2:int, Y2:int, Align:str = "Center", AlignPadding:int = 10, Layer:int = 0, FontSize:float = settings.FontSize, TextColor:tuple = colors.TEXT_COLOR):
+def Label(Text:str, X1:int, Y1:int, X2:int, Y2:int, Align:str = "Center", AlignPadding:int = 10, Layer:int = 0, FontSize:float = settings.FontSize, FontType:str = settings.FontType, TextColor:tuple = colors.TEXT_COLOR):
     """
     Creates a label.
 
@@ -38,6 +38,8 @@ def Label(Text:str, X1:int, Y1:int, X2:int, Y2:int, Align:str = "Center", AlignP
         The layer of the label in the UI.
     FontSize : float
         The font size of the text.
+    FontType : str
+        The font type of the text.
     TextColor : tuple
         The color of the text.
 
@@ -49,21 +51,22 @@ def Label(Text:str, X1:int, Y1:int, X2:int, Y2:int, Align:str = "Center", AlignP
         variables.Elements.append(["Label",
                                    None,
                                    {"Text": Text,
-                                       "X1": X1,
-                                       "Y1": Y1,
-                                       "X2": X2,
-                                       "Y2": Y2,
-                                       "Align": Align,
-                                       "AlignPadding": AlignPadding,
-                                       "Layer": Layer,
-                                       "FontSize": FontSize,
-                                       "TextColor": TextColor}])
+                                    "X1": X1,
+                                    "Y1": Y1,
+                                    "X2": X2,
+                                    "Y2": Y2,
+                                    "Align": Align,
+                                    "AlignPadding": AlignPadding,
+                                    "Layer": Layer,
+                                    "FontSize": FontSize,
+                                    "FontType": FontType,
+                                    "TextColor": TextColor}])
     except:
         errors.ShowError("ImageUI - Error in function Label.", str(traceback.format_exc()))
 
 
 # MARK: Button
-def Button(Text:str, X1:int, Y1:int, X2:int, Y2:int, Layer:int = 0, OnPress:callable = None, Selected:bool = False, FontSize:float = settings.FontSize, RoundCorners:float = settings.CornerRoundness, TextColor:tuple = colors.TEXT_COLOR, Color:tuple = colors.BUTTON_COLOR, HoverColor:tuple = colors.BUTTON_HOVER_COLOR, SelectedColor:tuple = colors.BUTTON_SELECTED_COLOR, SelectedHoverColor:tuple = colors.BUTTON_SELECTED_HOVER_COLOR):
+def Button(Text:str, X1:int, Y1:int, X2:int, Y2:int, Layer:int = 0, OnPress:callable = None, Selected:bool = False, FontSize:float = settings.FontSize, FontType:str = settings.FontType, RoundCorners:float = settings.CornerRoundness, TextColor:tuple = colors.TEXT_COLOR, Color:tuple = colors.BUTTON_COLOR, HoverColor:tuple = colors.BUTTON_HOVER_COLOR, SelectedColor:tuple = colors.BUTTON_SELECTED_COLOR, SelectedHoverColor:tuple = colors.BUTTON_SELECTED_HOVER_COLOR):
     """
     Creates a button.
 
@@ -87,6 +90,8 @@ def Button(Text:str, X1:int, Y1:int, X2:int, Y2:int, Layer:int = 0, OnPress:call
         Whether the button is selected.
     FontSize : float
         The font size of the text.
+    FontType : str
+        The font type of the text.
     RoundCorners : float
         The roundness of the corners.
     TextColor : tuple
@@ -118,6 +123,7 @@ def Button(Text:str, X1:int, Y1:int, X2:int, Y2:int, Layer:int = 0, OnPress:call
                                     "Layer": Layer,
                                     "Selected": Selected,
                                     "FontSize": FontSize,
+                                    "FontType": FontType,
                                     "RoundCorners": RoundCorners,
                                     "TextColor": TextColor,
                                     "Color": Color,
@@ -129,7 +135,7 @@ def Button(Text:str, X1:int, Y1:int, X2:int, Y2:int, Layer:int = 0, OnPress:call
 
 
 # MARK: Switch
-def Switch(Text:str, X1:int, Y1:int, X2:int, Y2:int, State:bool = False, SwitchWidth:int = 40, SwitchHeight:int = 20, TextPadding:int = 5, Layer:int = 0, OnChange:callable = None, FontSize:float = settings.FontSize, TextColor:tuple = colors.TEXT_COLOR, SwitchColor=colors.SWITCH_COLOR, SwitchKnobColor=colors.SWITCH_KNOB_COLOR, SwitchHoverColor=colors.SWITCH_HOVER_COLOR, SwitchEnabledColor=colors.SWITCH_ENABLED_COLOR, SwitchEnabledHoverColor=colors.SWITCH_ENABLED_HOVER_COLOR):
+def Switch(Text:str, X1:int, Y1:int, X2:int, Y2:int, State:bool = False, SwitchWidth:int = 40, SwitchHeight:int = 20, TextPadding:int = 5, Layer:int = 0, OnChange:callable = None, FontSize:float = settings.FontSize, FontType:str = settings.FontType, TextColor:tuple = colors.TEXT_COLOR, SwitchColor=colors.SWITCH_COLOR, SwitchKnobColor=colors.SWITCH_KNOB_COLOR, SwitchHoverColor=colors.SWITCH_HOVER_COLOR, SwitchEnabledColor=colors.SWITCH_ENABLED_COLOR, SwitchEnabledHoverColor=colors.SWITCH_ENABLED_HOVER_COLOR):
     """
     Creates a switch.
 
@@ -159,6 +165,8 @@ def Switch(Text:str, X1:int, Y1:int, X2:int, Y2:int, State:bool = False, SwitchW
         The function to call when the switch is changed. Supports lambdas.
     FontSize : float
         The font size of the text.
+    FontType : str
+        The font type of the text.
     TextColor : tuple
         The color of the text.
     SwitchColor : tuple
@@ -193,6 +201,7 @@ def Switch(Text:str, X1:int, Y1:int, X2:int, Y2:int, State:bool = False, SwitchW
                                     "TextPadding": TextPadding,
                                     "Layer": Layer,
                                     "FontSize": FontSize,
+                                    "FontType": FontType,
                                     "TextColor": TextColor,
                                     "SwitchColor": SwitchColor,
                                     "SwitchKnobColor": SwitchKnobColor,

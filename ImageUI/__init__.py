@@ -1,15 +1,15 @@
-from .settings import SourceLanguage
-from .settings import DestinationLanguage
 from .settings import DevelopmentMode
 from .settings import CachePath
-from .settings import FontSize
-from .settings import FontType
 from .settings import CornerRoundness
 
 from .translations import Initialize
 from .translations import ManualTranslation
 from .translations import GetAvailableLanguages
 from .translations import SaveCache
+
+from .text import SetFontSize
+from .text import SetFontType
+from .text import ListFontTypes
 
 from .ImageUI import Label
 from .ImageUI import Button

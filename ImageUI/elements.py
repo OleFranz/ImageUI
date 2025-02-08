@@ -12,15 +12,15 @@ import cv2
 
 
 # MARK: Label
-def Label(Text, X1, Y1, X2, Y2, Align, AlignPadding, Layer, FontSize, TextColor):
+def Label(Text, X1, Y1, X2, Y2, Align, AlignPadding, Layer, FontSize, FontType, TextColor):
     try:
         if Text == "": return
         Text = translations.Translate(Text)
-        if str(FontSize) in variables.Fonts:
-            Font = variables.Fonts[str(FontSize)]
+        if f"{FontSize}-{FontType}" in variables.Fonts:
+            Font = variables.Fonts[f"{FontSize}-{FontType}"]
         else:
-            Font = ImageFont.truetype("arial.ttf", FontSize)
-            variables.Fonts[str(FontSize)] = Font
+            Font = ImageFont.truetype(FontType, FontSize)
+            variables.Fonts[f"{FontSize}-{FontType}"] = Font
         Frame = Image.fromarray(variables.Frame)
         Draw = ImageDraw.Draw(Frame)
         BBoxX1, BBoxY1, BBoxX2, BBoxY2 = Draw.textbbox((0, 0), Text, font=Font)
@@ -38,7 +38,7 @@ def Label(Text, X1, Y1, X2, Y2, Align, AlignPadding, Layer, FontSize, TextColor)
 
 
 # MARK: Button
-def Button(Text, X1, Y1, X2, Y2, Layer, Selected, FontSize, RoundCorners, TextColor, Color, HoverColor, SelectedColor, SelectedHoverColor):
+def Button(Text, X1, Y1, X2, Y2, Layer, Selected, FontSize, FontType, RoundCorners, TextColor, Color, HoverColor, SelectedColor, SelectedHoverColor):
     try:
         if X1 <= states.MouseX * variables.Frame.shape[1] <= X2 and Y1 <= states.MouseY * variables.Frame.shape[0] <= Y2 and states.ForegroundWindow and states.TopMostLayer == Layer:
             Hovered = True
@@ -57,7 +57,7 @@ def Button(Text, X1, Y1, X2, Y2, Layer, Selected, FontSize, RoundCorners, TextCo
         else:
             cv2.rectangle(variables.Frame, (round(X1 + RoundCorners / 2), round(Y1 + RoundCorners / 2)), (round(X2 - RoundCorners / 2), round(Y2 - RoundCorners / 2)), Color, RoundCorners, settings.RectangleLineType)
             cv2.rectangle(variables.Frame, (round(X1 + RoundCorners / 2), round(Y1 + RoundCorners / 2)), (round(X2 - RoundCorners / 2), round(Y2 - RoundCorners / 2)), Color,  - 1, settings.RectangleLineType)
-        Label(Text, X1, Y1, X2, Y2, "Center", 0, Layer, FontSize, TextColor)
+        Label(Text, X1, Y1, X2, Y2, "Center", 0, Layer, FontSize, FontType, TextColor)
         if X1 <= states.MouseX * variables.Frame.shape[1] <= X2 and Y1 <= states.MouseY * variables.Frame.shape[0] <= Y2 and states.LeftClicked == False and states.LastLeftClicked == True:
             return states.ForegroundWindow and states.TopMostLayer == Layer, states.LeftClicked and Hovered, Hovered
         else:
@@ -68,7 +68,7 @@ def Button(Text, X1, Y1, X2, Y2, Layer, Selected, FontSize, RoundCorners, TextCo
 
 
 # MARK: Switch
-def Switch(Text, X1, Y1, X2, Y2, Layer, SwitchWidth, SwitchHeight, TextPadding, State, FontSize, TextColor, SwitchColor, SwitchKnobColor, SwitchHoverColor, SwitchEnabledColor, SwitchEnabledHoverColor):
+def Switch(Text, X1, Y1, X2, Y2, Layer, SwitchWidth, SwitchHeight, TextPadding, State, FontSize, FontType, TextColor, SwitchColor, SwitchKnobColor, SwitchHoverColor, SwitchEnabledColor, SwitchEnabledHoverColor):
     try:
         CurrentTime = time.time()
 
@@ -129,7 +129,7 @@ def Switch(Text, X1, Y1, X2, Y2, Layer, SwitchWidth, SwitchHeight, TextPadding, 
                     cv2.circle(variables.Frame, (round(X1+SwitchHeight/2+(SwitchWidth-SwitchHeight)*(1-animationState)), round((Y1+Y2)/2)), round(SwitchHeight/2.5), SwitchKnobColor, -1, cv2.LINE_AA)
                 else:
                     cv2.circle(variables.Frame, (round(X1+SwitchHeight/2), round((Y1+Y2)/2)), round(SwitchHeight/2.5), SwitchKnobColor, -1, cv2.LINE_AA)
-        Label(Text, X1, Y1, X2, Y2, "Left", SwitchWidth + TextPadding, Layer, FontSize, TextColor)
+        Label(Text, X1, Y1, X2, Y2, "Left", SwitchWidth + TextPadding, Layer, FontSize, FontType, TextColor)
         if X1 <= states.MouseX * states.FrameWidth <= X2 and Y1 <= states.MouseY * states.FrameHeight <= Y2 and states.LeftClicked == False and states.LastLeftClicked == True:
             variables.Switches[Text] = not State, CurrentTime
             return states.ForegroundWindow and states.TopMostLayer == Layer, states.LeftClicked and SwitchHovered, SwitchHovered

@@ -13,7 +13,7 @@ CachePath:str = os.path.join(tempfile.gettempdir(), "ImageUI-Cache")
 
 FontSize:float = 13
 """The font size of the UI elements."""
-FontType:int = cv2.FONT_HERSHEY_SIMPLEX
+FontType:str = "arial.ttf"
 """The cv2.FONT_{?} font type to use."""
 LineType:int = cv2.LINE_AA
 """The cv2.LINE_{?} line type to use."""
