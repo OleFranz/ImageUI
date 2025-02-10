@@ -1,3 +1,5 @@
+Exit = False
+
 Frame = None
 LastFrame = None
 CachedFrame = None
@@ -9,3 +11,4 @@ LastElements = []
 
 Fonts = {}
 Switches = {}
+Dropdowns = {}

@@ -38,20 +38,13 @@ def Label(Text, X1, Y1, X2, Y2, Align, AlignPadding, Layer, FontSize, FontType, 
 
 
 # MARK: Button
-def Button(Text, X1, Y1, X2, Y2, Layer, Selected, FontSize, FontType, RoundCorners, TextColor, Color, HoverColor, SelectedColor, SelectedHoverColor):
+def Button(Text, X1, Y1, X2, Y2, Layer, FontSize, FontType, RoundCorners, TextColor, Color, HoverColor):
     try:
         if X1 <= states.MouseX * variables.Frame.shape[1] <= X2 and Y1 <= states.MouseY * variables.Frame.shape[0] <= Y2 and states.ForegroundWindow and states.TopMostLayer == Layer:
             Hovered = True
         else:
             Hovered = False
-        if Selected == True:
-            if Hovered == True:
-                cv2.rectangle(variables.Frame, (round(X1 + RoundCorners / 2), round(Y1 + RoundCorners / 2)), (round(X2 - RoundCorners / 2), round(Y2 - RoundCorners / 2)), SelectedHoverColor, RoundCorners, settings.RectangleLineType)
-                cv2.rectangle(variables.Frame, (round(X1 + RoundCorners / 2), round(Y1 + RoundCorners / 2)), (round(X2 - RoundCorners / 2), round(Y2 - RoundCorners / 2)), SelectedHoverColor,  - 1, settings.RectangleLineType)
-            else:
-                cv2.rectangle(variables.Frame, (round(X1 + RoundCorners / 2), round(Y1 + RoundCorners / 2)), (round(X2 - RoundCorners / 2), round(Y2 - RoundCorners / 2)), SelectedColor, RoundCorners, settings.RectangleLineType)
-                cv2.rectangle(variables.Frame, (round(X1 + RoundCorners / 2), round(Y1 + RoundCorners / 2)), (round(X2 - RoundCorners / 2), round(Y2 - RoundCorners / 2)), SelectedColor,  - 1, settings.RectangleLineType)
-        elif Hovered == True:
+        if Hovered == True:
             cv2.rectangle(variables.Frame, (round(X1 + RoundCorners / 2), round(Y1 + RoundCorners / 2)), (round(X2 - RoundCorners / 2), round(Y2 - RoundCorners / 2)), HoverColor, RoundCorners, settings.RectangleLineType)
             cv2.rectangle(variables.Frame, (round(X1 + RoundCorners / 2), round(Y1 + RoundCorners / 2)), (round(X2 - RoundCorners / 2), round(Y2 - RoundCorners / 2)), HoverColor,  - 1, settings.RectangleLineType)
         else:
@@ -132,9 +125,84 @@ def Switch(Text, X1, Y1, X2, Y2, Layer, SwitchWidth, SwitchHeight, TextPadding, 
         Label(Text, X1, Y1, X2, Y2, "Left", SwitchWidth + TextPadding, Layer, FontSize, FontType, TextColor)
         if X1 <= states.MouseX * states.FrameWidth <= X2 and Y1 <= states.MouseY * states.FrameHeight <= Y2 and states.LeftClicked == False and states.LastLeftClicked == True:
             variables.Switches[Text] = not State, CurrentTime
-            return states.ForegroundWindow and states.TopMostLayer == Layer, states.LeftClicked and SwitchHovered, SwitchHovered
+            return not State, states.ForegroundWindow and states.TopMostLayer == Layer, states.LeftClicked and SwitchHovered, SwitchHovered
         else:
-            return False, states.LeftClicked and SwitchHovered, SwitchHovered
+            return State, False, states.LeftClicked and SwitchHovered, SwitchHovered
     except:
-        errors.ShowError("UIComponents - Error in function Switch.", str(traceback.format_exc()))
-        return False, False, False
+        errors.ShowError("Elements - Error in function Switch.", str(traceback.format_exc()))
+        return False, False, False, False
+
+
+# MARK: Dropdown
+def Dropdown(Title, Items, DefaultItem, X1, Y1, X2, Y2, DropdownHeight, DropdownPadding, Layer, FontSize, FontType, RoundCorners, TextColor, SecondaryTextColor, Color, HoverColor):
+    try:
+        if Title + str(Items) not in variables.Dropdowns:
+            DefaultItem = int(max(min(DefaultItem, len(Items) - 1), 0))
+            variables.Dropdowns[Title + str(Items)] = False, DefaultItem
+
+        DropdownSelected, SelectedItem = variables.Dropdowns[Title + str(Items)]
+
+        if X1 <= states.MouseX * states.FrameWidth <= X2 and Y1 <= states.MouseY * states.FrameHeight <= Y2 + ((DropdownHeight + DropdownPadding) if DropdownSelected else 0) and states.ForegroundWindow and states.TopMostLayer == Layer:
+            DropdownHovered = True
+            DropdownPressed = states.LeftClicked
+            DropdownChanged = True if states.LastLeftClicked == True and states.LeftClicked == False and DropdownSelected == True else False
+            DropdownSelected = not DropdownSelected if states.LastLeftClicked == True and states.LeftClicked == False else DropdownSelected
+        else:
+            DropdownHovered = False
+            DropdownPressed = False
+            DropdownChanged =  DropdownSelected
+            DropdownSelected = False
+
+        if DropdownHovered == True:
+            cv2.rectangle(variables.Frame, (round(X1+RoundCorners/2), round(Y1+RoundCorners/2)), (round(X2-RoundCorners/2), round(Y2-RoundCorners/2)), HoverColor, RoundCorners, cv2.LINE_AA)
+            cv2.rectangle(variables.Frame, (round(X1+RoundCorners/2), round(Y1+RoundCorners/2)), (round(X2-RoundCorners/2), round(Y2-RoundCorners/2)), HoverColor, -1, cv2.LINE_AA)
+        else:
+            cv2.rectangle(variables.Frame, (round(X1+RoundCorners/2), round(Y1+RoundCorners/2)), (round(X2-RoundCorners/2), round(Y2-RoundCorners/2)), Color, RoundCorners, cv2.LINE_AA)
+            cv2.rectangle(variables.Frame, (round(X1+RoundCorners/2), round(Y1+RoundCorners/2)), (round(X2-RoundCorners/2), round(Y2-RoundCorners/2)), Color, -1, cv2.LINE_AA)
+        if DropdownSelected == True:
+            cv2.rectangle(variables.Frame, (round(X1+RoundCorners/2), round(Y2+DropdownPadding+RoundCorners/2)), (round(X2-RoundCorners/2), round(Y2+DropdownHeight+DropdownPadding-RoundCorners/2)), HoverColor, RoundCorners, cv2.LINE_AA)
+            cv2.rectangle(variables.Frame, (round(X1+RoundCorners/2), round(Y2+DropdownPadding+RoundCorners/2)), (round(X2-RoundCorners/2), round(Y2+DropdownHeight+DropdownPadding-RoundCorners/2)), HoverColor, -1, cv2.LINE_AA)
+
+            Padding = (Y2 + Y1) / 2 - FontSize / 4 - Y1
+            Height = round(Y2 - Padding) - round(Y1 + Padding)
+            cv2.line(variables.Frame, (round(X2 - Padding - Height), round(Y1 + Padding)), (round(X2 - Padding), round(Y2 - Padding)), TextColor, max(round(FontSize / 15), 1), cv2.LINE_AA)
+            cv2.line(variables.Frame, (round(X2 - Padding - Height), round(Y1 + Padding)), (round(X2 - Padding  - Height * 2), round(Y2 - Padding)), TextColor, max(round(FontSize / 15), 1), cv2.LINE_AA)
+
+            for Event in states.ScrollEventQueue:
+                if Event.dy > 0:
+                    SelectedItem = (SelectedItem - 1) if SelectedItem > 0 else 0
+                elif Event.dy < 0:
+                    SelectedItem = (SelectedItem + 1) if SelectedItem < len(Items) - 1 else len(Items) - 1
+            states.ScrollEventQueue = []
+
+            for i in range(3):
+                Index = SelectedItem - 1 + i
+                if Index >= len(Items):
+                    Index = -1
+                if Index < 0:
+                    Index = -1
+                if Index == -1:
+                    Item = ""
+                else:
+                    Item = Items[Index]
+                if i == 1:
+                    ItemText = "> " + Item + " <"
+                else:
+                    ItemText = Item
+                Label(ItemText, X1, Y2 + DropdownPadding + DropdownHeight / 3 * i, X2, Y2 + DropdownPadding + DropdownHeight / 3 * (i + 1), "Center", 0, Layer, FontSize, FontType, TextColor if i == 1 else SecondaryTextColor)
+
+        else:
+
+            Padding = (Y2 + Y1) / 2 - FontSize / 4 - Y1
+            Height = round(Y2 - Padding) - round(Y1 + Padding)
+            cv2.line(variables.Frame, (round(X2 - Padding - Height), round(Y2 - Padding)), (round(X2 - Padding), round(Y1 + Padding)), TextColor, max(round(FontSize / 15), 1), cv2.LINE_AA)
+            cv2.line(variables.Frame, (round(X2 - Padding - Height), round(Y2 - Padding)), (round(X2 - Padding  - Height * 2), round(Y1 + Padding)), TextColor, max(round(FontSize / 15), 1), cv2.LINE_AA)
+
+        Label(Title, X1, Y1, X2, Y2, "Center", 0, Layer, FontSize, FontType, TextColor)
+
+        variables.Dropdowns[Title + str(Items)] = DropdownSelected, SelectedItem
+
+        return Items[SelectedItem], DropdownChanged, DropdownSelected, DropdownPressed, DropdownHovered
+    except:
+        errors.ShowError("Elements - Error in function Dropdown.", str(traceback.format_exc()))
+        return "", False, False, False, False

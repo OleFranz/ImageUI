@@ -66,9 +66,26 @@ def Label(Text:str, X1:int, Y1:int, X2:int, Y2:int, Align:str = "Center", AlignP
 
 
 # MARK: Button
-def Button(Text:str, X1:int, Y1:int, X2:int, Y2:int, Layer:int = 0, OnPress:callable = None, Selected:bool = False, FontSize:float = settings.FontSize, FontType:str = settings.FontType, RoundCorners:float = settings.CornerRoundness, TextColor:tuple = colors.TEXT_COLOR, Color:tuple = colors.BUTTON_COLOR, HoverColor:tuple = colors.BUTTON_HOVER_COLOR, SelectedColor:tuple = colors.BUTTON_SELECTED_COLOR, SelectedHoverColor:tuple = colors.BUTTON_SELECTED_HOVER_COLOR):
+def Button(Text:str, X1:int, Y1:int, X2:int, Y2:int, Layer:int = 0, OnPress:callable = None, FontSize:float = settings.FontSize, FontType:str = settings.FontType, RoundCorners:float = settings.CornerRoundness, TextColor:tuple = colors.TEXT_COLOR, Color:tuple = colors.BUTTON_COLOR, HoverColor:tuple = colors.BUTTON_HOVER_COLOR):
     """
     Creates a button.
+
+    **OnPress Usage:**
+
+    **1. Using a pre-defined function:**
+
+    ```python
+    def ButtonCallback():
+        print("Button Pressed!")
+
+    ImageUI.Button(..., OnPress=ButtonCallback, ...)
+    ```
+
+    **2. Using a lambda function for simple actions:**
+
+    ```python
+    ImageUI.Button(..., OnPress=lambda: print("Button Pressed!"), ...)
+    ```
 
     Parameters
     ----------
@@ -85,9 +102,7 @@ def Button(Text:str, X1:int, Y1:int, X2:int, Y2:int, Layer:int = 0, OnPress:call
     Layer : int
         The layer of the button in the UI.
     OnPress : callable
-        The function to call when the button is clicked. Supports lambdas.
-    Selected : bool
-        Whether the button is selected.
+        The function to call when the button is clicked.
     FontSize : float
         The font size of the text.
     FontType : str
@@ -100,17 +115,10 @@ def Button(Text:str, X1:int, Y1:int, X2:int, Y2:int, Layer:int = 0, OnPress:call
         The color of the button.
     HoverColor : tuple
         The color of the button when hovered.
-    SelectedColor : tuple
-        The color of the button when selected.
-    SelectedHoverColor : tuple
-        The color of the button when selected and hovered.
 
     Returns
     -------
-    tuple of (bool, bool, bool)
-        1. Clicked: Whether the button was clicked.
-        2. Pressed: Whether the button is currently pressed.
-        3. Hovered: Whether the button is currently hovered.
+    None
     """
     try:
         variables.Elements.append(["Button",
@@ -121,15 +129,12 @@ def Button(Text:str, X1:int, Y1:int, X2:int, Y2:int, Layer:int = 0, OnPress:call
                                     "X2": X2,
                                     "Y2": Y2,
                                     "Layer": Layer,
-                                    "Selected": Selected,
                                     "FontSize": FontSize,
                                     "FontType": FontType,
                                     "RoundCorners": RoundCorners,
                                     "TextColor": TextColor,
                                     "Color": Color,
-                                    "HoverColor": HoverColor,
-                                    "SelectedColor": SelectedColor,
-                                    "SelectedHoverColor": SelectedHoverColor}])
+                                    "HoverColor": HoverColor}])
     except:
         errors.ShowError("ImageUI - Error in function Button.", str(traceback.format_exc()))
 
@@ -138,6 +143,26 @@ def Button(Text:str, X1:int, Y1:int, X2:int, Y2:int, Layer:int = 0, OnPress:call
 def Switch(Text:str, X1:int, Y1:int, X2:int, Y2:int, State:bool = False, SwitchWidth:int = 40, SwitchHeight:int = 20, TextPadding:int = 5, Layer:int = 0, OnChange:callable = None, FontSize:float = settings.FontSize, FontType:str = settings.FontType, TextColor:tuple = colors.TEXT_COLOR, SwitchColor=colors.SWITCH_COLOR, SwitchKnobColor=colors.SWITCH_KNOB_COLOR, SwitchHoverColor=colors.SWITCH_HOVER_COLOR, SwitchEnabledColor=colors.SWITCH_ENABLED_COLOR, SwitchEnabledHoverColor=colors.SWITCH_ENABLED_HOVER_COLOR):
     """
     Creates a switch.
+
+    **OnChange Usage:**
+
+    **1. Using a pre-defined function:**
+
+    ```python
+    def SwitchCallback(State:bool):
+        if State == True:
+            print("Switch is ON!")
+        else:
+            print("Switch is OFF!")
+
+    ImageUI.Switch(..., OnChange=SwitchCallback, ...)
+    ```
+
+    **2. Using a lambda function for simple actions:**
+
+    ```python
+    ImageUI.Switch(..., OnChange=lambda State: print(f"Switch state changed to: {State}"), ...)
+    ```
 
     Parameters
     ----------
@@ -162,7 +187,7 @@ def Switch(Text:str, X1:int, Y1:int, X2:int, Y2:int, State:bool = False, SwitchW
     Layer : int
         The layer of the switch in the UI.
     OnChange : callable
-        The function to call when the switch is changed. Supports lambdas.
+        The function to call when the switch is changed.
     FontSize : float
         The font size of the text.
     FontType : str
@@ -182,10 +207,7 @@ def Switch(Text:str, X1:int, Y1:int, X2:int, Y2:int, State:bool = False, SwitchW
 
     Returns
     -------
-    tuple of (bool, bool, bool)
-        1. Clicked: Whether the switch was changed.
-        2. Pressed: Whether the switch is currently pressed.
-        3. Hovered: Whether the switch is currently hovered.
+    None
     """
     try:
         variables.Elements.append(["Switch",
@@ -210,6 +232,95 @@ def Switch(Text:str, X1:int, Y1:int, X2:int, Y2:int, State:bool = False, SwitchW
                                     "SwitchEnabledHoverColor": SwitchEnabledHoverColor}])
     except:
         errors.ShowError("ImageUI - Error in function Switch.", str(traceback.format_exc()))
+
+
+# MARK: Dropdown
+def Dropdown(Title:str, Items:list, DefaultItem:int, X1:int, Y1:int, X2:int, Y2:int, DropdownHeight:int = 100, DropdownPadding:int = 5, Layer:int = 0, OnChange:callable = None, FontSize:float = settings.FontSize, FontType:str = settings.FontType, RoundCorners:float = settings.CornerRoundness, TextColor:tuple = colors.TEXT_COLOR, SecondaryTextColor:tuple = colors.GRAY_TEXT_COLOR, Color:tuple = colors.DROPDOWN_COLOR, HoverColor:tuple = colors.DROPDOWN_HOVER_COLOR):
+    """
+    Creates a dropdown.
+
+    **OnChange Usage:**
+
+    **1. Using a pre-defined function:**
+
+    ```python
+    def DropdownCallback(SelectedItem):
+        print(f"Dropdown item selected: {SelectedItem}")
+
+    ImageUI.Dropdown(..., OnChange=DropdownCallback, ...)
+    ```
+
+    **2. Using a lambda function for simple actions:**
+
+    ```python
+    ImageUI.Dropdown(..., OnChange=lambda SelectedItem: print(f"Dropdown item selected: {SelectedItem}"), ...)
+    ```
+
+    Parameters
+    ----------
+    Title : str
+        The title of the dropdown.
+    Items : list
+        The items of the dropdown.
+    X1 : int
+        The x coordinate of the top left corner.
+    Y1 : int
+        The y coordinate of the top left corner.
+    X2 : int
+        The x coordinate of the bottom right corner.
+    Y2 : int
+        The y coordinate of the bottom right corner.
+    DefaultItem : int
+        The index of the default item.
+    DropdownHeight : int
+        The height of the dropdown.
+    DropdownPadding : int
+        The padding between the title and the dropdown box.
+    Layer : int
+        The layer of the button in the UI.
+    OnChange : callable
+        The function to call when the selected item is changed.
+    FontSize : float
+        The font size of the text.
+    FontType : str
+        The font type of the text.
+    RoundCorners : float
+        The roundness of the corners.
+    TextColor : tuple
+        The color of the text.
+    SecondaryTextColor : tuple
+        The color of the secondary text.
+    Color : tuple
+        The color of the button.
+    HoverColor : tuple
+        The color of the button when hovered.
+
+    Returns
+    -------
+    None
+    """
+    try:
+        variables.Elements.append(["Dropdown",
+                                   OnChange,
+                                   {"Title": Title,
+                                    "Items": Items,
+                                    "DefaultItem": DefaultItem,
+                                    "X1": X1,
+                                    "Y1": Y1,
+                                    "X2": X2,
+                                    "Y2": Y2,
+                                    "DropdownHeight": DropdownHeight,
+                                    "DropdownPadding": DropdownPadding,
+                                    "Layer": Layer,
+                                    "FontSize": FontSize,
+                                    "FontType": FontType,
+                                    "RoundCorners": RoundCorners,
+                                    "TextColor": TextColor,
+                                    "SecondaryTextColor": SecondaryTextColor,
+                                    "Color": Color,
+                                    "HoverColor": HoverColor}])
+    except:
+        errors.ShowError("ImageUI - Error in function Dropdown.", str(traceback.format_exc()))
 
 
 # MARK: Update
@@ -308,12 +419,21 @@ def Update(WindowHWND:int, Frame:np.ndarray):
                         variables.ForceSingleRender = True
 
                 elif ItemType == "Switch":
-                    Changed, Pressed, Hovered = elements.Switch(**Item[2])
+                    State, Changed, Pressed, Hovered = elements.Switch(**Item[2])
                     variables.Areas.append((ItemType, Item[2]["X1"], Item[2]["Y1"], Item[2]["X2"], Item[2]["Y2"], Item[2]["Layer"], Pressed or Hovered))
 
                     if Changed:
                         if ItemFunction is not None:
-                            ItemFunction()
+                            ItemFunction(State)
+                        variables.ForceSingleRender = True
+
+                elif ItemType == "Dropdown":
+                    SelectedItem, Changed, Selected, Pressed, Hovered = elements.Dropdown(**Item[2])
+                    variables.Areas.append((ItemType, Item[2]["X1"], Item[2]["Y1"], Item[2]["X2"], Item[2]["Y2"] + ((Item[2]["DropdownHeight"] + Item[2]["DropdownPadding"]) if Selected else 0), Item[2]["Layer"], Pressed or Hovered))
+
+                    if Changed:
+                        if ItemFunction is not None:
+                            ItemFunction(SelectedItem)
                         variables.ForceSingleRender = True
 
             variables.CachedFrame = variables.Frame.copy()
@@ -340,3 +460,4 @@ def Exit():
     None
     """
     translations.SaveCache()
+    variables.Exit = True

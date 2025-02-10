@@ -14,8 +14,8 @@ TRANSLATING = False
 TRANSLATION_CACHE = {}
 
 
-# MARK: Initialize
-def Initialize(SourceLanguage:str, DestinationLanguage:str):
+# MARK: SetTranslator
+def SetTranslator(SourceLanguage:str, DestinationLanguage:str):
     """
     All the text from the UI will be translated. Available languages can be listed with ImageUI.translations.GetTranslatorLanguages().
 
@@ -32,6 +32,8 @@ def Initialize(SourceLanguage:str, DestinationLanguage:str):
     """
     try:
         global Translator, TRANSLATION_CACHE
+        Translator = None
+        TRANSLATION_CACHE = {}
 
         Languages = GetAvailableLanguages()
 
@@ -48,12 +50,12 @@ def Initialize(SourceLanguage:str, DestinationLanguage:str):
         if SourceLanguageIsValid:
             settings.SourceLanguage = SourceLanguage
         else:
-            errors.ShowError("Translate - Error in function Initialize.", "Source language not found. Use ImageUI.translations.GetAvailableLanguages() to list available languages.")
+            errors.ShowError("Translate - Error in function SetTranslator.", "Source language not found. Use ImageUI.translations.GetAvailableLanguages() to list available languages.")
             return
         if DestinationLanguageIsValid:
             settings.DestinationLanguage = DestinationLanguage
         else:
-            errors.ShowError("Translate - Error in function Initialize.", "Destination language not found. Use ImageUI.translations.GetAvailableLanguages() to list available languages.")
+            errors.ShowError("Translate - Error in function SetTranslator.", "Destination language not found. Use ImageUI.translations.GetAvailableLanguages() to list available languages.")
             return
 
         Translator = GoogleTranslator(source=settings.SourceLanguage, target=settings.DestinationLanguage)
@@ -68,7 +70,7 @@ def Initialize(SourceLanguage:str, DestinationLanguage:str):
                         json.dump({}, f, indent=4)
                 TRANSLATION_CACHE = File
     except:
-        errors.ShowError("Translate - Error in function Initialize.", str(traceback.format_exc()))
+        errors.ShowError("Translate - Error in function SetTranslator.", str(traceback.format_exc()))
 
 
 def TranslateThread(Text):
