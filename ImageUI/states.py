@@ -13,10 +13,19 @@ MouseY = 0
 
 TopMostLayer = 0
 
+LeftPressed = False
+RightPressed = False
+LastLeftPressed = False
+LastRightPressed = False
+
 LeftClicked = False
+"""If the left mouse button was clicked. Clicked means pressed in the last update and released in the current update."""
 RightClicked = False
-LastLeftClicked = False
-LastRightClicked = False
+"""If the right mouse button was clicked. Clicked means pressed in the last update and released in the current update."""
+LeftClickPosition = 0, 0
+"""The position at which the left mouse button was clicked. Does not get reset when the mouse button is not clicked."""
+RightClickPosition = 0, 0
+"""The position at which the right mouse button was clicked. Does not get reset when the mouse button is not clicked."""
 
 ForegroundWindow = False
 LastForegroundWindow = False

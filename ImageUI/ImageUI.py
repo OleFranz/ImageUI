@@ -102,7 +102,7 @@ def Button(Text:str, X1:int, Y1:int, X2:int, Y2:int, Layer:int = 0, OnPress:call
     Layer : int
         The layer of the button in the UI.
     OnPress : callable
-        The function to call when the button is clicked.
+        The function to call when the button was clicked.
     FontSize : float
         The font size of the text.
     FontType : str
@@ -358,20 +358,31 @@ def Update(WindowHWND:int, Frame:np.ndarray):
             MouseY = 0
 
         ForegroundWindow = ctypes.windll.user32.GetForegroundWindow() == WindowHWND
-        LeftClicked = ctypes.windll.user32.GetKeyState(0x01) & 0x8000 != 0 and ForegroundWindow
-        RightClicked = ctypes.windll.user32.GetKeyState(0x02) & 0x8000 != 0 and ForegroundWindow
-        LastLeftClicked = States.LeftClicked
-        LastRightClicked = States.RightClicked
+        LeftPressed = ctypes.windll.user32.GetKeyState(0x01) & 0x8000 != 0 and ForegroundWindow and 0 <= MouseX <= 1 and 0 <= MouseY <= 1
+        RightPressed = ctypes.windll.user32.GetKeyState(0x02) & 0x8000 != 0 and ForegroundWindow and 0 <= MouseX <= 1 and 0 <= MouseY <= 1
+        LastLeftPressed = States.LeftPressed
+        LastRightPressed = States.RightPressed
         States.FrameWidth = WindowWidth
         States.FrameHeight = WindowHeight
         States.MouseX = MouseX
         States.MouseY = MouseY
-        States.LastLeftClicked = States.LeftClicked if ForegroundWindow else False
-        States.LastRightClicked = States.RightClicked if ForegroundWindow else False
-        States.LeftClicked = LeftClicked if ForegroundWindow else False
-        States.RightClicked = RightClicked if ForegroundWindow else False
-        if LastLeftClicked == False and LeftClicked == False and LastRightClicked == False and RightClicked == False:
+        States.LastLeftPressed = States.LeftPressed if ForegroundWindow else False
+        States.LastRightPressed = States.RightPressed if ForegroundWindow else False
+        States.LeftPressed = LeftPressed
+        States.RightPressed = RightPressed
+        if LastLeftPressed == False and LeftPressed == False and LastRightPressed == False and RightPressed == False:
             States.ForegroundWindow = ForegroundWindow
+
+        if LeftPressed == False and LastLeftPressed == True:
+            States.LeftClicked = True
+            States.LeftClickPosition = round(MouseX * WindowWidth), round(MouseY * WindowHeight)
+        else:
+            States.LeftClicked = False
+        if RightPressed == False and LastRightPressed == True:
+            States.RightClicked = True
+            States.RightClickPosition = round(MouseX * WindowWidth), round(MouseY * WindowHeight)
+        else:
+            States.RightClicked = False
 
 
         RenderFrame = False
@@ -396,7 +407,7 @@ def Update(WindowHWND:int, Frame:np.ndarray):
         if [[Item[0], Item[2]] for Item in Variables.Elements] != [[Item[0], Item[2]] for Item in Variables.LastElements]:
             RenderFrame = True
 
-        if RenderFrame or Variables.ForceSingleRender or LastLeftClicked != LeftClicked:
+        if RenderFrame or Variables.ForceSingleRender or LastLeftPressed != LeftPressed:
             Variables.ForceSingleRender = False
             Variables.Frame = Frame.copy()
             Variables.Areas = []
