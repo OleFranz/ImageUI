@@ -1,26 +1,21 @@
-# Settings
-from .ImageUI import DevelopmentMode
-from .ImageUI import CachePath
-from .ImageUI import CornerRoundness
+from .Settings import DevelopmentMode
+from .Settings import CachePath
+from .Settings import CornerRoundness
 
-# Translations
-from .ImageUI import SetTranslator
-from .ImageUI import ManualTranslation
-from .ImageUI import GetAvailableLanguages
-from .ImageUI import SaveCache
+from .Translations import SetTranslator
+from .Translations import ManualTranslation
+from .Translations import GetAvailableLanguages
+from .Translations import SaveCache
 
-# Text
-from .ImageUI import SetFontSize
-from .ImageUI import SetFontType
-from .ImageUI import ListFontTypes
+from .Text import SetFontSize
+from .Text import SetFontType
+from .Text import ListFontTypes
 
-# States
-from .ImageUI import LeftClicked
-from .ImageUI import RightClicked
-from .ImageUI import LeftClickPosition
-from .ImageUI import RightClickPosition
+from .States import LeftClicked
+from .States import RightClicked
+from .States import LeftClickPosition
+from .States import RightClickPosition
 
-# ImageUI
 from .ImageUI import Label
 from .ImageUI import Button
 from .ImageUI import Switch
