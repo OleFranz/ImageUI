@@ -1,5 +1,5 @@
-from ImageUI import settings
-from ImageUI import errors
+from ImageUI import Settings
+from ImageUI import Errors
 import traceback
 import os
 
@@ -7,7 +7,7 @@ import os
 # MARK: SetFontSize
 def SetFontSize(FontSize:float = 13):
     """
-    Set the font size of the UI elements.
+    Set the font size of the UI Elements.
 
     Parameters
     ----------
@@ -20,17 +20,17 @@ def SetFontSize(FontSize:float = 13):
     """
     try:
         if 0.5 <= float(FontSize) <= 65535.4:
-            settings.FontSize = float(FontSize)
+            Settings.FontSize = float(FontSize)
         else:
-            errors.ShowError("Text - Invalid font size.", f"Invalid font size: {FontSize}\nFont size must be between 0.5 and 65535.4.")
+            Errors.ShowError("Text - Invalid font size.", f"Invalid font size: {FontSize}\nFont size must be between 0.5 and 65535.4.")
     except:
-        errors.ShowError("Text - Error in function SetFontSize.", str(traceback.format_exc()))
+        Errors.ShowError("Text - Error in function SetFontSize.", str(traceback.format_exc()))
 
 
 # MARK: SetFontType
 def SetFontType(FontType:str = "arial.ttf"):
     """
-    Set the font type of the UI elements.
+    Set the font type of the UI Elements.
 
     Parameters
     ----------
@@ -46,11 +46,11 @@ def SetFontType(FontType:str = "arial.ttf"):
         if ParsedFontType.endswith(".ttf") == False:
             ParsedFontType += ".ttf"
         if ParsedFontType in ListFontTypes():
-            settings.FontType = ParsedFontType
+            Settings.FontType = ParsedFontType
         else:
-            errors.ShowError("Text - Invalid font type.", f"Invalid font type: {FontType}\nUse ImageUI.text.ListFontTypes() to get a list of available font types.")
+            Errors.ShowError("Text - Invalid font type.", f"Invalid font type: {FontType}\nUse ImageUI.Text.ListFontTypes() to get a list of available font types.")
     except:
-        errors.ShowError("Text - Error in function SetFontType.", str(traceback.format_exc()))
+        Errors.ShowError("Text - Error in function SetFontType.", str(traceback.format_exc()))
 
 
 # MARK: ListFontTypes
@@ -68,5 +68,5 @@ def ListFontTypes():
         AvailableFonts = [File for File in os.listdir(FontPath) if File.endswith(".ttf")]
         return AvailableFonts
     except:
-        errors.ShowError("Text - Error in function ListFontTypes.", str(traceback.format_exc()))
+        Errors.ShowError("Text - Error in function ListFontTypes.", str(traceback.format_exc()))
         return []

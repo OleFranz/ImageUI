@@ -1,7 +1,7 @@
 from deep_translator import GoogleTranslator
-from ImageUI import variables
-from ImageUI import settings
-from ImageUI import errors
+from ImageUI import Variables
+from ImageUI import Settings
+from ImageUI import Errors
 import threading
 import traceback
 import json
@@ -17,7 +17,7 @@ TRANSLATION_CACHE = {}
 # MARK: SetTranslator
 def SetTranslator(SourceLanguage:str, DestinationLanguage:str):
     """
-    All the text from the UI will be translated. Available languages can be listed with ImageUI.translations.GetTranslatorLanguages().
+    All the text from the UI will be translated. Available languages can be listed with ImageUI.Translations.GetTranslatorLanguages().
 
     Parameters
     ----------
@@ -32,6 +32,14 @@ def SetTranslator(SourceLanguage:str, DestinationLanguage:str):
     """
     try:
         global Translator, TRANSLATION_CACHE
+
+        if SourceLanguage == DestinationLanguage:
+            return
+        if SourceLanguage == Settings.SourceLanguage and DestinationLanguage == Settings.DestinationLanguage:
+            return
+
+        SaveCache()
+
         Translator = None
         TRANSLATION_CACHE = {}
 
@@ -48,29 +56,29 @@ def SetTranslator(SourceLanguage:str, DestinationLanguage:str):
                 DestinationLanguageIsValid = True
                 break
         if SourceLanguageIsValid:
-            settings.SourceLanguage = SourceLanguage
+            Settings.SourceLanguage = SourceLanguage
         else:
-            errors.ShowError("Translate - Error in function SetTranslator.", "Source language not found. Use ImageUI.translations.GetAvailableLanguages() to list available languages.")
+            Errors.ShowError("Translate - Error in function SetTranslator.", "Source language not found. Use ImageUI.Translations.GetAvailableLanguages() to list available languages.")
             return
         if DestinationLanguageIsValid:
-            settings.DestinationLanguage = DestinationLanguage
+            Settings.DestinationLanguage = DestinationLanguage
         else:
-            errors.ShowError("Translate - Error in function SetTranslator.", "Destination language not found. Use ImageUI.translations.GetAvailableLanguages() to list available languages.")
+            Errors.ShowError("Translate - Error in function SetTranslator.", "Destination language not found. Use ImageUI.Translations.GetAvailableLanguages() to list available languages.")
             return
 
-        Translator = GoogleTranslator(source=settings.SourceLanguage, target=settings.DestinationLanguage)
+        Translator = GoogleTranslator(source=Settings.SourceLanguage, target=Settings.DestinationLanguage)
 
-        if os.path.exists(os.path.join(settings.CachePath, f"Translations/{settings.DestinationLanguage}.json")):
-            with open(os.path.join(settings.CachePath, f"Translations/{settings.DestinationLanguage}.json"), "r") as f:
+        if os.path.exists(os.path.join(Settings.CachePath, f"Translations/{Settings.DestinationLanguage}.json")):
+            with open(os.path.join(Settings.CachePath, f"Translations/{Settings.DestinationLanguage}.json"), "r") as f:
                 try:
                     File = json.load(f)
                 except:
                     File = {}
-                    with open(os.path.join(settings.CachePath, f"Translations/{settings.DestinationLanguage}.json"), "w") as f:
+                    with open(os.path.join(Settings.CachePath, f"Translations/{Settings.DestinationLanguage}.json"), "w") as f:
                         json.dump({}, f, indent=4)
                 TRANSLATION_CACHE = File
     except:
-        errors.ShowError("Translate - Error in function SetTranslator.", str(traceback.format_exc()))
+        Errors.ShowError("Translate - Error in function SetTranslator.", str(traceback.format_exc()))
 
 
 def TranslateThread(Text):
@@ -81,11 +89,11 @@ def TranslateThread(Text):
         TRANSLATING = True
         Translation = Translator.translate(Text)
         TRANSLATION_CACHE[Text] = Translation
-        variables.ForceSingleRender = True
+        Variables.ForceSingleRender = True
         TRANSLATING = False
         return Translation
     except:
-        errors.ShowError("Translate - Error in function TranslateThread.", str(traceback.format_exc()))
+        Errors.ShowError("Translate - Error in function TranslateThread.", str(traceback.format_exc()))
         return Text
 
 
@@ -93,12 +101,12 @@ def TranslationRequest(Text):
     try:
         threading.Thread(target=TranslateThread, args=(Text,), daemon=True).start()
     except:
-        errors.ShowError("Translate - Error in function TranslationRequest.", str(traceback.format_exc()))
+        Errors.ShowError("Translate - Error in function TranslationRequest.", str(traceback.format_exc()))
 
 
 def Translate(Text):
     try:
-        if settings.DestinationLanguage == settings.SourceLanguage or Translator == None:
+        if Settings.DestinationLanguage == Settings.SourceLanguage or Translator == None:
             return Text
         elif Text in TRANSLATION_CACHE:
             Translation = TRANSLATION_CACHE[Text]
@@ -110,7 +118,7 @@ def Translate(Text):
                 TranslationRequest(Text)
             return Text
     except:
-        errors.ShowError("Translate - Error in function Translate.", str(traceback.format_exc()))
+        Errors.ShowError("Translate - Error in function Translate.", str(traceback.format_exc()))
         return Text
 
 
@@ -133,9 +141,9 @@ def ManualTranslation(Text, Translation):
     try:
         global TRANSLATION_CACHE
         TRANSLATION_CACHE[Text] = Translation
-        variables.ForceSingleRender = True
+        Variables.ForceSingleRender = True
     except:
-        errors.ShowError("Translate - Error in function ManualTranslation.", str(traceback.format_exc()))
+        Errors.ShowError("Translate - Error in function ManualTranslation.", str(traceback.format_exc()))
 
 
 # MARK: GetAvailableLanguages
@@ -158,7 +166,7 @@ def GetAvailableLanguages():
             FormattedLanguages[FormattedLanguage] = Languages[Language]
         return FormattedLanguages
     except:
-        errors.ShowError("Translate - Error in function GetAvailableLanguages.", str(traceback.format_exc()))
+        Errors.ShowError("Translate - Error in function GetAvailableLanguages.", str(traceback.format_exc()))
         return {}
 
 
@@ -172,10 +180,10 @@ def SaveCache():
     None
     """
     try:
-        if settings.DestinationLanguage != settings.SourceLanguage:
-            if os.path.exists(os.path.join(settings.CachePath, "Translations")) == False:
-                os.makedirs(os.path.join(settings.CachePath, "Translations"))
-            with open(os.path.join(settings.CachePath, f"Translations/{settings.DestinationLanguage}.json"), "w") as f:
+        if Settings.DestinationLanguage != Settings.SourceLanguage and TRANSLATION_CACHE != {}:
+            if os.path.exists(os.path.join(Settings.CachePath, "Translations")) == False:
+                os.makedirs(os.path.join(Settings.CachePath, "Translations"))
+            with open(os.path.join(Settings.CachePath, f"Translations/{Settings.DestinationLanguage}.json"), "w") as f:
                 json.dump(TRANSLATION_CACHE, f, indent=4)
     except:
-        errors.ShowError("Translate - Error in function SaveCache.", str(traceback.format_exc()))
+        Errors.ShowError("Translate - Error in function SaveCache.", str(traceback.format_exc()))

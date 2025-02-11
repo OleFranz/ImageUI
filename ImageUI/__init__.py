@@ -1,15 +1,15 @@
-from .settings import DevelopmentMode
-from .settings import CachePath
-from .settings import CornerRoundness
+from .Settings import DevelopmentMode
+from .Settings import CachePath
+from .Settings import CornerRoundness
 
-from .translations import SetTranslator
-from .translations import ManualTranslation
-from .translations import GetAvailableLanguages
-from .translations import SaveCache
+from .Translations import SetTranslator
+from .Translations import ManualTranslation
+from .Translations import GetAvailableLanguages
+from .Translations import SaveCache
 
-from .text import SetFontSize
-from .text import SetFontType
-from .text import ListFontTypes
+from .Text import SetFontSize
+from .Text import SetFontType
+from .Text import ListFontTypes
 
 from .ImageUI import Label
 from .ImageUI import Button

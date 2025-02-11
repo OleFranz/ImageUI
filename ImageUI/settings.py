@@ -12,7 +12,7 @@ CachePath:str = os.path.join(tempfile.gettempdir(), "ImageUI-Cache")
 """The path to the cache directory, things like translations are saved there."""
 
 FontSize:float = 13
-"""The font size of the UI elements."""
+"""The font size of the UI Elements."""
 FontType:str = "arial.ttf"
 """The cv2.FONT_{?} font type to use."""
 LineType:int = cv2.LINE_AA
@@ -24,4 +24,7 @@ CircleLineType:int = cv2.LINE_AA
 RectangleLineType:int = cv2.LINE_AA
 """The cv2.LINE_{?} line type to use for rectangles."""
 CornerRoundness:float = 5
-"""The roundness of the corners of the UI elements."""
+"""The roundness of the corners of the UI Elements."""
+
+SwitchAnimationDuration:float = 0.3333
+"""The duration of the switch animation in seconds."""

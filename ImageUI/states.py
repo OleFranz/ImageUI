@@ -1,5 +1,5 @@
-from ImageUI import variables
-from ImageUI import errors
+from ImageUI import Variables
+from ImageUI import Errors
 import threading
 import traceback
 import pynput
@@ -26,11 +26,14 @@ def HandleScrollEvents():
     try:
         global ScrollEventQueue
         with pynput.mouse.Events() as Events:
-            while variables.Exit == False:
+            while Variables.Exit == False:
                 Event = Events.get()
                 if isinstance(Event, pynput.mouse.Events.Scroll):
-                    ScrollEventQueue.append(Event)
-                    variables.ForceSingleRender = True
+                    if 0 <= MouseX <= 1 and 0 <= MouseY <= 1 and ForegroundWindow:
+                        ScrollEventQueue.append(Event)
+                        Variables.ForceSingleRender = True
     except:
-        errors.ShowError("States - Error in function HandleScrollEvents.", str(traceback.format_exc()))
+        Errors.ShowError("States - Error in function HandleScrollEvents.", str(traceback.format_exc()))
 ScrollEventThread = threading.Thread(target=HandleScrollEvents, daemon=True).start()
+
+AnyDropdownOpen = False

@@ -1,10 +1,10 @@
-from ImageUI import translations
-from ImageUI import variables
-from ImageUI import elements
-from ImageUI import settings
-from ImageUI import colors
-from ImageUI import errors
-from ImageUI import states
+from ImageUI import Translations
+from ImageUI import Variables
+from ImageUI import Elements
+from ImageUI import Settings
+from ImageUI import Colors
+from ImageUI import Errors
+from ImageUI import States
 import numpy as np
 import traceback
 import win32gui
@@ -14,7 +14,7 @@ import time
 
 
 # MARK: Label
-def Label(Text:str, X1:int, Y1:int, X2:int, Y2:int, Align:str = "Center", AlignPadding:int = 10, Layer:int = 0, FontSize:float = settings.FontSize, FontType:str = settings.FontType, TextColor:tuple = colors.TEXT_COLOR):
+def Label(Text:str, X1:int, Y1:int, X2:int, Y2:int, Align:str = "Center", AlignPadding:int = 10, Layer:int = 0, FontSize:float = Settings.FontSize, FontType:str = Settings.FontType, TextColor:tuple = Colors.TEXT_COLOR):
     """
     Creates a label.
 
@@ -48,7 +48,7 @@ def Label(Text:str, X1:int, Y1:int, X2:int, Y2:int, Align:str = "Center", AlignP
     None
     """
     try:
-        variables.Elements.append(["Label",
+        Variables.Elements.append(["Label",
                                    None,
                                    {"Text": Text,
                                     "X1": X1,
@@ -62,11 +62,11 @@ def Label(Text:str, X1:int, Y1:int, X2:int, Y2:int, Align:str = "Center", AlignP
                                     "FontType": FontType,
                                     "TextColor": TextColor}])
     except:
-        errors.ShowError("ImageUI - Error in function Label.", str(traceback.format_exc()))
+        Errors.ShowError("ImageUI - Error in function Label.", str(traceback.format_exc()))
 
 
 # MARK: Button
-def Button(Text:str, X1:int, Y1:int, X2:int, Y2:int, Layer:int = 0, OnPress:callable = None, FontSize:float = settings.FontSize, FontType:str = settings.FontType, RoundCorners:float = settings.CornerRoundness, TextColor:tuple = colors.TEXT_COLOR, Color:tuple = colors.BUTTON_COLOR, HoverColor:tuple = colors.BUTTON_HOVER_COLOR):
+def Button(Text:str, X1:int, Y1:int, X2:int, Y2:int, Layer:int = 0, OnPress:callable = None, FontSize:float = Settings.FontSize, FontType:str = Settings.FontType, RoundCorners:float = Settings.CornerRoundness, TextColor:tuple = Colors.TEXT_COLOR, Color:tuple = Colors.BUTTON_COLOR, HoverColor:tuple = Colors.BUTTON_HOVER_COLOR):
     """
     Creates a button.
 
@@ -121,7 +121,7 @@ def Button(Text:str, X1:int, Y1:int, X2:int, Y2:int, Layer:int = 0, OnPress:call
     None
     """
     try:
-        variables.Elements.append(["Button",
+        Variables.Elements.append(["Button",
                                    OnPress,
                                    {"Text": Text,
                                     "X1": X1,
@@ -136,11 +136,11 @@ def Button(Text:str, X1:int, Y1:int, X2:int, Y2:int, Layer:int = 0, OnPress:call
                                     "Color": Color,
                                     "HoverColor": HoverColor}])
     except:
-        errors.ShowError("ImageUI - Error in function Button.", str(traceback.format_exc()))
+        Errors.ShowError("ImageUI - Error in function Button.", str(traceback.format_exc()))
 
 
 # MARK: Switch
-def Switch(Text:str, X1:int, Y1:int, X2:int, Y2:int, State:bool = False, SwitchWidth:int = 40, SwitchHeight:int = 20, TextPadding:int = 5, Layer:int = 0, OnChange:callable = None, FontSize:float = settings.FontSize, FontType:str = settings.FontType, TextColor:tuple = colors.TEXT_COLOR, SwitchColor=colors.SWITCH_COLOR, SwitchKnobColor=colors.SWITCH_KNOB_COLOR, SwitchHoverColor=colors.SWITCH_HOVER_COLOR, SwitchEnabledColor=colors.SWITCH_ENABLED_COLOR, SwitchEnabledHoverColor=colors.SWITCH_ENABLED_HOVER_COLOR):
+def Switch(Text:str, X1:int, Y1:int, X2:int, Y2:int, State:bool = False, SwitchWidth:int = 40, SwitchHeight:int = 20, TextPadding:int = 5, Layer:int = 0, OnChange:callable = None, FontSize:float = Settings.FontSize, FontType:str = Settings.FontType, TextColor:tuple = Colors.TEXT_COLOR, SwitchColor=Colors.SWITCH_COLOR, SwitchKnobColor=Colors.SWITCH_KNOB_COLOR, SwitchHoverColor=Colors.SWITCH_HOVER_COLOR, SwitchEnabledColor=Colors.SWITCH_ENABLED_COLOR, SwitchEnabledHoverColor=Colors.SWITCH_ENABLED_HOVER_COLOR):
     """
     Creates a switch.
 
@@ -210,7 +210,7 @@ def Switch(Text:str, X1:int, Y1:int, X2:int, Y2:int, State:bool = False, SwitchW
     None
     """
     try:
-        variables.Elements.append(["Switch",
+        Variables.Elements.append(["Switch",
                                    OnChange,
                                    {"Text": Text,
                                     "X1": X1,
@@ -231,11 +231,11 @@ def Switch(Text:str, X1:int, Y1:int, X2:int, Y2:int, State:bool = False, SwitchW
                                     "SwitchEnabledColor": SwitchEnabledColor,
                                     "SwitchEnabledHoverColor": SwitchEnabledHoverColor}])
     except:
-        errors.ShowError("ImageUI - Error in function Switch.", str(traceback.format_exc()))
+        Errors.ShowError("ImageUI - Error in function Switch.", str(traceback.format_exc()))
 
 
 # MARK: Dropdown
-def Dropdown(Title:str, Items:list, DefaultItem:int, X1:int, Y1:int, X2:int, Y2:int, DropdownHeight:int = 100, DropdownPadding:int = 5, Layer:int = 0, OnChange:callable = None, FontSize:float = settings.FontSize, FontType:str = settings.FontType, RoundCorners:float = settings.CornerRoundness, TextColor:tuple = colors.TEXT_COLOR, SecondaryTextColor:tuple = colors.GRAY_TEXT_COLOR, Color:tuple = colors.DROPDOWN_COLOR, HoverColor:tuple = colors.DROPDOWN_HOVER_COLOR):
+def Dropdown(Title:str, Items:list, DefaultItem:int, X1:int, Y1:int, X2:int, Y2:int, DropdownHeight:int = 100, DropdownPadding:int = 5, Layer:int = 0, OnChange:callable = None, FontSize:float = Settings.FontSize, FontType:str = Settings.FontType, RoundCorners:float = Settings.CornerRoundness, TextColor:tuple = Colors.TEXT_COLOR, SecondaryTextColor:tuple = Colors.GRAY_TEXT_COLOR, Color:tuple = Colors.DROPDOWN_COLOR, HoverColor:tuple = Colors.DROPDOWN_HOVER_COLOR):
     """
     Creates a dropdown.
 
@@ -300,7 +300,7 @@ def Dropdown(Title:str, Items:list, DefaultItem:int, X1:int, Y1:int, X2:int, Y2:
     None
     """
     try:
-        variables.Elements.append(["Dropdown",
+        Variables.Elements.append(["Dropdown",
                                    OnChange,
                                    {"Title": Title,
                                     "Items": Items,
@@ -320,7 +320,7 @@ def Dropdown(Title:str, Items:list, DefaultItem:int, X1:int, Y1:int, X2:int, Y2:
                                     "Color": Color,
                                     "HoverColor": HoverColor}])
     except:
-        errors.ShowError("ImageUI - Error in function Dropdown.", str(traceback.format_exc()))
+        Errors.ShowError("ImageUI - Error in function Dropdown.", str(traceback.format_exc()))
 
 
 # MARK: Update
@@ -360,93 +360,96 @@ def Update(WindowHWND:int, Frame:np.ndarray):
         ForegroundWindow = ctypes.windll.user32.GetForegroundWindow() == WindowHWND
         LeftClicked = ctypes.windll.user32.GetKeyState(0x01) & 0x8000 != 0 and ForegroundWindow
         RightClicked = ctypes.windll.user32.GetKeyState(0x02) & 0x8000 != 0 and ForegroundWindow
-        LastLeftClicked = states.LeftClicked
-        LastRightClicked = states.RightClicked
-        states.FrameWidth = WindowWidth
-        states.FrameHeight = WindowHeight
-        states.MouseX = MouseX
-        states.MouseY = MouseY
-        states.LastLeftClicked = states.LeftClicked if ForegroundWindow else False
-        states.LastRightClicked = states.RightClicked if ForegroundWindow else False
-        states.LeftClicked = LeftClicked if ForegroundWindow else False
-        states.RightClicked = RightClicked if ForegroundWindow else False
+        LastLeftClicked = States.LeftClicked
+        LastRightClicked = States.RightClicked
+        States.FrameWidth = WindowWidth
+        States.FrameHeight = WindowHeight
+        States.MouseX = MouseX
+        States.MouseY = MouseY
+        States.LastLeftClicked = States.LeftClicked if ForegroundWindow else False
+        States.LastRightClicked = States.RightClicked if ForegroundWindow else False
+        States.LeftClicked = LeftClicked if ForegroundWindow else False
+        States.RightClicked = RightClicked if ForegroundWindow else False
         if LastLeftClicked == False and LeftClicked == False and LastRightClicked == False and RightClicked == False:
-            states.ForegroundWindow = ForegroundWindow
+            States.ForegroundWindow = ForegroundWindow
 
 
         RenderFrame = False
 
-        for Area in variables.Areas:
+        for Area in Variables.Areas:
+            if States.AnyDropdownOpen and Area[0] != "Dropdown":
+                continue
             if Area[0] != "Label":
-                if (Area[1] <= MouseX * WindowWidth <= Area[3] and Area[2] <= MouseY * WindowHeight <= Area[4]) != Area[6] and Area[5] == states.TopMostLayer:
+                if (Area[1] <= MouseX * WindowWidth <= Area[3] and Area[2] <= MouseY * WindowHeight <= Area[4]) != Area[6] and Area[5] == States.TopMostLayer:
                     Area = (Area[1], Area[2], Area[3], Area[4], not Area[5])
                     RenderFrame = True
 
-        if ForegroundWindow == False and variables.CachedFrame is not None:
+        if ForegroundWindow == False and Variables.CachedFrame is not None:
             RenderFrame = False
 
-        if np.array_equal(Frame, variables.LastFrame) == False:
+        if np.array_equal(Frame, Variables.LastFrame) == False:
             RenderFrame = True
-        variables.LastFrame = Frame.copy()
+        Variables.LastFrame = Frame.copy()
 
-        if [[Item[0], Item[2]] for Item in variables.Elements] != [[Item[0], Item[2]] for Item in variables.LastElements]:
+        Variables.Elements = sorted(Variables.Elements, key=lambda Item: (Item[2]["Layer"], {"Button": 1, "Switch": 2, "Label": 3, "Dropdown": 4}.get(Item[0], 0)))
+
+        if [[Item[0], Item[2]] for Item in Variables.Elements] != [[Item[0], Item[2]] for Item in Variables.LastElements]:
             RenderFrame = True
 
-        if RenderFrame or variables.ForceSingleRender or LastLeftClicked != LeftClicked:
-            variables.ForceSingleRender = False
+        if RenderFrame or Variables.ForceSingleRender or LastLeftClicked != LeftClicked:
+            Variables.ForceSingleRender = False
+            Variables.Frame = Frame.copy()
+            Variables.Areas = []
 
-            variables.Elements = sorted(variables.Elements, key=lambda Item: Item[2]["Layer"])
-            states.TopMostLayer = variables.Elements[-1][2]["Layer"] if len(variables.Elements) > 0 else 0
+            States.TopMostLayer = Variables.Elements[-1][2]["Layer"] if len(Variables.Elements) > 0 else 0
+            States.AnyDropdownOpen = any([Item for Item in Variables.Dropdowns if Variables.Dropdowns[Item][0] == True])
 
-            variables.Frame = Frame.copy()
-            variables.Areas = []
-
-            for Item in variables.Elements:
+            for Item in Variables.Elements:
                 ItemType = Item[0]
                 ItemFunction = Item[1]
 
                 if ItemType == "Label":
-                    elements.Label(**Item[2])
-                    variables.Areas.append((ItemType, Item[2]["X1"], Item[2]["Y1"], Item[2]["X2"], Item[2]["Y2"], Item[2]["Layer"]))
+                    Elements.Label(**Item[2])
+                    Variables.Areas.append((ItemType, Item[2]["X1"], Item[2]["Y1"], Item[2]["X2"], Item[2]["Y2"], Item[2]["Layer"]))
 
                 elif ItemType == "Button":
-                    Clicked, Pressed, Hovered = elements.Button(**Item[2])
-                    variables.Areas.append((ItemType, Item[2]["X1"], Item[2]["Y1"], Item[2]["X2"], Item[2]["Y2"], Item[2]["Layer"], Pressed or Hovered))
+                    Clicked, Pressed, Hovered = Elements.Button(**Item[2])
+                    Variables.Areas.append((ItemType, Item[2]["X1"], Item[2]["Y1"], Item[2]["X2"], Item[2]["Y2"], Item[2]["Layer"], Pressed or Hovered))
 
                     if Clicked:
                         if ItemFunction is not None:
                             ItemFunction()
-                        variables.ForceSingleRender = True
+                        Variables.ForceSingleRender = True
 
                 elif ItemType == "Switch":
-                    State, Changed, Pressed, Hovered = elements.Switch(**Item[2])
-                    variables.Areas.append((ItemType, Item[2]["X1"], Item[2]["Y1"], Item[2]["X2"], Item[2]["Y2"], Item[2]["Layer"], Pressed or Hovered))
+                    State, Changed, Pressed, Hovered = Elements.Switch(**Item[2])
+                    Variables.Areas.append((ItemType, Item[2]["X1"], Item[2]["Y1"], Item[2]["X2"], Item[2]["Y2"], Item[2]["Layer"], Pressed or Hovered))
 
                     if Changed:
                         if ItemFunction is not None:
                             ItemFunction(State)
-                        variables.ForceSingleRender = True
+                        Variables.ForceSingleRender = True
 
                 elif ItemType == "Dropdown":
-                    SelectedItem, Changed, Selected, Pressed, Hovered = elements.Dropdown(**Item[2])
-                    variables.Areas.append((ItemType, Item[2]["X1"], Item[2]["Y1"], Item[2]["X2"], Item[2]["Y2"] + ((Item[2]["DropdownHeight"] + Item[2]["DropdownPadding"]) if Selected else 0), Item[2]["Layer"], Pressed or Hovered))
+                    SelectedItem, Changed, Selected, Pressed, Hovered = Elements.Dropdown(**Item[2])
+                    Variables.Areas.append((ItemType, Item[2]["X1"], Item[2]["Y1"], Item[2]["X2"], Item[2]["Y2"] + ((Item[2]["DropdownHeight"] + Item[2]["DropdownPadding"]) if Selected else 0), Item[2]["Layer"], Pressed or Hovered))
 
                     if Changed:
                         if ItemFunction is not None:
                             ItemFunction(SelectedItem)
-                        variables.ForceSingleRender = True
+                        Variables.ForceSingleRender = True
 
-            variables.CachedFrame = variables.Frame.copy()
-            variables.LastElements = variables.Elements
+            Variables.CachedFrame = Variables.Frame.copy()
+            Variables.LastElements = Variables.Elements
 
-            if settings.DevelopmentMode:
+            if Settings.DevelopmentMode:
                 print(f"New Frame Rendered! ({round(time.time(), 1)})")
 
-        variables.Elements = []
+        Variables.Elements = []
 
-        return variables.CachedFrame
+        return Variables.CachedFrame
     except:
-        errors.ShowError("ImageUI - Error in function Update.", str(traceback.format_exc()))
+        Errors.ShowError("ImageUI - Error in function Update.", str(traceback.format_exc()))
         return Frame
 
 
@@ -459,5 +462,5 @@ def Exit():
     -------
     None
     """
-    translations.SaveCache()
-    variables.Exit = True
+    Translations.SaveCache()
+    Variables.Exit = True
