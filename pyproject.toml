@@ -1,9 +1,16 @@
 [project]
 name = "ImageUI"
-version = "0.18"
+version = "0.19"
 description = "A package for easily creating UIs in Python, mainly using OpenCV's drawing functions."
 readme = "README.md"
 requires-python = ">=3.9"
 authors = [{ "name" = "OleFranz" }]
 license = { file = "LICENSE" }
-dependencies = ["opencv-python"]
+dependencies = [
+    "mouse",
+    "numpy",
+    "pillow",
+    "pywin32",
+    "opencv-python",
+    "deep-translator"
+]
