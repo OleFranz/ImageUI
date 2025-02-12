@@ -2,7 +2,7 @@ from setuptools import setup, find_packages
 
 setup(
     name="ImageUI",
-    version="0.19",
+    version="0.20",
     description="A package for easily creating UIs in Python, mainly using OpenCV's drawing functions.",
     long_description=open("README.md").read(),
     author="OleFranz",
@@ -13,6 +13,7 @@ setup(
         "mouse",
         "numpy",
         "pillow",
+        "pynput",
         "pywin32",
         "opencv-python",
         "deep-translator",
