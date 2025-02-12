@@ -8,6 +8,7 @@ ForceSingleRender = False
 Areas = []
 Elements = []
 LastElements = []
+TextCache = []
 
 Fonts = {}
 Switches = {}

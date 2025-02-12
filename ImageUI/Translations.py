@@ -33,11 +33,6 @@ def SetTranslator(SourceLanguage:str, DestinationLanguage:str):
     try:
         global Translator, TRANSLATION_CACHE
 
-        if SourceLanguage == DestinationLanguage:
-            return
-        if SourceLanguage == Settings.SourceLanguage and DestinationLanguage == Settings.DestinationLanguage:
-            return
-
         SaveCache()
 
         Translator = None
@@ -64,6 +59,11 @@ def SetTranslator(SourceLanguage:str, DestinationLanguage:str):
             Settings.DestinationLanguage = DestinationLanguage
         else:
             Errors.ShowError("Translate - Error in function SetTranslator.", "Destination language not found. Use ImageUI.Translations.GetAvailableLanguages() to list available languages.")
+            return
+
+        if SourceLanguage == DestinationLanguage:
+            return
+        if SourceLanguage == Settings.SourceLanguage and DestinationLanguage == Settings.DestinationLanguage:
             return
 
         Translator = GoogleTranslator(source=Settings.SourceLanguage, target=Settings.DestinationLanguage)

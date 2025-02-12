@@ -16,14 +16,25 @@ def Label(Text, X1, Y1, X2, Y2, Align, AlignPadding, Layer, FontSize, FontType, 
     try:
         if Text == "": return
         Text = Translations.Translate(Text)
+        Frame = Variables.Frame.copy()
+        for CachedText in Variables.TextCache:
+            if CachedText[0] != f"{Text}-{X1}-{Y1}-{X2}-{Y2}-{FontSize}-{FontType}-{TextColor}":
+                continue
+            EmptyFrame, TextFrame, BBoxX1, BBoxY1, BBoxX2, BBoxY2 = CachedText[1]
+            CurrentFrame = Frame[BBoxY1:BBoxY2, BBoxX1:BBoxX2].copy()
+            if (CurrentFrame == EmptyFrame).all():
+                Frame[BBoxY1:BBoxY2, BBoxX1:BBoxX2] = TextFrame
+                Variables.Frame = Frame.copy()
+                return
+
         if f"{FontSize}-{FontType}" in Variables.Fonts:
             Font = Variables.Fonts[f"{FontSize}-{FontType}"]
         else:
             Font = ImageFont.truetype(FontType, FontSize)
             Variables.Fonts[f"{FontSize}-{FontType}"] = Font
-        Frame = Image.fromarray(Variables.Frame)
+        Frame = Image.fromarray(Frame)
         Draw = ImageDraw.Draw(Frame)
-        BBoxX1, BBoxY1, BBoxX2, BBoxY2 = Draw.textbbox((0, 0), Text, font=Font)
+        BBoxX1, BBoxY1, BBoxX2, BBoxY2 = Draw.textbbox((0, 0), Text, Font)
         if Align.lower() == "left":
             X = round(X1 + BBoxX1 + AlignPadding)
         elif Align.lower() == "right":
@@ -31,8 +42,16 @@ def Label(Text, X1, Y1, X2, Y2, Align, AlignPadding, Layer, FontSize, FontType, 
         else:
             X = round(X1 + (X2 - X1) / 2 - (BBoxX2 - BBoxX1) / 2)
         Y = round(Y1 + (Y2 - Y1) / 2 - (BBoxY2 - BBoxY1) / 2)
+        BBoxX1 += X - 2
+        BBoxY1 += Y - 2
+        BBoxX2 += X + 2
+        BBoxY2 += Y + 2
+        EmptyFrame = Variables.Frame[BBoxY1:BBoxY2, BBoxX1:BBoxX2].copy()
         Draw.text((X, Y), Text, font=Font, fill=(TextColor[0], TextColor[1], TextColor[2], 255))
-        Variables.Frame = numpy.array(Frame)
+        Frame = numpy.array(Frame)
+        Variables.Frame = Frame.copy()
+        TextFrame = Frame[BBoxY1:BBoxY2, BBoxX1:BBoxX2]
+        Variables.TextCache.append([f"{Text}-{X1}-{Y1}-{X2}-{Y2}-{FontSize}-{FontType}-{TextColor}", [EmptyFrame, TextFrame, BBoxX1, BBoxY1, BBoxX2, BBoxY2]])
     except:
         Errors.ShowError("Elements - Error in function Label.", str(traceback.format_exc()))
 

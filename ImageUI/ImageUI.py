@@ -390,10 +390,9 @@ def Update(WindowHWND:int, Frame:np.ndarray):
         for Area in Variables.Areas:
             if States.AnyDropdownOpen and Area[0] != "Dropdown":
                 continue
-            if Area[0] != "Label":
-                if (Area[1] <= MouseX * WindowWidth <= Area[3] and Area[2] <= MouseY * WindowHeight <= Area[4]) != Area[6] and Area[5] == States.TopMostLayer:
-                    Area = (Area[1], Area[2], Area[3], Area[4], not Area[5])
-                    RenderFrame = True
+            if (Area[1] <= MouseX * WindowWidth <= Area[3] and Area[2] <= MouseY * WindowHeight <= Area[4]) != Area[6] and Area[5] == States.TopMostLayer:
+                Area = (Area[1], Area[2], Area[3], Area[4], not Area[5])
+                RenderFrame = True
 
         if ForegroundWindow == False and Variables.CachedFrame is not None:
             RenderFrame = False
@@ -421,7 +420,6 @@ def Update(WindowHWND:int, Frame:np.ndarray):
 
                 if ItemType == "Label":
                     Elements.Label(**Item[2])
-                    Variables.Areas.append((ItemType, Item[2]["X1"], Item[2]["Y1"], Item[2]["X2"], Item[2]["Y2"], Item[2]["Layer"]))
 
                 elif ItemType == "Button":
                     Clicked, Pressed, Hovered = Elements.Button(**Item[2])
