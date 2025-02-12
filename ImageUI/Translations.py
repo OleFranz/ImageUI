@@ -22,9 +22,9 @@ def SetTranslator(SourceLanguage:str, DestinationLanguage:str):
     Parameters
     ----------
     SourceLanguage : str
-        The source language.
+        The source language. Either the language code or the english language name.
     DestinationLanguage : str
-        The destination language.
+        The destination language. Either the language code or the english language name.
 
     Returns
     -------
@@ -36,6 +36,7 @@ def SetTranslator(SourceLanguage:str, DestinationLanguage:str):
         SaveCache()
 
         Translator = None
+        while TRANSLATING: time.sleep(0.1)
         TRANSLATION_CACHE = {}
 
         Languages = GetAvailableLanguages()
@@ -43,12 +44,20 @@ def SetTranslator(SourceLanguage:str, DestinationLanguage:str):
         SourceLanguageIsValid = False
         DestinationLanguageIsValid = False
         for Language in Languages:
-            if str(Languages[Language]) == SourceLanguage:
+            if Languages[Language] == SourceLanguage:
                 SourceLanguageIsValid = True
                 break
+            elif Language == SourceLanguage:
+                SourceLanguageIsValid = True
+                SourceLanguage = Languages[Language]
+                break
         for Language in Languages:
-            if str(Languages[Language]) == DestinationLanguage:
+            if Languages[Language] == DestinationLanguage:
                 DestinationLanguageIsValid = True
+                break
+            elif Language == DestinationLanguage:
+                DestinationLanguageIsValid = True
+                DestinationLanguage = Languages[Language]
                 break
         if SourceLanguageIsValid:
             Settings.SourceLanguage = SourceLanguage
@@ -62,8 +71,6 @@ def SetTranslator(SourceLanguage:str, DestinationLanguage:str):
             return
 
         if SourceLanguage == DestinationLanguage:
-            return
-        if SourceLanguage == Settings.SourceLanguage and DestinationLanguage == Settings.DestinationLanguage:
             return
 
         Translator = GoogleTranslator(source=Settings.SourceLanguage, target=Settings.DestinationLanguage)
@@ -85,7 +92,7 @@ def TranslateThread(Text):
     try:
         global TRANSLATING, TRANSLATION_CACHE
         while TRANSLATING:
-            time.sleep(0.1)
+            time.sleep(0.01)
         TRANSLATING = True
         Translation = Translator.translate(Text)
         TRANSLATION_CACHE[Text] = Translation
