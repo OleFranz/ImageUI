@@ -323,6 +323,48 @@ def Dropdown(Title:str, Items:list, DefaultItem:int, X1:int, Y1:int, X2:int, Y2:
         Errors.ShowError("ImageUI - Error in function Dropdown.", str(traceback.format_exc()))
 
 
+# MARK: Image
+def Image(Image:np.ndarray, X1:int, Y1:int, X2:int, Y2:int, Layer:int = 0, OnPress:callable = None, RoundCorners:float = Settings.CornerRoundness):
+    """
+    Creates an image.
+
+    Parameters
+    ----------
+    Image : np.ndarray
+        The image to draw.
+    X1 : int
+        The x coordinate of the top left corner.
+    Y1 : int
+        The y coordinate of the top left corner.
+    X2 : int
+        The x coordinate of the bottom right corner.
+    Y2 : int
+        The y coordinate of the bottom right corner.
+    Layer : int
+        The layer of the image in the UI.
+    OnPress : callable
+        The function to call when the image was clicked.
+    RoundCorners : float
+        The roundness of the corners.
+
+    Returns
+    -------
+    None
+    """
+    try:
+        Variables.Elements.append(["Image",
+                                   OnPress,
+                                   {"Image": Image,
+                                    "X1": X1,
+                                    "Y1": Y1,
+                                    "X2": X2,
+                                    "Y2": Y2,
+                                    "Layer": Layer,
+                                    "RoundCorners": RoundCorners}])
+    except:
+        Errors.ShowError("ImageUI - Error in function Image.", str(traceback.format_exc()))
+
+
 # MARK: Update
 def Update(WindowHWND:int, Frame:np.ndarray):
     """
@@ -401,7 +443,7 @@ def Update(WindowHWND:int, Frame:np.ndarray):
             RenderFrame = True
         Variables.LastFrame = Frame.copy()
 
-        Variables.Elements = sorted(Variables.Elements, key=lambda Item: (Item[2]["Layer"], {"Button": 1, "Switch": 2, "Label": 3, "Dropdown": 4}.get(Item[0], 0)))
+        Variables.Elements = sorted(Variables.Elements, key=lambda Item: (Item[2]["Layer"], {"Image": 1, "Button": 2, "Switch": 3, "Label": 4, "Dropdown": 5}.get(Item[0], 0)))
 
         if [[Item[0], Item[2]] for Item in Variables.Elements] != [[Item[0], Item[2]] for Item in Variables.LastElements]:
             RenderFrame = True
@@ -446,6 +488,14 @@ def Update(WindowHWND:int, Frame:np.ndarray):
                     if Changed:
                         if ItemFunction is not None:
                             ItemFunction(SelectedItem)
+                        Variables.ForceSingleRender = True
+
+                elif ItemType == "Image":
+                    Clicked = Elements.Image(**Item[2])
+
+                    if Clicked:
+                        if ItemFunction is not None:
+                            ItemFunction()
                         Variables.ForceSingleRender = True
 
             Variables.CachedFrame = Variables.Frame.copy()

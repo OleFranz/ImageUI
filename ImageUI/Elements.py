@@ -1,4 +1,4 @@
-from PIL import Image, ImageDraw, ImageFont
+from PIL import Image as PILImage, ImageDraw as PILDraw, ImageFont as PILFont
 from ImageUI import Translations
 from ImageUI import Variables
 from ImageUI import Settings
@@ -30,10 +30,10 @@ def Label(Text, X1, Y1, X2, Y2, Align, AlignPadding, Layer, FontSize, FontType, 
         if f"{FontSize}-{FontType}" in Variables.Fonts:
             Font = Variables.Fonts[f"{FontSize}-{FontType}"]
         else:
-            Font = ImageFont.truetype(FontType, FontSize)
+            Font = PILFont.truetype(FontType, FontSize)
             Variables.Fonts[f"{FontSize}-{FontType}"] = Font
-        Frame = Image.fromarray(Frame)
-        Draw = ImageDraw.Draw(Frame)
+        Frame = PILImage.fromarray(Frame)
+        Draw = PILDraw.Draw(Frame)
         BBoxX1, BBoxY1, BBoxX2, BBoxY2 = Draw.textbbox((0, 0), Text, Font)
         if Align.lower() == "left":
             X = round(X1 + BBoxX1 + AlignPadding)
@@ -109,38 +109,38 @@ def Switch(Text, X1, Y1, X2, Y2, Layer, SwitchWidth, SwitchHeight, TextPadding, 
             SwitchHovered = False
         if SwitchHovered == True:
             if State == True:
-                cv2.circle(Variables.Frame, (round(X1 + SwitchHeight / 2), round((Y1 + Y2) / 2)), round(SwitchHeight / 2), SwitchEnabledHoverColor, -1, cv2.LINE_AA)
-                cv2.circle(Variables.Frame, (round(X1 + SwitchWidth - SwitchHeight / 2), round((Y1 + Y2) / 2)), round(SwitchHeight / 2), SwitchEnabledHoverColor, -1, cv2.LINE_AA)
-                cv2.rectangle(Variables.Frame, (round(X1 + SwitchHeight / 2 + 1), round((Y1 + Y2) / 2 - SwitchHeight / 2)), (round(X1 + SwitchWidth - SwitchHeight / 2 - 1), round((Y1 + Y2) / 2 + SwitchHeight / 2)), SwitchEnabledHoverColor, -1, cv2.LINE_AA)
+                cv2.circle(Variables.Frame, (round(X1 + SwitchHeight / 2), round((Y1 + Y2) / 2)), round(SwitchHeight / 2), SwitchEnabledHoverColor, -1, Settings.CircleLineType)
+                cv2.circle(Variables.Frame, (round(X1 + SwitchWidth - SwitchHeight / 2), round((Y1 + Y2) / 2)), round(SwitchHeight / 2), SwitchEnabledHoverColor, -1, Settings.CircleLineType)
+                cv2.rectangle(Variables.Frame, (round(X1 + SwitchHeight / 2 + 1), round((Y1 + Y2) / 2 - SwitchHeight / 2)), (round(X1 + SwitchWidth - SwitchHeight / 2 - 1), round((Y1 + Y2) / 2 + SwitchHeight / 2)), SwitchEnabledHoverColor, -1, Settings.RectangleLineType)
                 if AnimationState < 1:
-                    cv2.circle(Variables.Frame, (round(X1 + SwitchHeight / 2 + (SwitchWidth - SwitchHeight) * AnimationState), round((Y1 + Y2) / 2)), round(SwitchHeight / 2.5), SwitchKnobColor, -1, cv2.LINE_AA)
+                    cv2.circle(Variables.Frame, (round(X1 + SwitchHeight / 2 + (SwitchWidth - SwitchHeight) * AnimationState), round((Y1 + Y2) / 2)), round(SwitchHeight / 2.5), SwitchKnobColor, -1, Settings.CircleLineType)
                 else:
-                    cv2.circle(Variables.Frame, (round(X1 + SwitchWidth - SwitchHeight / 2), round((Y1 + Y2) / 2)), round(SwitchHeight / 2.5), SwitchKnobColor, -1, cv2.LINE_AA)
+                    cv2.circle(Variables.Frame, (round(X1 + SwitchWidth - SwitchHeight / 2), round((Y1 + Y2) / 2)), round(SwitchHeight / 2.5), SwitchKnobColor, -1, Settings.CircleLineType)
             else:
-                cv2.circle(Variables.Frame, (round(X1 + SwitchHeight / 2), round((Y1 + Y2) / 2)), round(SwitchHeight / 2), SwitchHoverColor, -1, cv2.LINE_AA)
-                cv2.circle(Variables.Frame, (round(X1 + SwitchWidth - SwitchHeight / 2), round((Y1 + Y2) / 2)), round(SwitchHeight / 2), SwitchHoverColor, -1, cv2.LINE_AA)
-                cv2.rectangle(Variables.Frame, (round(X1 + SwitchHeight / 2 + 1), round((Y1 + Y2) / 2 - SwitchHeight / 2)), (round(X1 + SwitchWidth - SwitchHeight / 2 - 1), round((Y1 + Y2) / 2 + SwitchHeight / 2)), SwitchHoverColor, -1, cv2.LINE_AA)
+                cv2.circle(Variables.Frame, (round(X1 + SwitchHeight / 2), round((Y1 + Y2) / 2)), round(SwitchHeight / 2), SwitchHoverColor, -1, Settings.CircleLineType)
+                cv2.circle(Variables.Frame, (round(X1 + SwitchWidth - SwitchHeight / 2), round((Y1 + Y2) / 2)), round(SwitchHeight / 2), SwitchHoverColor, -1, Settings.CircleLineType)
+                cv2.rectangle(Variables.Frame, (round(X1 + SwitchHeight / 2 + 1), round((Y1 + Y2) / 2 - SwitchHeight / 2)), (round(X1 + SwitchWidth - SwitchHeight / 2 - 1), round((Y1 + Y2) / 2 + SwitchHeight / 2)), SwitchHoverColor, -1, Settings.RectangleLineType)
                 if AnimationState < 1:
-                    cv2.circle(Variables.Frame, (round(X1 + SwitchHeight / 2 + (SwitchWidth - SwitchHeight) * (1 - AnimationState)), round((Y1 + Y2) / 2)), round(SwitchHeight / 2.5), SwitchKnobColor, -1, cv2.LINE_AA)
+                    cv2.circle(Variables.Frame, (round(X1 + SwitchHeight / 2 + (SwitchWidth - SwitchHeight) * (1 - AnimationState)), round((Y1 + Y2) / 2)), round(SwitchHeight / 2.5), SwitchKnobColor, -1, Settings.CircleLineType)
                 else:
-                    cv2.circle(Variables.Frame, (round(X1 + SwitchHeight / 2), round((Y1 + Y2) / 2)), round(SwitchHeight / 2.5), SwitchKnobColor, -1, cv2.LINE_AA)
+                    cv2.circle(Variables.Frame, (round(X1 + SwitchHeight / 2), round((Y1 + Y2) / 2)), round(SwitchHeight / 2.5), SwitchKnobColor, -1, Settings.CircleLineType)
         else:
             if State == True:
-                cv2.circle(Variables.Frame, (round(X1 + SwitchHeight / 2), round((Y1 + Y2) / 2)), round(SwitchHeight / 2), SwitchEnabledColor, -1, cv2.LINE_AA)
-                cv2.circle(Variables.Frame, (round(X1 + SwitchWidth - SwitchHeight / 2), round((Y1 + Y2) / 2)), round(SwitchHeight / 2), SwitchEnabledColor, -1, cv2.LINE_AA)
-                cv2.rectangle(Variables.Frame, (round(X1 + SwitchHeight / 2 + 1), round((Y1 + Y2) / 2 - SwitchHeight / 2)), (round(X1 + SwitchWidth - SwitchHeight / 2 - 1), round((Y1 + Y2) / 2 + SwitchHeight / 2)), SwitchEnabledColor, -1, cv2.LINE_AA)
+                cv2.circle(Variables.Frame, (round(X1 + SwitchHeight / 2), round((Y1 + Y2) / 2)), round(SwitchHeight / 2), SwitchEnabledColor, -1, Settings.CircleLineType)
+                cv2.circle(Variables.Frame, (round(X1 + SwitchWidth - SwitchHeight / 2), round((Y1 + Y2) / 2)), round(SwitchHeight / 2), SwitchEnabledColor, -1, Settings.CircleLineType)
+                cv2.rectangle(Variables.Frame, (round(X1 + SwitchHeight / 2 + 1), round((Y1 + Y2) / 2 - SwitchHeight / 2)), (round(X1 + SwitchWidth - SwitchHeight / 2 - 1), round((Y1 + Y2) / 2 + SwitchHeight / 2)), SwitchEnabledColor, -1, Settings.RectangleLineType)
                 if AnimationState < 1:
-                    cv2.circle(Variables.Frame, (round(X1 + SwitchHeight / 2 + (SwitchWidth - SwitchHeight) * AnimationState), round((Y1 + Y2) / 2)), round(SwitchHeight / 2.5), SwitchKnobColor, -1, cv2.LINE_AA)
+                    cv2.circle(Variables.Frame, (round(X1 + SwitchHeight / 2 + (SwitchWidth - SwitchHeight) * AnimationState), round((Y1 + Y2) / 2)), round(SwitchHeight / 2.5), SwitchKnobColor, -1, Settings.CircleLineType)
                 else:
-                    cv2.circle(Variables.Frame, (round(X1 + SwitchWidth - SwitchHeight / 2), round((Y1 + Y2) / 2)), round(SwitchHeight / 2.5), SwitchKnobColor, -1, cv2.LINE_AA)
+                    cv2.circle(Variables.Frame, (round(X1 + SwitchWidth - SwitchHeight / 2), round((Y1 + Y2) / 2)), round(SwitchHeight / 2.5), SwitchKnobColor, -1, Settings.CircleLineType)
             else:
-                cv2.circle(Variables.Frame, (round(X1 + SwitchHeight / 2), round((Y1 + Y2) / 2)), round(SwitchHeight / 2), SwitchColor, -1, cv2.LINE_AA)
-                cv2.circle(Variables.Frame, (round(X1 + SwitchWidth - SwitchHeight / 2), round((Y1 + Y2) / 2)), round(SwitchHeight / 2), SwitchColor, -1, cv2.LINE_AA)
-                cv2.rectangle(Variables.Frame, (round(X1 + SwitchHeight / 2 + 1), round((Y1 + Y2) / 2 - SwitchHeight / 2)), (round(X1 + SwitchWidth - SwitchHeight / 2 - 1), round((Y1 + Y2) / 2 + SwitchHeight / 2)), SwitchColor, -1, cv2.LINE_AA)
+                cv2.circle(Variables.Frame, (round(X1 + SwitchHeight / 2), round((Y1 + Y2) / 2)), round(SwitchHeight / 2), SwitchColor, -1, Settings.CircleLineType)
+                cv2.circle(Variables.Frame, (round(X1 + SwitchWidth - SwitchHeight / 2), round((Y1 + Y2) / 2)), round(SwitchHeight / 2), SwitchColor, -1, Settings.CircleLineType)
+                cv2.rectangle(Variables.Frame, (round(X1 + SwitchHeight / 2 + 1), round((Y1 + Y2) / 2 - SwitchHeight / 2)), (round(X1 + SwitchWidth - SwitchHeight / 2 - 1), round((Y1 + Y2) / 2 + SwitchHeight / 2)), SwitchColor, -1, Settings.RectangleLineType)
                 if AnimationState < 1:
-                    cv2.circle(Variables.Frame, (round(X1 + SwitchHeight / 2 + (SwitchWidth - SwitchHeight) * (1 - AnimationState)), round((Y1 + Y2) / 2)), round(SwitchHeight / 2.5), SwitchKnobColor, -1, cv2.LINE_AA)
+                    cv2.circle(Variables.Frame, (round(X1 + SwitchHeight / 2 + (SwitchWidth - SwitchHeight) * (1 - AnimationState)), round((Y1 + Y2) / 2)), round(SwitchHeight / 2.5), SwitchKnobColor, -1, Settings.CircleLineType)
                 else:
-                    cv2.circle(Variables.Frame, (round(X1 + SwitchHeight / 2), round((Y1 + Y2) / 2)), round(SwitchHeight / 2.5), SwitchKnobColor, -1, cv2.LINE_AA)
+                    cv2.circle(Variables.Frame, (round(X1 + SwitchHeight / 2), round((Y1 + Y2) / 2)), round(SwitchHeight / 2.5), SwitchKnobColor, -1, Settings.CircleLineType)
         Label(Text, X1, Y1, X2, Y2, "Left", SwitchWidth + TextPadding, Layer, FontSize, FontType, TextColor)
         if X1 <= States.MouseX * States.FrameWidth <= X2 and Y1 <= States.MouseY * States.FrameHeight <= Y2 and States.LeftPressed == False and States.LastLeftPressed == True and States.ForegroundWindow and States.TopMostLayer == Layer and States.AnyDropdownOpen == False:
             Variables.Switches[Text] = not State, CurrentTime
@@ -173,19 +173,19 @@ def Dropdown(Title, Items, DefaultItem, X1, Y1, X2, Y2, DropdownHeight, Dropdown
             DropdownSelected = False
 
         if DropdownHovered == True:
-            cv2.rectangle(Variables.Frame, (round(X1 + RoundCorners / 2), round(Y1 + RoundCorners / 2)), (round(X2 - RoundCorners / 2), round(Y2 - RoundCorners / 2)), HoverColor, RoundCorners, cv2.LINE_AA)
-            cv2.rectangle(Variables.Frame, (round(X1 + RoundCorners / 2), round(Y1 + RoundCorners / 2)), (round(X2 - RoundCorners / 2), round(Y2 - RoundCorners / 2)), HoverColor, -1, cv2.LINE_AA)
+            cv2.rectangle(Variables.Frame, (round(X1 + RoundCorners / 2), round(Y1 + RoundCorners / 2)), (round(X2 - RoundCorners / 2), round(Y2 - RoundCorners / 2)), HoverColor, RoundCorners, Settings.RectangleLineType)
+            cv2.rectangle(Variables.Frame, (round(X1 + RoundCorners / 2), round(Y1 + RoundCorners / 2)), (round(X2 - RoundCorners / 2), round(Y2 - RoundCorners / 2)), HoverColor, -1, Settings.RectangleLineType)
         else:
-            cv2.rectangle(Variables.Frame, (round(X1 + RoundCorners / 2), round(Y1 + RoundCorners / 2)), (round(X2 - RoundCorners / 2), round(Y2 - RoundCorners / 2)), Color, RoundCorners, cv2.LINE_AA)
-            cv2.rectangle(Variables.Frame, (round(X1 + RoundCorners / 2), round(Y1 + RoundCorners / 2)), (round(X2 - RoundCorners / 2), round(Y2 - RoundCorners / 2)), Color, -1, cv2.LINE_AA)
+            cv2.rectangle(Variables.Frame, (round(X1 + RoundCorners / 2), round(Y1 + RoundCorners / 2)), (round(X2 - RoundCorners / 2), round(Y2 - RoundCorners / 2)), Color, RoundCorners, Settings.RectangleLineType)
+            cv2.rectangle(Variables.Frame, (round(X1 + RoundCorners / 2), round(Y1 + RoundCorners / 2)), (round(X2 - RoundCorners / 2), round(Y2 - RoundCorners / 2)), Color, -1, Settings.RectangleLineType)
         if DropdownSelected == True:
-            cv2.rectangle(Variables.Frame, (round(X1 + RoundCorners / 2), round(Y2 + DropdownPadding + RoundCorners / 2)), (round(X2 - RoundCorners / 2), round(Y2 + DropdownHeight + DropdownPadding - RoundCorners / 2)), HoverColor, RoundCorners, cv2.LINE_AA)
-            cv2.rectangle(Variables.Frame, (round(X1 + RoundCorners / 2), round(Y2 + DropdownPadding + RoundCorners / 2)), (round(X2 - RoundCorners / 2), round(Y2 + DropdownHeight + DropdownPadding - RoundCorners / 2)), HoverColor, -1, cv2.LINE_AA)
+            cv2.rectangle(Variables.Frame, (round(X1 + RoundCorners / 2), round(Y2 + DropdownPadding + RoundCorners / 2)), (round(X2 - RoundCorners / 2), round(Y2 + DropdownHeight + DropdownPadding - RoundCorners / 2)), HoverColor, RoundCorners, Settings.RectangleLineType)
+            cv2.rectangle(Variables.Frame, (round(X1 + RoundCorners / 2), round(Y2 + DropdownPadding + RoundCorners / 2)), (round(X2 - RoundCorners / 2), round(Y2 + DropdownHeight + DropdownPadding - RoundCorners / 2)), HoverColor, -1, Settings.RectangleLineType)
 
             Padding = (Y2 + Y1) / 2 - FontSize / 4 - Y1
             Height = round(Y2 - Padding) - round(Y1 + Padding)
-            cv2.line(Variables.Frame, (round(X2 - Padding - Height), round(Y1 + Padding)), (round(X2 - Padding), round(Y2 - Padding)), TextColor, max(round(FontSize / 15), 1), cv2.LINE_AA)
-            cv2.line(Variables.Frame, (round(X2 - Padding - Height), round(Y1 + Padding)), (round(X2 - Padding - Height * 2), round(Y2 - Padding)), TextColor, max(round(FontSize / 15), 1), cv2.LINE_AA)
+            cv2.line(Variables.Frame, (round(X2 - Padding - Height), round(Y1 + Padding)), (round(X2 - Padding), round(Y2 - Padding)), TextColor, max(round(FontSize / 15), 1), Settings.CircleLineType)
+            cv2.line(Variables.Frame, (round(X2 - Padding - Height), round(Y1 + Padding)), (round(X2 - Padding - Height * 2), round(Y2 - Padding)), TextColor, max(round(FontSize / 15), 1), Settings.CircleLineType)
 
             for Event in States.ScrollEventQueue:
                 if Event.dy > 0:
@@ -214,8 +214,8 @@ def Dropdown(Title, Items, DefaultItem, X1, Y1, X2, Y2, DropdownHeight, Dropdown
 
             Padding = (Y2 + Y1) / 2 - FontSize / 4 - Y1
             Height = round(Y2 - Padding) - round(Y1 + Padding)
-            cv2.line(Variables.Frame, (round(X2 - Padding - Height), round(Y2 - Padding)), (round(X2 - Padding), round(Y1 + Padding)), TextColor, max(round(FontSize / 15), 1), cv2.LINE_AA)
-            cv2.line(Variables.Frame, (round(X2 - Padding - Height), round(Y2 - Padding)), (round(X2 - Padding - Height * 2), round(Y1 + Padding)), TextColor, max(round(FontSize / 15), 1), cv2.LINE_AA)
+            cv2.line(Variables.Frame, (round(X2 - Padding - Height), round(Y2 - Padding)), (round(X2 - Padding), round(Y1 + Padding)), TextColor, max(round(FontSize / 15), 1), Settings.LineType)
+            cv2.line(Variables.Frame, (round(X2 - Padding - Height), round(Y2 - Padding)), (round(X2 - Padding - Height * 2), round(Y1 + Padding)), TextColor, max(round(FontSize / 15), 1), Settings.LineType)
 
         Label(Title, X1, Y1, X2, Y2, "Center", 0, Layer, FontSize, FontType, TextColor)
 
@@ -225,3 +225,22 @@ def Dropdown(Title, Items, DefaultItem, X1, Y1, X2, Y2, DropdownHeight, Dropdown
     except:
         Errors.ShowError("Elements - Error in function Dropdown.", str(traceback.format_exc()))
         return "", False, False, False, False
+
+
+# MARK: Image
+def Image(Image, X1, Y1, X2, Y2, Layer, RoundCorners):
+    try:
+        Frame = Variables.Frame.copy()
+        Image = cv2.resize(Image, (X2 - X1, Y2 - Y1))
+        Mask = numpy.zeros((Image.shape[0], Image.shape[1], 1), dtype=numpy.uint8)
+        cv2.rectangle(Mask, (round(RoundCorners / 2), round(RoundCorners / 2)), (round(Mask.shape[1] - RoundCorners / 2 - 1), round(Mask.shape[0] - RoundCorners / 2 - 1)), 1, RoundCorners, Settings.RectangleLineType)
+        cv2.rectangle(Mask, (round(RoundCorners / 2), round(RoundCorners / 2)), (round(Mask.shape[1] - RoundCorners / 2 - 1), round(Mask.shape[0] - RoundCorners / 2 - 1)), 1, -1, Settings.RectangleLineType)
+        Image = cv2.bitwise_and(Image, Image, mask=Mask)
+        Frame[Y1:Y2, X1:X2] = Image
+        Variables.Frame = Frame
+        if X1 <= States.MouseX * Variables.Frame.shape[1] <= X2 and Y1 <= States.MouseY * Variables.Frame.shape[0] <= Y2 and States.LeftPressed == False and States.LastLeftPressed == True and States.ForegroundWindow and States.TopMostLayer == Layer and States.AnyDropdownOpen == False:
+            return True
+        else:
+            return False
+    except:
+        Errors.ShowError("Elements - Error in function Image.", str(traceback.format_exc()))

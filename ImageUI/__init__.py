@@ -20,5 +20,6 @@ from .ImageUI import Label
 from .ImageUI import Button
 from .ImageUI import Switch
 from .ImageUI import Dropdown
+from .ImageUI import Image
 from .ImageUI import Update
 from .ImageUI import Exit
