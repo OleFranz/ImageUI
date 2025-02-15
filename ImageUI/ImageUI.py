@@ -365,6 +365,82 @@ def Image(Image:np.ndarray, X1:int, Y1:int, X2:int, Y2:int, Layer:int = 0, OnPre
         Errors.ShowError("ImageUI - Error in function Image.", str(traceback.format_exc()))
 
 
+# MARK: Popup
+def Popup(Text:str, StartX1:int, StartY1:int, StartX2:int, StartY2:int, EndX1:int, EndY1:int, EndX2:int, EndY2:int, DoAnimation:bool = True, AnimationDuration:float = Settings.PopupAnimationDuration, ShowDuration:float = Settings.PopupShowDuration, Layer:int = 0, FontSize:float = Settings.FontSize, FontType:str = Settings.FontType, RoundCorners:float = Settings.CornerRoundness, TextColor:tuple = Colors.TEXT_COLOR, Color:tuple = Colors.POPUP_COLOR, OutlineColor:tuple = Colors.POPUP_OUTLINE_COLOR):
+    """
+    Creates a popup.
+
+    Parameters
+    ----------
+    Text : str
+        The text of the popup.
+    StartX1 : int
+        The x coordinate of the top left corner at the start of the animation.
+    StartY1 : int
+        The y coordinate of the top left corner at the start of the animation.
+    StartX2 : int
+        The x coordinate of the bottom right corner at the start of the animation.
+    StartY2 : int
+        The y coordinate of the bottom right corner at the start of the animation.
+    EndX1 : int
+        The x coordinate of the top left corner at the end of the animation.
+    EndY1 : int
+        The y coordinate of the top left corner at the end of the animation.
+    EndX2 : int
+        The x coordinate of the bottom right corner at the end of the animation.
+    EndY2 : int
+        The y coordinate of the bottom right corner at the end of the animation.
+    DoAnimation : bool
+        Whether to animate the popup. If set to false, the popup will be shown immediately at the end coordinates.
+    AnimationDuration : float
+        The duration of the animation in seconds.
+    ShowDuration : float
+        The duration of the popup in seconds. Negative values will show the popup indefinitely.
+    Layer : int
+        The layer of the popup in the UI.
+    FontSize : float
+        The font size of the text.
+    FontType : str
+        The font type of the text.
+    RoundCorners : float
+        The roundness of the corners.
+    TextColor : tuple
+        The color of the text.
+    Color : tuple
+        The color of the popup.
+    OutlineColor : tuple
+        The color of the outline of the popup.
+
+    Returns
+    -------
+    None
+    """
+    try:
+        Variables.Elements.append(["Popup",
+                                   None,
+                                   {"Text": Text,
+                                    "StartX1": StartX1,
+                                    "StartY1": StartY1,
+                                    "StartX2": StartX2,
+                                    "StartY2": StartY2,
+                                    "EndX1": EndX1,
+                                    "EndY1": EndY1,
+                                    "EndX2": EndX2,
+                                    "EndY2": EndY2,
+                                    "DoAnimation": DoAnimation,
+                                    "AnimationDuration": AnimationDuration,
+                                    "ShowDuration": ShowDuration,
+                                    "Layer": Layer,
+                                    "FontSize": FontSize,
+                                    "FontType": FontType,
+                                    "RoundCorners": RoundCorners,
+                                    "TextColor": TextColor,
+                                    "Color": Color,
+                                    "OutlineColor": OutlineColor}])
+    except:
+        Errors.ShowError("ImageUI - Error in function Popup.", str(traceback.format_exc()))
+
+
 # MARK: Update
 def Update(WindowHWND:int, Frame:np.ndarray):
     """
@@ -443,7 +519,7 @@ def Update(WindowHWND:int, Frame:np.ndarray):
             RenderFrame = True
         Variables.LastFrame = Frame.copy()
 
-        Variables.Elements = sorted(Variables.Elements, key=lambda Item: (Item[2]["Layer"], {"Image": 1, "Button": 2, "Switch": 3, "Label": 4, "Dropdown": 5}.get(Item[0], 0)))
+        Variables.Elements = sorted(Variables.Elements, key=lambda Item: (Item[2]["Layer"], {"Image": 1, "Button": 2, "Switch": 3, "Label": 4, "Dropdown": 5, "Popup": 6}.get(Item[0], 0)))
 
         if [[Item[0], Item[2]] for Item in Variables.Elements] != [[Item[0], Item[2]] for Item in Variables.LastElements]:
             RenderFrame = True
@@ -454,6 +530,9 @@ def Update(WindowHWND:int, Frame:np.ndarray):
             Variables.Areas = []
 
             States.TopMostLayer = Variables.Elements[-1][2]["Layer"] if len(Variables.Elements) > 0 else 0
+            if len(Variables.Popups) > 0: 
+                States.TopMostLayer = max(States.TopMostLayer, max([Item["Layer"] for Item in Variables.Popups.values()]))
+
             States.AnyDropdownOpen = any([Item for Item in Variables.Dropdowns if Variables.Dropdowns[Item][0] == True])
 
             for Item in Variables.Elements:
@@ -498,15 +577,21 @@ def Update(WindowHWND:int, Frame:np.ndarray):
                             ItemFunction()
                         Variables.ForceSingleRender = True
 
+                elif ItemType == "Popup":
+                    Elements.Popup(**Item[2])
+
             Variables.CachedFrame = Variables.Frame.copy()
             Variables.LastElements = Variables.Elements
 
             if Settings.DevelopmentMode:
                 print(f"New Frame Rendered! ({round(time.time(), 1)})")
 
+        Variables.Frame = Variables.CachedFrame.copy()
+        Elements.CheckAndRenderPopups()
+
         Variables.Elements = []
 
-        return Variables.CachedFrame
+        return Variables.Frame
     except:
         Errors.ShowError("ImageUI - Error in function Update.", str(traceback.format_exc()))
         return Frame

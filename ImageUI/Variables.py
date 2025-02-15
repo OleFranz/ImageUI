@@ -13,3 +13,4 @@ TextCache = []
 Fonts = {}
 Switches = {}
 Dropdowns = {}
+Popups = {}

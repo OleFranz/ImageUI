@@ -28,3 +28,7 @@ CornerRoundness:float = 5
 
 SwitchAnimationDuration:float = 0.3333
 """The duration of the switch animation in seconds."""
+PopupAnimationDuration:float = 0.5
+"""The duration of the popup animation in seconds."""
+PopupShowDuration:float = 5
+"""The duration of the popup show in seconds."""

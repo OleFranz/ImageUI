@@ -260,3 +260,115 @@ def Image(Image, X1, Y1, X2, Y2, Layer, RoundCorners):
             return False
     except:
         Errors.ShowError("Elements - Error in function Image.", str(traceback.format_exc()))
+
+
+# MARK: Popup
+def Popup(Text, StartX1, StartY1, StartX2, StartY2, EndX1, EndY1, EndX2, EndY2, DoAnimation, AnimationDuration, ShowDuration, Layer, FontSize, FontType, RoundCorners, TextColor, Color, OutlineColor):
+    try:
+        Key = f"{StartX1}-{StartY1}-{StartX2}-{StartY2}-{EndX1}-{EndY1}-{EndX2}-{EndY2}-{Layer}"
+        if Key not in Variables.Popups:
+            Variables.Popups[Key] = {"Key": Key,
+                                     "Time": time.time(),
+                                     "Text": Text,
+                                     "StartX1": StartX1,
+                                     "StartY1": StartY1,
+                                     "StartX2": StartX2,
+                                     "StartY2": StartY2,
+                                     "EndX1": EndX1,
+                                     "EndY1": EndY1,
+                                     "EndX2": EndX2,
+                                     "EndY2": EndY2,
+                                     "DoAnimation": DoAnimation,
+                                     "AnimationDuration": AnimationDuration,
+                                     "ShowDuration": ShowDuration,
+                                     "Layer": Layer,
+                                     "FontSize": FontSize,
+                                     "FontType": FontType,
+                                     "RoundCorners": RoundCorners,
+                                     "TextColor": TextColor,
+                                     "Color": Color,
+                                     "OutlineColor": OutlineColor}
+        else:
+            if Variables.Popups[Key]["DoAnimation"] and Variables.Popups[Key]["Time"] + Variables.Popups[Key]["AnimationDuration"] <= time.time():
+                Variables.Popups[Key]["Time"] = time.time() - Variables.Popups[Key]["AnimationDuration"]
+            Variables.Popups[Key]["Text"] = Text
+            Variables.Popups[Key]["DoAnimation"] = DoAnimation
+            Variables.Popups[Key]["AnimationDuration"] = AnimationDuration
+            Variables.Popups[Key]["ShowDuration"] = ShowDuration
+            Variables.Popups[Key]["FontSize"] = FontSize
+            Variables.Popups[Key]["FontType"] = FontType
+            Variables.Popups[Key]["RoundCorners"] = RoundCorners
+            Variables.Popups[Key]["TextColor"] = TextColor
+            Variables.Popups[Key]["Color"] = Color
+            Variables.Popups[Key]["OutlineColor"] = OutlineColor
+    except:
+        Errors.ShowError("Elements - Error in function Popup.", str(traceback.format_exc()))
+
+
+def CheckAndRenderPopups():
+    try:
+        for Popup in list(Variables.Popups.values()):
+            Render = False
+            CurrentTime = time.time()
+            if Popup["DoAnimation"] == True:
+                Time = Popup["Time"]
+                StartX1 = Popup["StartX1"]
+                StartY1 = Popup["StartY1"]
+                StartX2 = Popup["StartX2"]
+                StartY2 = Popup["StartY2"]
+                EndX1 = Popup["EndX1"]
+                EndY1 = Popup["EndY1"]
+                EndX2 = Popup["EndX2"]
+                EndY2 = Popup["EndY2"]
+                AnimationDuration = Popup["AnimationDuration"]
+                ShowDuration = Popup["ShowDuration"]
+                if Popup["Time"] <= CurrentTime <= Popup["Time"] + Popup["AnimationDuration"]:
+                    X = (CurrentTime - Time) / AnimationDuration
+                    X = -(math.cos(math.pi * X) - 1) / 2
+                    X1 = round(StartX1 * (1 - X) + EndX1 * X)
+                    Y1 = round(StartY1 * (1 - X) + EndY1 * X)
+                    X2 = round(StartX2 * (1 - X) + EndX2 * X)
+                    Y2 = round(StartY2 * (1 - X) + EndY2 * X)
+                    Render = True
+                elif Popup["Time"] + Popup["ShowDuration"] + Popup["AnimationDuration"] <= CurrentTime <= Popup["Time"] + Popup["ShowDuration"] + Popup["AnimationDuration"] * 2 and Popup["DoAnimation"] == True:
+                    X = (CurrentTime - Time - ShowDuration - AnimationDuration) / AnimationDuration
+                    X = math.pow(2, 10 * X - 10)
+                    X1 = round(EndX1 * (1 - X) + StartX1 * X)
+                    Y1 = round(EndY1 * (1 - X) + StartY1 * X)
+                    X2 = round(EndX2 * (1 - X) + StartX2 * X)
+                    Y2 = round(EndY2 * (1 - X) + StartY2 * X)
+                    Render = True
+            if Popup["Time"] + (Popup["AnimationDuration"] if Popup["DoAnimation"] else 0) <= CurrentTime <= Popup["Time"] + Popup["ShowDuration"] + (Popup["AnimationDuration"] if Popup["DoAnimation"] else 0):
+                X1 = round(Popup["EndX1"])
+                Y1 = round(Popup["EndY1"])
+                X2 = round(Popup["EndX2"])
+                Y2 = round(Popup["EndY2"])
+                Render = True
+            elif Popup["Time"] + Popup["ShowDuration"] + (Popup["AnimationDuration"] * 2 if Popup["DoAnimation"] else 0) <= CurrentTime:
+                del Variables.Popups[Popup["Key"]]
+                Variables.ForceSingleRender = True
+            if Render:
+                Text = Popup["Text"]
+                Layer = Popup["Layer"]
+                FontSize = Popup["FontSize"]
+                FontType = Popup["FontType"]
+                RoundCorners = Popup["RoundCorners"]
+                TextColor = Popup["TextColor"]
+                Color = Popup["Color"]
+                OutlineColor = Popup["OutlineColor"]
+
+                if RoundCorners > 0:
+                    cv2.rectangle(Variables.Frame, (round(X1 + RoundCorners / 2), round(Y1 + RoundCorners / 2)), (round(X2 - RoundCorners / 2), round(Y2 - RoundCorners / 2)), OutlineColor, RoundCorners, Settings.RectangleLineType)
+                else:
+                    cv2.rectangle(Variables.Frame, (round(X1), round(Y1)), (round(X2), round(Y2)), OutlineColor, -1, Settings.RectangleLineType)
+
+                if RoundCorners > 0:
+                    cv2.rectangle(Variables.Frame, (round(X1 + RoundCorners / 2) + 1, round(Y1 + RoundCorners / 2) + 1), (round(X2 - RoundCorners / 2) - 1, round(Y2 - RoundCorners / 2) - 1), Color, RoundCorners, Settings.RectangleLineType)
+                    cv2.rectangle(Variables.Frame, (round(X1 + RoundCorners / 2) + 1, round(Y1 + RoundCorners / 2) + 1), (round(X2 - RoundCorners / 2) - 1, round(Y2 - RoundCorners / 2) - 1), Color, -1, Settings.RectangleLineType)
+                else:
+                    cv2.rectangle(Variables.Frame, (round(X1) + 1, round(Y1) + 1), (round(X2) - 1, round(Y2) - 1), Color, -1, Settings.RectangleLineType)
+
+                Label(Text, X1, Y1, X2, Y2, "Center", 0, Layer, FontSize, FontType, TextColor)
+
+    except:
+        Errors.ShowError("Elements - Error in function CheckAndRenderPopups.", str(traceback.format_exc()))
