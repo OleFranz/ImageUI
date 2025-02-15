@@ -64,11 +64,17 @@ def Button(Text, X1, Y1, X2, Y2, Layer, FontSize, FontType, RoundCorners, TextCo
         else:
             Hovered = False
         if Hovered == True:
-            cv2.rectangle(Variables.Frame, (round(X1 + RoundCorners / 2), round(Y1 + RoundCorners / 2)), (round(X2 - RoundCorners / 2), round(Y2 - RoundCorners / 2)), HoverColor, RoundCorners, Settings.RectangleLineType)
-            cv2.rectangle(Variables.Frame, (round(X1 + RoundCorners / 2), round(Y1 + RoundCorners / 2)), (round(X2 - RoundCorners / 2), round(Y2 - RoundCorners / 2)), HoverColor, - 1, Settings.RectangleLineType)
+            if RoundCorners > 0:
+                cv2.rectangle(Variables.Frame, (round(X1 + RoundCorners / 2), round(Y1 + RoundCorners / 2)), (round(X2 - RoundCorners / 2), round(Y2 - RoundCorners / 2)), HoverColor, RoundCorners, Settings.RectangleLineType)
+                cv2.rectangle(Variables.Frame, (round(X1 + RoundCorners / 2), round(Y1 + RoundCorners / 2)), (round(X2 - RoundCorners / 2), round(Y2 - RoundCorners / 2)), HoverColor, - 1, Settings.RectangleLineType)
+            else:
+                cv2.rectangle(Variables.Frame, (round(X1), round(Y1)), (round(X2), round(Y2)), HoverColor, - 1, Settings.RectangleLineType)
         else:
-            cv2.rectangle(Variables.Frame, (round(X1 + RoundCorners / 2), round(Y1 + RoundCorners / 2)), (round(X2 - RoundCorners / 2), round(Y2 - RoundCorners / 2)), Color, RoundCorners, Settings.RectangleLineType)
-            cv2.rectangle(Variables.Frame, (round(X1 + RoundCorners / 2), round(Y1 + RoundCorners / 2)), (round(X2 - RoundCorners / 2), round(Y2 - RoundCorners / 2)), Color, - 1, Settings.RectangleLineType)
+            if RoundCorners > 0:
+                cv2.rectangle(Variables.Frame, (round(X1 + RoundCorners / 2), round(Y1 + RoundCorners / 2)), (round(X2 - RoundCorners / 2), round(Y2 - RoundCorners / 2)), Color, RoundCorners, Settings.RectangleLineType)
+                cv2.rectangle(Variables.Frame, (round(X1 + RoundCorners / 2), round(Y1 + RoundCorners / 2)), (round(X2 - RoundCorners / 2), round(Y2 - RoundCorners / 2)), Color, - 1, Settings.RectangleLineType)
+            else:
+                cv2.rectangle(Variables.Frame, (round(X1), round(Y1)), (round(X2), round(Y2)), Color, - 1, Settings.RectangleLineType)
         Label(Text, X1, Y1, X2, Y2, "Center", 0, Layer, FontSize, FontType, TextColor)
         if X1 <= States.MouseX * Variables.Frame.shape[1] <= X2 and Y1 <= States.MouseY * Variables.Frame.shape[0] <= Y2 and States.LeftPressed == False and States.LastLeftPressed == True and States.ForegroundWindow and States.TopMostLayer == Layer and States.AnyDropdownOpen == False:
             return True, States.LeftPressed and Hovered, Hovered
@@ -173,14 +179,23 @@ def Dropdown(Title, Items, DefaultItem, X1, Y1, X2, Y2, DropdownHeight, Dropdown
             DropdownSelected = False
 
         if DropdownHovered == True:
-            cv2.rectangle(Variables.Frame, (round(X1 + RoundCorners / 2), round(Y1 + RoundCorners / 2)), (round(X2 - RoundCorners / 2), round(Y2 - RoundCorners / 2)), HoverColor, RoundCorners, Settings.RectangleLineType)
-            cv2.rectangle(Variables.Frame, (round(X1 + RoundCorners / 2), round(Y1 + RoundCorners / 2)), (round(X2 - RoundCorners / 2), round(Y2 - RoundCorners / 2)), HoverColor, -1, Settings.RectangleLineType)
+            if RoundCorners > 0:
+                cv2.rectangle(Variables.Frame, (round(X1 + RoundCorners / 2), round(Y1 + RoundCorners / 2)), (round(X2 - RoundCorners / 2), round(Y2 - RoundCorners / 2)), HoverColor, RoundCorners, Settings.RectangleLineType)
+                cv2.rectangle(Variables.Frame, (round(X1 + RoundCorners / 2), round(Y1 + RoundCorners / 2)), (round(X2 - RoundCorners / 2), round(Y2 - RoundCorners / 2)), HoverColor, -1, Settings.RectangleLineType)
+            else:
+                cv2.rectangle(Variables.Frame, (round(X1), round(Y1)), (round(X2), round(Y2)), HoverColor, -1, Settings.RectangleLineType)
         else:
-            cv2.rectangle(Variables.Frame, (round(X1 + RoundCorners / 2), round(Y1 + RoundCorners / 2)), (round(X2 - RoundCorners / 2), round(Y2 - RoundCorners / 2)), Color, RoundCorners, Settings.RectangleLineType)
-            cv2.rectangle(Variables.Frame, (round(X1 + RoundCorners / 2), round(Y1 + RoundCorners / 2)), (round(X2 - RoundCorners / 2), round(Y2 - RoundCorners / 2)), Color, -1, Settings.RectangleLineType)
+            if RoundCorners > 0:
+                cv2.rectangle(Variables.Frame, (round(X1 + RoundCorners / 2), round(Y1 + RoundCorners / 2)), (round(X2 - RoundCorners / 2), round(Y2 - RoundCorners / 2)), Color, RoundCorners, Settings.RectangleLineType)
+                cv2.rectangle(Variables.Frame, (round(X1 + RoundCorners / 2), round(Y1 + RoundCorners / 2)), (round(X2 - RoundCorners / 2), round(Y2 - RoundCorners / 2)), Color, -1, Settings.RectangleLineType)
+            else:
+                cv2.rectangle(Variables.Frame, (round(X1), round(Y1)), (round(X2), round(Y2)), Color, -1, Settings.RectangleLineType)
         if DropdownSelected == True:
-            cv2.rectangle(Variables.Frame, (round(X1 + RoundCorners / 2), round(Y2 + DropdownPadding + RoundCorners / 2)), (round(X2 - RoundCorners / 2), round(Y2 + DropdownHeight + DropdownPadding - RoundCorners / 2)), HoverColor, RoundCorners, Settings.RectangleLineType)
-            cv2.rectangle(Variables.Frame, (round(X1 + RoundCorners / 2), round(Y2 + DropdownPadding + RoundCorners / 2)), (round(X2 - RoundCorners / 2), round(Y2 + DropdownHeight + DropdownPadding - RoundCorners / 2)), HoverColor, -1, Settings.RectangleLineType)
+            if RoundCorners > 0:
+                cv2.rectangle(Variables.Frame, (round(X1 + RoundCorners / 2), round(Y2 + DropdownPadding + RoundCorners / 2)), (round(X2 - RoundCorners / 2), round(Y2 + DropdownHeight + DropdownPadding - RoundCorners / 2)), HoverColor, RoundCorners, Settings.RectangleLineType)
+                cv2.rectangle(Variables.Frame, (round(X1 + RoundCorners / 2), round(Y2 + DropdownPadding + RoundCorners / 2)), (round(X2 - RoundCorners / 2), round(Y2 + DropdownHeight + DropdownPadding - RoundCorners / 2)), HoverColor, -1, Settings.RectangleLineType)
+            else:
+                cv2.rectangle(Variables.Frame, (round(X1), round(Y2 + DropdownPadding)), (round(X2), round(Y2 + DropdownHeight + DropdownPadding)), HoverColor, -1, Settings.RectangleLineType)
 
             Padding = (Y2 + Y1) / 2 - FontSize / 4 - Y1
             Height = round(Y2 - Padding) - round(Y1 + Padding)
@@ -232,10 +247,11 @@ def Image(Image, X1, Y1, X2, Y2, Layer, RoundCorners):
     try:
         Frame = Variables.Frame.copy()
         Image = cv2.resize(Image, (X2 - X1, Y2 - Y1))
-        Mask = numpy.zeros((Image.shape[0], Image.shape[1], 1), dtype=numpy.uint8)
-        cv2.rectangle(Mask, (round(RoundCorners / 2), round(RoundCorners / 2)), (round(Mask.shape[1] - RoundCorners / 2 - 1), round(Mask.shape[0] - RoundCorners / 2 - 1)), 1, RoundCorners, Settings.RectangleLineType)
-        cv2.rectangle(Mask, (round(RoundCorners / 2), round(RoundCorners / 2)), (round(Mask.shape[1] - RoundCorners / 2 - 1), round(Mask.shape[0] - RoundCorners / 2 - 1)), 1, -1, Settings.RectangleLineType)
-        Image = cv2.bitwise_and(Image, Image, mask=Mask)
+        if RoundCorners > 0:
+            Mask = numpy.zeros((Image.shape[0], Image.shape[1], 1), dtype=numpy.uint8)
+            cv2.rectangle(Mask, (round(RoundCorners / 2), round(RoundCorners / 2)), (round(Mask.shape[1] - RoundCorners / 2 - 1), round(Mask.shape[0] - RoundCorners / 2 - 1)), 1, RoundCorners, Settings.RectangleLineType)
+            cv2.rectangle(Mask, (round(RoundCorners / 2), round(RoundCorners / 2)), (round(Mask.shape[1] - RoundCorners / 2 - 1), round(Mask.shape[0] - RoundCorners / 2 - 1)), 1, -1, Settings.RectangleLineType)
+            Image = cv2.bitwise_and(Image, Image, mask=Mask)
         Frame[Y1:Y2, X1:X2] = Image
         Variables.Frame = Frame
         if X1 <= States.MouseX * Variables.Frame.shape[1] <= X2 and Y1 <= States.MouseY * Variables.Frame.shape[0] <= Y2 and States.LeftPressed == False and States.LastLeftPressed == True and States.ForegroundWindow and States.TopMostLayer == Layer and States.AnyDropdownOpen == False:
