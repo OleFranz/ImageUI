@@ -366,9 +366,15 @@ def Image(Image:np.ndarray, X1:int, Y1:int, X2:int, Y2:int, Layer:int = 0, OnPre
 
 
 # MARK: Popup
-def Popup(Text:str, StartX1:int, StartY1:int, StartX2:int, StartY2:int, EndX1:int, EndY1:int, EndX2:int, EndY2:int, DoAnimation:bool = True, AnimationDuration:float = Settings.PopupAnimationDuration, ShowDuration:float = Settings.PopupShowDuration, Layer:int = 0, FontSize:float = Settings.FontSize, FontType:str = Settings.FontType, RoundCorners:float = Settings.CornerRoundness, TextColor:tuple = Colors.TEXT_COLOR, Color:tuple = Colors.POPUP_COLOR, OutlineColor:tuple = Colors.POPUP_OUTLINE_COLOR):
+def Popup(Text:str, StartX1:int, StartY1:int, StartX2:int, StartY2:int, EndX1:int, EndY1:int, EndX2:int, EndY2:int, Progress:float = 0, DoAnimation:bool = True, AnimationDuration:float = Settings.PopupAnimationDuration, ShowDuration:float = Settings.PopupShowDuration, Layer:int = 0, FontSize:float = Settings.FontSize, FontType:str = Settings.FontType, RoundCorners:float = Settings.CornerRoundness, TextColor:tuple = Colors.TEXT_COLOR, Color:tuple = Colors.POPUP_COLOR, OutlineColor:tuple = Colors.POPUP_OUTLINE_COLOR, ProgressBarColor:tuple = Colors.POPUP_PROGRESS_BAR_COLOR):
     """
     Creates a popup.
+
+    If the `Progress` value is 0, the progress bar will not be shown.
+    The `Progress` value should be between 0 and 100, if it is in this range, the `ShowDuration` value will be ignored and the popup will be shown indefinitely.
+    If the `Progress` value is less than 0, an indeterminate progress bar will be shown.
+
+    If the `ShowDuration` value is less or equal to 0, the popup will be shown indefinitely.
 
     Parameters
     ----------
@@ -390,6 +396,8 @@ def Popup(Text:str, StartX1:int, StartY1:int, StartX2:int, StartY2:int, EndX1:in
         The x coordinate of the bottom right corner at the end of the animation.
     EndY2 : int
         The y coordinate of the bottom right corner at the end of the animation.
+    Progress : float
+        The progress shown in the progress bar.
     DoAnimation : bool
         Whether to animate the popup. If set to false, the popup will be shown immediately at the end coordinates.
     AnimationDuration : float
@@ -410,6 +418,8 @@ def Popup(Text:str, StartX1:int, StartY1:int, StartX2:int, StartY2:int, EndX1:in
         The color of the popup.
     OutlineColor : tuple
         The color of the outline of the popup.
+    ProgressBarColor : tuple
+        The color of the progress bar.
 
     Returns
     -------
@@ -427,6 +437,7 @@ def Popup(Text:str, StartX1:int, StartY1:int, StartX2:int, StartY2:int, EndX1:in
                                     "EndY1": EndY1,
                                     "EndX2": EndX2,
                                     "EndY2": EndY2,
+                                    "Progress": min(Progress, 100),
                                     "DoAnimation": DoAnimation,
                                     "AnimationDuration": AnimationDuration,
                                     "ShowDuration": ShowDuration,
@@ -436,7 +447,8 @@ def Popup(Text:str, StartX1:int, StartY1:int, StartX2:int, StartY2:int, EndX1:in
                                     "RoundCorners": RoundCorners,
                                     "TextColor": TextColor,
                                     "Color": Color,
-                                    "OutlineColor": OutlineColor}])
+                                    "OutlineColor": OutlineColor,
+                                    "ProgressBarColor": ProgressBarColor}])
     except:
         Errors.ShowError("ImageUI - Error in function Popup.", str(traceback.format_exc()))
 

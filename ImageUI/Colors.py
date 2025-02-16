@@ -23,3 +23,4 @@ DROPDOWN_HOVER_COLOR = (47, 47, 47) if THEME == "Dark" else (231, 231, 231)
 
 POPUP_COLOR = (42, 42, 42) if THEME == "Dark" else (236, 236, 236)
 POPUP_OUTLINE_COLOR = (155, 155, 155) if THEME == "Dark" else (100, 100, 100)
+POPUP_PROGRESS_BAR_COLOR = (255, 200, 87) if THEME == "Dark" else (184, 95, 0)

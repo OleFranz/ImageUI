@@ -245,6 +245,8 @@ def Dropdown(Title, Items, DefaultItem, X1, Y1, X2, Y2, DropdownHeight, Dropdown
 # MARK: Image
 def Image(Image, X1, Y1, X2, Y2, Layer, RoundCorners):
     try:
+        if type(Image) == type(None): return
+        if Image.shape[1] <= 0 or Image.shape[0] <= 0: return
         Frame = Variables.Frame.copy()
         Image = cv2.resize(Image, (X2 - X1, Y2 - Y1))
         if RoundCorners > 0:
@@ -263,7 +265,7 @@ def Image(Image, X1, Y1, X2, Y2, Layer, RoundCorners):
 
 
 # MARK: Popup
-def Popup(Text, StartX1, StartY1, StartX2, StartY2, EndX1, EndY1, EndX2, EndY2, DoAnimation, AnimationDuration, ShowDuration, Layer, FontSize, FontType, RoundCorners, TextColor, Color, OutlineColor):
+def Popup(Text, StartX1, StartY1, StartX2, StartY2, EndX1, EndY1, EndX2, EndY2, Progress, DoAnimation, AnimationDuration, ShowDuration, Layer, FontSize, FontType, RoundCorners, TextColor, Color, OutlineColor, ProgressBarColor):
     try:
         Key = f"{StartX1}-{StartY1}-{StartX2}-{StartY2}-{EndX1}-{EndY1}-{EndX2}-{EndY2}-{Layer}"
         if Key not in Variables.Popups:
@@ -278,6 +280,7 @@ def Popup(Text, StartX1, StartY1, StartX2, StartY2, EndX1, EndY1, EndX2, EndY2, 
                                      "EndY1": EndY1,
                                      "EndX2": EndX2,
                                      "EndY2": EndY2,
+                                     "Progress": Progress,
                                      "DoAnimation": DoAnimation,
                                      "AnimationDuration": AnimationDuration,
                                      "ShowDuration": ShowDuration,
@@ -287,11 +290,13 @@ def Popup(Text, StartX1, StartY1, StartX2, StartY2, EndX1, EndY1, EndX2, EndY2, 
                                      "RoundCorners": RoundCorners,
                                      "TextColor": TextColor,
                                      "Color": Color,
-                                     "OutlineColor": OutlineColor}
+                                     "OutlineColor": OutlineColor,
+                                     "ProgressBarColor": ProgressBarColor}
         else:
             if Variables.Popups[Key]["DoAnimation"] and Variables.Popups[Key]["Time"] + Variables.Popups[Key]["AnimationDuration"] <= time.time():
                 Variables.Popups[Key]["Time"] = time.time() - Variables.Popups[Key]["AnimationDuration"]
             Variables.Popups[Key]["Text"] = Text
+            Variables.Popups[Key]["Progress"] = Progress
             Variables.Popups[Key]["DoAnimation"] = DoAnimation
             Variables.Popups[Key]["AnimationDuration"] = AnimationDuration
             Variables.Popups[Key]["ShowDuration"] = ShowDuration
@@ -301,6 +306,7 @@ def Popup(Text, StartX1, StartY1, StartX2, StartY2, EndX1, EndY1, EndX2, EndY2, 
             Variables.Popups[Key]["TextColor"] = TextColor
             Variables.Popups[Key]["Color"] = Color
             Variables.Popups[Key]["OutlineColor"] = OutlineColor
+            Variables.Popups[Key]["ProgressBarColor"] = ProgressBarColor
     except:
         Errors.ShowError("Elements - Error in function Popup.", str(traceback.format_exc()))
 
@@ -310,19 +316,36 @@ def CheckAndRenderPopups():
         for Popup in list(Variables.Popups.values()):
             Render = False
             CurrentTime = time.time()
+            Time = Popup["Time"]
+            Text = Popup["Text"]
+            StartX1 = Popup["StartX1"]
+            StartY1 = Popup["StartY1"]
+            StartX2 = Popup["StartX2"]
+            StartY2 = Popup["StartY2"]
+            EndX1 = Popup["EndX1"]
+            EndY1 = Popup["EndY1"]
+            EndX2 = Popup["EndX2"]
+            EndY2 = Popup["EndY2"]
+            Progress = Popup["Progress"]
+            DoAnimation = Popup["DoAnimation"]
+            AnimationDuration = Popup["AnimationDuration"]
+            ShowDuration = Popup["ShowDuration"]
+            Layer = Popup["Layer"]
+            FontSize = Popup["FontSize"]
+            FontType = Popup["FontType"]
+            RoundCorners = Popup["RoundCorners"]
+            TextColor = Popup["TextColor"]
+            Color = Popup["Color"]
+            OutlineColor = Popup["OutlineColor"]
+            ProgressBarColor = Popup["ProgressBarColor"]
+
+            if Progress < 0 or (Progress > 0 and Progress < 100) or ShowDuration <= 0:
+                if CurrentTime >= Time + (AnimationDuration if DoAnimation else 0):
+                    Time = CurrentTime - (AnimationDuration if DoAnimation else 0)
+                    Popup["Time"] = Time
+
             if Popup["DoAnimation"] == True:
-                Time = Popup["Time"]
-                StartX1 = Popup["StartX1"]
-                StartY1 = Popup["StartY1"]
-                StartX2 = Popup["StartX2"]
-                StartY2 = Popup["StartY2"]
-                EndX1 = Popup["EndX1"]
-                EndY1 = Popup["EndY1"]
-                EndX2 = Popup["EndX2"]
-                EndY2 = Popup["EndY2"]
-                AnimationDuration = Popup["AnimationDuration"]
-                ShowDuration = Popup["ShowDuration"]
-                if Popup["Time"] <= CurrentTime <= Popup["Time"] + Popup["AnimationDuration"]:
+                if Time <= CurrentTime <= Time + AnimationDuration:
                     X = (CurrentTime - Time) / AnimationDuration
                     X = -(math.cos(math.pi * X) - 1) / 2
                     X1 = round(StartX1 * (1 - X) + EndX1 * X)
@@ -330,7 +353,7 @@ def CheckAndRenderPopups():
                     X2 = round(StartX2 * (1 - X) + EndX2 * X)
                     Y2 = round(StartY2 * (1 - X) + EndY2 * X)
                     Render = True
-                elif Popup["Time"] + Popup["ShowDuration"] + Popup["AnimationDuration"] <= CurrentTime <= Popup["Time"] + Popup["ShowDuration"] + Popup["AnimationDuration"] * 2 and Popup["DoAnimation"] == True:
+                elif Time + ShowDuration + AnimationDuration <= CurrentTime <= Time + ShowDuration + AnimationDuration * 2 and DoAnimation == True:
                     X = (CurrentTime - Time - ShowDuration - AnimationDuration) / AnimationDuration
                     X = math.pow(2, 10 * X - 10)
                     X1 = round(EndX1 * (1 - X) + StartX1 * X)
@@ -338,24 +361,16 @@ def CheckAndRenderPopups():
                     X2 = round(EndX2 * (1 - X) + StartX2 * X)
                     Y2 = round(EndY2 * (1 - X) + StartY2 * X)
                     Render = True
-            if Popup["Time"] + (Popup["AnimationDuration"] if Popup["DoAnimation"] else 0) <= CurrentTime <= Popup["Time"] + Popup["ShowDuration"] + (Popup["AnimationDuration"] if Popup["DoAnimation"] else 0):
+            if Time + (AnimationDuration if DoAnimation else 0) <= CurrentTime <= Time + ShowDuration + (AnimationDuration if DoAnimation else 0):
                 X1 = round(Popup["EndX1"])
                 Y1 = round(Popup["EndY1"])
                 X2 = round(Popup["EndX2"])
                 Y2 = round(Popup["EndY2"])
                 Render = True
-            elif Popup["Time"] + Popup["ShowDuration"] + (Popup["AnimationDuration"] * 2 if Popup["DoAnimation"] else 0) <= CurrentTime:
+            elif Time + ShowDuration + (AnimationDuration * 2 if DoAnimation else 0) <= CurrentTime:
                 del Variables.Popups[Popup["Key"]]
                 Variables.ForceSingleRender = True
             if Render:
-                Text = Popup["Text"]
-                Layer = Popup["Layer"]
-                FontSize = Popup["FontSize"]
-                FontType = Popup["FontType"]
-                RoundCorners = Popup["RoundCorners"]
-                TextColor = Popup["TextColor"]
-                Color = Popup["Color"]
-                OutlineColor = Popup["OutlineColor"]
 
                 if RoundCorners > 0:
                     cv2.rectangle(Variables.Frame, (round(X1 + RoundCorners / 2), round(Y1 + RoundCorners / 2)), (round(X2 - RoundCorners / 2), round(Y2 - RoundCorners / 2)), OutlineColor, RoundCorners, Settings.RectangleLineType)
@@ -367,6 +382,19 @@ def CheckAndRenderPopups():
                     cv2.rectangle(Variables.Frame, (round(X1 + RoundCorners / 2) + 1, round(Y1 + RoundCorners / 2) + 1), (round(X2 - RoundCorners / 2) - 1, round(Y2 - RoundCorners / 2) - 1), Color, -1, Settings.RectangleLineType)
                 else:
                     cv2.rectangle(Variables.Frame, (round(X1) + 1, round(Y1) + 1), (round(X2) - 1, round(Y2) - 1), Color, -1, Settings.RectangleLineType)
+
+                if Progress > 0:
+                    cv2.line(Variables.Frame, (round(X1 + RoundCorners / 2), round(Y2)), (round(X1 + RoundCorners / 2 + (X2 - X1 - RoundCorners) * Progress / 100), round(Y2)), ProgressBarColor, 1, Settings.LineType)
+                elif Progress < 0:
+                    X = time.time() % 2
+                    if X < 1:
+                        Left = 0.5 - math.cos(X ** 2 * math.pi) / 2
+                        Right = 0.5 - math.cos((X + (X - X ** 2)) * math.pi) / 2
+                    else:
+                        X -= 1
+                        Left = 0.5 + math.cos((X + (X - X ** 2)) * math.pi) / 2
+                        Right = 0.5 + math.cos(X ** 2 * math.pi) / 2
+                    cv2.line(Variables.Frame, (round(X1 + RoundCorners / 2 + (X2 - X1 - RoundCorners) * Right), round(Y2)), (round(X1 + RoundCorners / 2 + (X2 - X1 - RoundCorners) * Left), round(Y2)), ProgressBarColor, 1, Settings.LineType)
 
                 Label(Text, X1, Y1, X2, Y2, "Center", 0, Layer, FontSize, FontType, TextColor)
 
