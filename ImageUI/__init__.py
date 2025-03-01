@@ -16,6 +16,8 @@ from .States import RightClicked
 from .States import LeftClickPosition
 from .States import RightClickPosition
 
+from .Colors import SetTheme
+
 from .ImageUI import Label
 from .ImageUI import Button
 from .ImageUI import Switch
