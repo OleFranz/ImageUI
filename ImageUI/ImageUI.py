@@ -235,7 +235,7 @@ def Switch(Text:str, X1:int, Y1:int, X2:int, Y2:int, State:bool = False, SwitchW
 
 
 # MARK: Dropdown
-def Dropdown(Title:str, Items:list, DefaultItem:int, X1:int, Y1:int, X2:int, Y2:int, DropdownHeight:int = 100, DropdownPadding:int = 5, Layer:int = 0, OnChange:callable = None, FontSize:float = Settings.FontSize, FontType:str = Settings.FontType, RoundCorners:float = Settings.CornerRoundness, TextColor:tuple = Colors.TEXT_COLOR, SecondaryTextColor:tuple = Colors.GRAY_TEXT_COLOR, Color:tuple = Colors.DROPDOWN_COLOR, HoverColor:tuple = Colors.DROPDOWN_HOVER_COLOR):
+def Dropdown(Title:str, Items:list, DefaultItem:any, X1:int, Y1:int, X2:int, Y2:int, DropdownHeight:int = 100, DropdownPadding:int = 5, Layer:int = 0, OnChange:callable = None, FontSize:float = Settings.FontSize, FontType:str = Settings.FontType, RoundCorners:float = Settings.CornerRoundness, TextColor:tuple = Colors.TEXT_COLOR, SecondaryTextColor:tuple = Colors.GRAY_TEXT_COLOR, Color:tuple = Colors.DROPDOWN_COLOR, HoverColor:tuple = Colors.DROPDOWN_HOVER_COLOR):
     """
     Creates a dropdown.
 
@@ -262,6 +262,8 @@ def Dropdown(Title:str, Items:list, DefaultItem:int, X1:int, Y1:int, X2:int, Y2:
         The title of the dropdown.
     Items : list
         The items of the dropdown.
+    DefaultItem : any
+        The item from the items list which is the default item.
     X1 : int
         The x coordinate of the top left corner.
     Y1 : int
@@ -270,8 +272,6 @@ def Dropdown(Title:str, Items:list, DefaultItem:int, X1:int, Y1:int, X2:int, Y2:
         The x coordinate of the bottom right corner.
     Y2 : int
         The y coordinate of the bottom right corner.
-    DefaultItem : int
-        The index of the default item.
     DropdownHeight : int
         The height of the dropdown.
     DropdownPadding : int

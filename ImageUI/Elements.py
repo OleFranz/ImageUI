@@ -162,7 +162,10 @@ def Switch(Text, X1, Y1, X2, Y2, Layer, SwitchWidth, SwitchHeight, TextPadding, 
 def Dropdown(Title, Items, DefaultItem, X1, Y1, X2, Y2, DropdownHeight, DropdownPadding, Layer, FontSize, FontType, RoundCorners, TextColor, SecondaryTextColor, Color, HoverColor):
     try:
         if Title + str(Items) not in Variables.Dropdowns:
-            DefaultItem = int(max(min(DefaultItem, len(Items) - 1), 0))
+            try:
+                DefaultItem = Items.index(DefaultItem)
+            except ValueError:
+                DefaultItem = 0
             Variables.Dropdowns[Title + str(Items)] = False, DefaultItem
 
         DropdownSelected, SelectedItem = Variables.Dropdowns[Title + str(Items)]
