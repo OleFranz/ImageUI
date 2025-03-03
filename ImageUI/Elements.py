@@ -224,9 +224,12 @@ def Input(X1, Y1, X2, Y2, DefaultInput, Placeholder, TextAlign, TextAlignPadding
         if Selected:
             for Key in States.KeyboardEventQueue:
                 if Key == "Paste":
-                    win32clipboard.OpenClipboard()
-                    Input += win32clipboard.GetClipboardData()
-                    win32clipboard.CloseClipboard()
+                    try:
+                        win32clipboard.OpenClipboard()
+                        Input += win32clipboard.GetClipboardData()
+                        win32clipboard.CloseClipboard()
+                    except:
+                        pass
                 elif Key == "Backspace":
                     Input = Input[:-1] if len(Input) > 0 else ""
                 elif Key == "Enter":
@@ -247,7 +250,7 @@ def Input(X1, Y1, X2, Y2, DefaultInput, Placeholder, TextAlign, TextAlignPadding
 
         return Input, Changed, Selected, Pressed, Hovered
     except:
-        Errors.ShowError("Elements - Error in function Button.", str(traceback.format_exc()))
+        Errors.ShowError("Elements - Error in function Input.", str(traceback.format_exc()))
         return "", False, False, False, False
 
 
