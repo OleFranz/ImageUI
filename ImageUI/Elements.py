@@ -4,6 +4,7 @@ from ImageUI import Variables
 from ImageUI import Settings
 from ImageUI import Errors
 from ImageUI import States
+import win32clipboard
 import traceback
 import numpy
 import math
@@ -14,7 +15,7 @@ import cv2
 # MARK: Label
 def Label(Text, X1, Y1, X2, Y2, Align, AlignPadding, Layer, FontSize, FontType, TextColor):
     try:
-        if Text == "": return
+        if Text == "": return X1, Y1, X2, Y2
         Text = Translations.Translate(Text)
         Frame = Variables.Frame.copy()
         for CachedText in Variables.TextCache:
@@ -25,7 +26,7 @@ def Label(Text, X1, Y1, X2, Y2, Align, AlignPadding, Layer, FontSize, FontType, 
             if (CurrentFrame == EmptyFrame).all():
                 Frame[BBoxY1:BBoxY2, BBoxX1:BBoxX2] = TextFrame
                 Variables.Frame = Frame.copy()
-                return
+                return BBoxX1 + 2, BBoxX1 + 2, BBoxX2 - 2, BBoxY2 - 2
 
         if f"{FontSize}-{FontType}" in Variables.Fonts:
             Font = Variables.Fonts[f"{FontSize}-{FontType}"]
@@ -52,14 +53,16 @@ def Label(Text, X1, Y1, X2, Y2, Align, AlignPadding, Layer, FontSize, FontType, 
         Variables.Frame = Frame.copy()
         TextFrame = Frame[BBoxY1:BBoxY2, BBoxX1:BBoxX2]
         Variables.TextCache.append([f"{Text}-{X1}-{Y1}-{X2}-{Y2}-{FontSize}-{FontType}-{TextColor}", [EmptyFrame, TextFrame, BBoxX1, BBoxY1, BBoxX2, BBoxY2]])
+        return BBoxX1 + 2, BBoxX1 + 2, BBoxX2 - 2, BBoxY2 - 2
     except:
         Errors.ShowError("Elements - Error in function Label.", str(traceback.format_exc()))
+        return X1, Y1, X2, Y2
 
 
 # MARK: Button
 def Button(Text, X1, Y1, X2, Y2, Layer, FontSize, FontType, RoundCorners, TextColor, Color, HoverColor):
     try:
-        if X1 <= States.MouseX * Variables.Frame.shape[1] <= X2 and Y1 <= States.MouseY * Variables.Frame.shape[0] <= Y2 and States.ForegroundWindow and States.TopMostLayer == Layer and States.AnyDropdownOpen == False:
+        if X1 <= States.MouseX * Variables.Frame.shape[1] <= X2 and Y1 <= States.MouseY * Variables.Frame.shape[0] <= Y2 and States.ForegroundWindow and States.TopMostLayer == Layer and States.AnyDropdownOpen == False and States.AnyInputsOpen == False:
             Hovered = True
         else:
             Hovered = False
@@ -76,7 +79,7 @@ def Button(Text, X1, Y1, X2, Y2, Layer, FontSize, FontType, RoundCorners, TextCo
             else:
                 cv2.rectangle(Variables.Frame, (round(X1), round(Y1)), (round(X2), round(Y2)), Color, - 1, Settings.RectangleLineType)
         Label(Text, X1, Y1, X2, Y2, "Center", 0, Layer, FontSize, FontType, TextColor)
-        if X1 <= States.MouseX * Variables.Frame.shape[1] <= X2 and Y1 <= States.MouseY * Variables.Frame.shape[0] <= Y2 and States.LeftPressed == False and States.LastLeftPressed == True and States.ForegroundWindow and States.TopMostLayer == Layer and States.AnyDropdownOpen == False:
+        if X1 <= States.MouseX * Variables.Frame.shape[1] <= X2 and Y1 <= States.MouseY * Variables.Frame.shape[0] <= Y2 and States.LeftPressed == False and States.LastLeftPressed == True and States.ForegroundWindow and States.TopMostLayer == Layer and States.AnyDropdownOpen == False and States.AnyInputsOpen == False:
             return True, States.LeftPressed and Hovered, Hovered
         else:
             return False, States.LeftPressed and Hovered, Hovered
@@ -109,7 +112,7 @@ def Switch(Text, X1, Y1, X2, Y2, Layer, SwitchWidth, SwitchHeight, TextPadding, 
         else:
             AnimationState = 1
 
-        if X1 <= States.MouseX * States.FrameWidth <= X2 and Y1 <= States.MouseY * States.FrameHeight <= Y2 and States.ForegroundWindow and States.TopMostLayer == Layer and States.AnyDropdownOpen == False:
+        if X1 <= States.MouseX * States.FrameWidth <= X2 and Y1 <= States.MouseY * States.FrameHeight <= Y2 and States.ForegroundWindow and States.TopMostLayer == Layer and States.AnyDropdownOpen == False and States.AnyInputsOpen == False:
             SwitchHovered = True
         else:
             SwitchHovered = False
@@ -148,7 +151,7 @@ def Switch(Text, X1, Y1, X2, Y2, Layer, SwitchWidth, SwitchHeight, TextPadding, 
                 else:
                     cv2.circle(Variables.Frame, (round(X1 + SwitchHeight / 2), round((Y1 + Y2) / 2)), round(SwitchHeight / 2.5), SwitchKnobColor, -1, Settings.CircleLineType)
         Label(Text, X1, Y1, X2, Y2, "Left", SwitchWidth + TextPadding, Layer, FontSize, FontType, TextColor)
-        if X1 <= States.MouseX * States.FrameWidth <= X2 and Y1 <= States.MouseY * States.FrameHeight <= Y2 and States.LeftPressed == False and States.LastLeftPressed == True and States.ForegroundWindow and States.TopMostLayer == Layer and States.AnyDropdownOpen == False:
+        if X1 <= States.MouseX * States.FrameWidth <= X2 and Y1 <= States.MouseY * States.FrameHeight <= Y2 and States.LeftPressed == False and States.LastLeftPressed == True and States.ForegroundWindow and States.TopMostLayer == Layer and States.AnyDropdownOpen == False and States.AnyInputsOpen == False:
             Variables.Switches[Text] = not State, CurrentTime
             return not State, True, States.LeftPressed and SwitchHovered, SwitchHovered
         else:
@@ -156,6 +159,91 @@ def Switch(Text, X1, Y1, X2, Y2, Layer, SwitchWidth, SwitchHeight, TextPadding, 
     except:
         Errors.ShowError("Elements - Error in function Switch.", str(traceback.format_exc()))
         return False, False, False, False
+
+
+# MARK: Input
+def Input(X1, Y1, X2, Y2, DefaultInput, ExampleInput, TextAlign, TextAlignPadding, Layer, FontSize, FontType, RoundCorners, TextColor, SecondaryTextColor, Color, HoverColor, ThemeColor):
+    try:
+        if f"{DefaultInput}#{ExampleInput}" not in Variables.Inputs:
+            Variables.Inputs[f"{DefaultInput}#{ExampleInput}"] = False, DefaultInput
+
+        Selected, Input = Variables.Inputs[f"{DefaultInput}#{ExampleInput}"]
+
+        Changed = False
+
+        if X1 <= States.MouseX * Variables.Frame.shape[1] <= X2 and Y1 <= States.MouseY * Variables.Frame.shape[0] <= Y2 and States.ForegroundWindow and States.TopMostLayer == Layer and States.AnyDropdownOpen == False:
+            Hovered = True
+            Pressed = States.LeftPressed
+        else:
+            Hovered = False
+            Pressed = False
+
+            if States.LastLeftPressed == True and States.LeftPressed == False and States.AnyDropdownOpen == False:
+                Selected = False
+                Changed = True
+
+        if Hovered and Pressed:
+            Selected = True
+            States.KeyboardEventQueue = []
+            Variables.ForceSingleRender = True
+
+        if Hovered == True or Selected == True:
+            if RoundCorners > 0:
+                cv2.rectangle(Variables.Frame, (round(X1 + RoundCorners / 2), round(Y1 + RoundCorners / 2)), (round(X2 - RoundCorners / 2), round(Y2 - RoundCorners / 2)), HoverColor, RoundCorners, Settings.RectangleLineType)
+                cv2.rectangle(Variables.Frame, (round(X1 + RoundCorners / 2), round(Y1 + RoundCorners / 2)), (round(X2 - RoundCorners / 2), round(Y2 - RoundCorners / 2)), HoverColor, - 1, Settings.RectangleLineType)
+            else:
+                cv2.rectangle(Variables.Frame, (round(X1), round(Y1)), (round(X2), round(Y2)), HoverColor, - 1, Settings.RectangleLineType)
+            cv2.line(Variables.Frame, (round(X1 + RoundCorners / 2), round(Y2)), (round(X2 - RoundCorners / 2), round(Y2)), ThemeColor, 1, Settings.LineType)
+            if RoundCorners > 0:
+                cv2.rectangle(Variables.Frame, (round(X1 + RoundCorners / 2) + 2, round(Y1 + RoundCorners / 2) + 2), (round(X2 - RoundCorners / 2) - 2, round(Y2 - RoundCorners / 2) - 2), HoverColor, RoundCorners, Settings.RectangleLineType)
+            else:
+                cv2.rectangle(Variables.Frame, (round(X1) + 2, round(Y1) + 2), (round(X2) - 2, round(Y2) - 2), HoverColor, - 1, Settings.RectangleLineType)
+        else:
+            if RoundCorners > 0:
+                cv2.rectangle(Variables.Frame, (round(X1 + RoundCorners / 2), round(Y1 + RoundCorners / 2)), (round(X2 - RoundCorners / 2), round(Y2 - RoundCorners / 2)), Color, RoundCorners, Settings.RectangleLineType)
+                cv2.rectangle(Variables.Frame, (round(X1 + RoundCorners / 2), round(Y1 + RoundCorners / 2)), (round(X2 - RoundCorners / 2), round(Y2 - RoundCorners / 2)), Color, - 1, Settings.RectangleLineType)
+            else:
+                cv2.rectangle(Variables.Frame, (round(X1), round(Y1)), (round(X2), round(Y2)), Color, - 1, Settings.RectangleLineType)
+            cv2.line(Variables.Frame, (round(X1 + RoundCorners / 2), round(Y2)), (round(X2 - RoundCorners / 2), round(Y2)), ThemeColor, 1, Settings.LineType)
+            if RoundCorners > 0:
+                cv2.rectangle(Variables.Frame, (round(X1 + RoundCorners / 2) + 2, round(Y1 + RoundCorners / 2) + 2), (round(X2 - RoundCorners / 2) - 2, round(Y2 - RoundCorners / 2) - 2), Color, RoundCorners, Settings.RectangleLineType)
+            else:
+                cv2.rectangle(Variables.Frame, (round(X1) + 2, round(Y1) + 2), (round(X2) - 2, round(Y2) - 2), Color, - 1, Settings.RectangleLineType)
+
+        CursorX = X1 + TextAlignPadding
+        if Input != "":
+            _, _, CursorX, _ = Label(Input, X1, Y1, X2, Y2, TextAlign, TextAlignPadding, Layer, FontSize, FontType, TextColor)
+        elif ExampleInput != "":
+            Label(ExampleInput, X1 + 3, Y1, X2 + 3, Y2, TextAlign, TextAlignPadding, Layer, FontSize, FontType, SecondaryTextColor)
+
+        for Key in States.KeyboardEventQueue:
+            if Key == "Paste":
+                win32clipboard.OpenClipboard()
+                Input += win32clipboard.GetClipboardData()
+                win32clipboard.CloseClipboard()
+            elif Key == "Backspace":
+                Input = Input[:-1] if len(Input) > 0 else ""
+            elif Key == "Enter":
+                Selected = False
+                Changed = True
+            else:
+                try:
+                    Input += str(Key)
+                except:
+                    pass
+
+            Variables.ForceSingleRender = True
+            States.KeyboardEventQueue.pop(0)
+
+        if Selected:
+            cv2.line(Variables.Frame, (round(CursorX), round(Y1 + (Y2 - Y1) * 0.3)), (round(CursorX), round(Y2 - (Y2 - Y1) * 0.3)), TextColor, 1, Settings.LineType)
+
+        Variables.Inputs[f"{DefaultInput}#{ExampleInput}"] = Selected, Input
+
+        return Input, Changed, Selected, Pressed, Hovered
+    except:
+        Errors.ShowError("Elements - Error in function Button.", str(traceback.format_exc()))
+        return "", False, False, False, False
 
 
 # MARK: Dropdown
@@ -170,7 +258,7 @@ def Dropdown(Title, Items, DefaultItem, X1, Y1, X2, Y2, DropdownHeight, Dropdown
 
         DropdownSelected, SelectedItem = Variables.Dropdowns[Title + str(Items)]
 
-        if X1 <= States.MouseX * States.FrameWidth <= X2 and Y1 <= States.MouseY * States.FrameHeight <= Y2 + ((DropdownHeight + DropdownPadding) if DropdownSelected else 0) and States.ForegroundWindow and States.TopMostLayer == Layer:
+        if X1 <= States.MouseX * States.FrameWidth <= X2 and Y1 <= States.MouseY * States.FrameHeight <= Y2 + ((DropdownHeight + DropdownPadding) if DropdownSelected else 0) and States.ForegroundWindow and States.TopMostLayer == Layer and States.AnyInputsOpen == False:
             DropdownHovered = True
             DropdownPressed = States.LeftPressed
             DropdownChanged = True if States.LastLeftPressed == True and States.LeftPressed == False and DropdownSelected == True else False
@@ -259,7 +347,7 @@ def Image(Image, X1, Y1, X2, Y2, Layer, RoundCorners):
             Image = cv2.bitwise_and(Image, Image, mask=Mask)
         Frame[Y1:Y2, X1:X2] = Image
         Variables.Frame = Frame
-        if X1 <= States.MouseX * Variables.Frame.shape[1] <= X2 and Y1 <= States.MouseY * Variables.Frame.shape[0] <= Y2 and States.LeftPressed == False and States.LastLeftPressed == True and States.ForegroundWindow and States.TopMostLayer == Layer and States.AnyDropdownOpen == False:
+        if X1 <= States.MouseX * Variables.Frame.shape[1] <= X2 and Y1 <= States.MouseY * Variables.Frame.shape[0] <= Y2 and States.LeftPressed == False and States.LastLeftPressed == True and States.ForegroundWindow and States.TopMostLayer == Layer and States.AnyDropdownOpen == False and States.AnyInputsOpen == False:
             return True
         else:
             return False

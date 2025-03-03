@@ -18,6 +18,10 @@ SwitchKnobColor = (28, 28, 28)
 SwitchEnabledColor = (255, 200, 87)
 SwitchEnabledHoverColor = (255, 200, 87)
 
+InputColor = (42, 42, 42)
+InputHoverColor = (47, 47, 47)
+InputThemeColor = (208, 208, 208)
+
 DropdownColor = (42, 42, 42)
 DropdownHoverColor = (47, 47, 47)
 
@@ -49,6 +53,10 @@ def SetTheme(Theme:str):
     global SwitchKnobColor; SwitchKnobColor = (28, 28, 28) if Theme == "Dark" else (250, 250, 250)
     global SwitchEnabledColor; SwitchEnabledColor = (255, 200, 87) if Theme == "Dark" else (184, 95, 0)
     global SwitchEnabledHoverColor; SwitchEnabledHoverColor = (255, 200, 87) if Theme == "Dark" else (184, 95, 0)
+
+    global InputColor; InputColor = (42, 42, 42) if Theme == "Dark" else (236, 236, 236)
+    global InputHoverColor; InputHoverColor = (47, 47, 47) if Theme == "Dark" else (231, 231, 231)
+    global InputThemeColor; InputThemeColor = (208, 208, 208) if Theme == "Dark" else (60, 60, 60)
 
     global DropdownColor; DropdownColor = (42, 42, 42) if Theme == "Dark" else (236, 236, 236)
     global DropdownHoverColor; DropdownHoverColor = (47, 47, 47) if Theme == "Dark" else (231, 231, 231)

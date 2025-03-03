@@ -255,6 +255,85 @@ def Switch(Text:str, X1:int, Y1:int, X2:int, Y2:int, State:bool = False, SwitchW
         Errors.ShowError("ImageUI - Error in function Switch.", str(traceback.format_exc()))
 
 
+# MARK: Input
+def Input(X1:int, Y1:int, X2:int, Y2:int, DefaultInput:str = "", ExampleInput:str = "", TextAlign:str = "Left", TextAlignPadding:int = 10, Layer:int = 0, OnChange:callable = None, FontSize:float = Defaults.FontSize, FontType:str = Defaults.FontType, RoundCorners:float = Defaults.CornerRoundness, TextColor:tuple = Defaults.TextColor, SecondaryTextColor:tuple = Defaults.GrayTextColor, Color:tuple = Defaults.InputColor, HoverColor:tuple = Defaults.InputHoverColor, ThemeColor:tuple = Defaults.InputThemeColor):
+    """
+    Creates an input box.
+
+    Parameters
+    ----------
+    X1 : int
+        The x coordinate of the top left corner.
+    Y1 : int
+        The y coordinate of the top left corner.
+    X2 : int
+        The x coordinate of the bottom right corner.
+    Y2 : int
+        The y coordinate of the bottom right corner.
+    DefaultInput : str
+        The default text in the input.
+    ExampleInput : str
+        The example input for the input.
+    TextAlign : str
+        The alignment of the text. (Left, Right, Center)
+    TextAlignPadding : int
+        The padding of the text when aligned left or right.
+    Layer : int
+        The layer of the button in the UI.
+    OnChange : callable
+        The function to call when the input is changed.
+    FontSize : float
+        The font size of the text.
+    FontType : str
+        The font type of the text.
+    RoundCorners : float
+        The roundness of the corners.
+    TextColor : tuple
+        The color of the text.
+    SecondaryTextColor : tuple
+        The color of the example text.
+    Color : tuple
+        The color of the input.
+    HoverColor : tuple
+        The color of the input when hovered.
+
+    Returns
+    -------
+    None
+    """
+    try:
+        if FontSize == Defaults.FontSize: FontSize = Settings.FontSize
+        if FontType == Defaults.FontType: FontType = Settings.FontType
+        if RoundCorners == Defaults.CornerRoundness: RoundCorners = Settings.CornerRoundness
+        if TextColor == Defaults.TextColor: TextColor = Colors.TextColor
+        if SecondaryTextColor == Defaults.GrayTextColor: SecondaryTextColor = Colors.GrayTextColor
+        if Color == Defaults.InputColor: Color = Colors.InputColor
+        if HoverColor == Defaults.InputHoverColor: HoverColor = Colors.InputHoverColor
+        if ThemeColor == Defaults.InputThemeColor: ThemeColor = Colors.InputThemeColor
+
+        Variables.Elements.append(["Input",
+                                   OnChange,
+                                   {"X1": X1,
+                                    "Y1": Y1,
+                                    "X2": X2,
+                                    "Y2": Y2,
+                                    "DefaultInput": DefaultInput,
+                                    "ExampleInput": ExampleInput,
+                                    "TextAlign": TextAlign,
+                                    "TextAlignPadding": TextAlignPadding,
+                                    "Layer": Layer,
+                                    "FontSize": FontSize,
+                                    "FontType": FontType,
+                                    "RoundCorners": RoundCorners,
+                                    "TextColor": TextColor,
+                                    "SecondaryTextColor": SecondaryTextColor,
+                                    "Color": Color,
+                                    "HoverColor": HoverColor,
+                                    "ThemeColor": ThemeColor}])
+    except:
+        Errors.ShowError("ImageUI - Error in function Input.", str(traceback.format_exc()))
+
+
 # MARK: Dropdown
 def Dropdown(Title:str, Items:list, DefaultItem:any, X1:int, Y1:int, X2:int, Y2:int, DropdownHeight:int = 100, DropdownPadding:int = 5, Layer:int = 0, OnChange:callable = None, FontSize:float = Defaults.FontSize, FontType:str = Defaults.FontType, RoundCorners:float = Defaults.CornerRoundness, TextColor:tuple = Defaults.TextColor, SecondaryTextColor:tuple = Defaults.GrayTextColor, Color:tuple = Defaults.DropdownColor, HoverColor:tuple = Defaults.DropdownHoverColor):
     """
@@ -561,6 +640,8 @@ def Update(WindowHWND:int, Frame:np.ndarray):
         for Area in Variables.Areas:
             if States.AnyDropdownOpen and Area[0] != "Dropdown":
                 continue
+            if States.AnyInputsOpen and Area[0] != "Input":
+                continue
             if (Area[1] <= MouseX * WindowWidth <= Area[3] and Area[2] <= MouseY * WindowHeight <= Area[4]) != Area[6] and Area[5] == States.TopMostLayer:
                 Area = (Area[1], Area[2], Area[3], Area[4], not Area[5])
                 RenderFrame = True
@@ -572,7 +653,7 @@ def Update(WindowHWND:int, Frame:np.ndarray):
             RenderFrame = True
         Variables.LastFrame = Frame.copy()
 
-        Variables.Elements = sorted(Variables.Elements, key=lambda Item: (Item[2]["Layer"], {"Image": 1, "Button": 2, "Switch": 3, "Label": 4, "Dropdown": 5, "Popup": 6}.get(Item[0], 0)))
+        Variables.Elements = sorted(Variables.Elements, key=lambda Item: (Item[2]["Layer"], {"Image": 1, "Button": 2, "Switch": 3, "Input": 4, "Label": 5, "Dropdown": 6, "Popup": 7}.get(Item[0], 0)))
 
         if [[Item[0], Item[2]] for Item in Variables.Elements] != [[Item[0], Item[2]] for Item in Variables.LastElements]:
             RenderFrame = True
@@ -587,6 +668,7 @@ def Update(WindowHWND:int, Frame:np.ndarray):
                 States.TopMostLayer = max(States.TopMostLayer, max([Item["Layer"] for Item in Variables.Popups.values()]))
 
             States.AnyDropdownOpen = any([Item for Item in Variables.Dropdowns if Variables.Dropdowns[Item][0] == True])
+            States.AnyInputsOpen = any([Item for Item in Variables.Inputs if Variables.Inputs[Item][0] == True])
 
             for Item in Variables.Elements:
                 ItemType = Item[0]
@@ -611,6 +693,15 @@ def Update(WindowHWND:int, Frame:np.ndarray):
                     if Changed:
                         if ItemFunction is not None:
                             ItemFunction(State)
+                        Variables.ForceSingleRender = True
+
+                elif ItemType == "Input":
+                    Input, Changed, Selected, Pressed, Hovered = Elements.Input(**Item[2])
+                    Variables.Areas.append((ItemType, Item[2]["X1"], Item[2]["Y1"], Item[2]["X2"], Item[2]["Y2"], Item[2]["Layer"], Pressed or Hovered))
+
+                    if Changed:
+                        if ItemFunction is not None:
+                            ItemFunction(Input)
                         Variables.ForceSingleRender = True
 
                 elif ItemType == "Dropdown":

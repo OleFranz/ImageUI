@@ -12,6 +12,7 @@ from .Colors import SetTheme
 from .ImageUI import Label
 from .ImageUI import Button
 from .ImageUI import Switch
+from .ImageUI import Input
 from .ImageUI import Dropdown
 from .ImageUI import Image
 from .ImageUI import Popup

@@ -10,6 +10,9 @@ class SwitchKnobColor: pass
 class SwitchHoverColor: pass
 class SwitchEnabledColor: pass
 class SwitchEnabledHoverColor: pass
+class InputColor: pass
+class InputHoverColor: pass
+class InputThemeColor: pass
 class DropdownColor: pass
 class DropdownHoverColor: pass
 class PopupAnimationDuration: pass
