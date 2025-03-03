@@ -162,12 +162,12 @@ def Switch(Text, X1, Y1, X2, Y2, Layer, SwitchWidth, SwitchHeight, TextPadding, 
 
 
 # MARK: Input
-def Input(X1, Y1, X2, Y2, DefaultInput, ExampleInput, TextAlign, TextAlignPadding, Layer, FontSize, FontType, RoundCorners, TextColor, SecondaryTextColor, Color, HoverColor, ThemeColor):
+def Input(X1, Y1, X2, Y2, DefaultInput, Placeholder, TextAlign, TextAlignPadding, Layer, FontSize, FontType, RoundCorners, TextColor, SecondaryTextColor, Color, HoverColor, ThemeColor):
     try:
-        if f"{DefaultInput}#{ExampleInput}" not in Variables.Inputs:
-            Variables.Inputs[f"{DefaultInput}#{ExampleInput}"] = False, DefaultInput
+        if f"{DefaultInput}#{Placeholder}" not in Variables.Inputs:
+            Variables.Inputs[f"{DefaultInput}#{Placeholder}"] = False, DefaultInput
 
-        Selected, Input = Variables.Inputs[f"{DefaultInput}#{ExampleInput}"]
+        Selected, Input = Variables.Inputs[f"{DefaultInput}#{Placeholder}"]
 
         Changed = False
 
@@ -179,6 +179,11 @@ def Input(X1, Y1, X2, Y2, DefaultInput, ExampleInput, TextAlign, TextAlignPaddin
             Pressed = False
 
             if States.LastLeftPressed == True and States.LeftPressed == False and States.AnyDropdownOpen == False:
+                Selected = False
+                Changed = True
+
+        if Selected:
+            if States.ForegroundWindow == False or States.TopMostLayer != Layer or States.AnyDropdownOpen == True:
                 Selected = False
                 Changed = True
 
@@ -213,32 +218,32 @@ def Input(X1, Y1, X2, Y2, DefaultInput, ExampleInput, TextAlign, TextAlignPaddin
         CursorX = X1 + TextAlignPadding
         if Input != "":
             _, _, CursorX, _ = Label(Input, X1, Y1, X2, Y2, TextAlign, TextAlignPadding, Layer, FontSize, FontType, TextColor)
-        elif ExampleInput != "":
-            Label(ExampleInput, X1 + 3, Y1, X2 + 3, Y2, TextAlign, TextAlignPadding, Layer, FontSize, FontType, SecondaryTextColor)
-
-        for Key in States.KeyboardEventQueue:
-            if Key == "Paste":
-                win32clipboard.OpenClipboard()
-                Input += win32clipboard.GetClipboardData()
-                win32clipboard.CloseClipboard()
-            elif Key == "Backspace":
-                Input = Input[:-1] if len(Input) > 0 else ""
-            elif Key == "Enter":
-                Selected = False
-                Changed = True
-            else:
-                try:
-                    Input += str(Key)
-                except:
-                    pass
-
-            Variables.ForceSingleRender = True
-            States.KeyboardEventQueue.pop(0)
+        elif Placeholder != "":
+            Label(Placeholder, X1 + 3, Y1, X2 + 3, Y2, TextAlign, TextAlignPadding, Layer, FontSize, FontType, SecondaryTextColor)
 
         if Selected:
+            for Key in States.KeyboardEventQueue:
+                if Key == "Paste":
+                    win32clipboard.OpenClipboard()
+                    Input += win32clipboard.GetClipboardData()
+                    win32clipboard.CloseClipboard()
+                elif Key == "Backspace":
+                    Input = Input[:-1] if len(Input) > 0 else ""
+                elif Key == "Enter":
+                    Selected = False
+                    Changed = True
+                else:
+                    try:
+                        Input += str(Key)
+                    except:
+                        pass
+
+                Variables.ForceSingleRender = True
+                States.KeyboardEventQueue.pop(0)
+
             cv2.line(Variables.Frame, (round(CursorX), round(Y1 + (Y2 - Y1) * 0.3)), (round(CursorX), round(Y2 - (Y2 - Y1) * 0.3)), TextColor, 1, Settings.LineType)
 
-        Variables.Inputs[f"{DefaultInput}#{ExampleInput}"] = Selected, Input
+        Variables.Inputs[f"{DefaultInput}#{Placeholder}"] = Selected, Input
 
         return Input, Changed, Selected, Pressed, Hovered
     except:

@@ -256,7 +256,7 @@ def Switch(Text:str, X1:int, Y1:int, X2:int, Y2:int, State:bool = False, SwitchW
 
 
 # MARK: Input
-def Input(X1:int, Y1:int, X2:int, Y2:int, DefaultInput:str = "", ExampleInput:str = "", TextAlign:str = "Left", TextAlignPadding:int = 10, Layer:int = 0, OnChange:callable = None, FontSize:float = Defaults.FontSize, FontType:str = Defaults.FontType, RoundCorners:float = Defaults.CornerRoundness, TextColor:tuple = Defaults.TextColor, SecondaryTextColor:tuple = Defaults.GrayTextColor, Color:tuple = Defaults.InputColor, HoverColor:tuple = Defaults.InputHoverColor, ThemeColor:tuple = Defaults.InputThemeColor):
+def Input(X1:int, Y1:int, X2:int, Y2:int, DefaultInput:str = "", Placeholder:str = "", TextAlign:str = "Left", TextAlignPadding:int = 10, Layer:int = 0, OnChange:callable = None, FontSize:float = Defaults.FontSize, FontType:str = Defaults.FontType, RoundCorners:float = Defaults.CornerRoundness, TextColor:tuple = Defaults.TextColor, SecondaryTextColor:tuple = Defaults.GrayTextColor, Color:tuple = Defaults.InputColor, HoverColor:tuple = Defaults.InputHoverColor, ThemeColor:tuple = Defaults.InputThemeColor):
     """
     Creates an input box.
 
@@ -272,8 +272,8 @@ def Input(X1:int, Y1:int, X2:int, Y2:int, DefaultInput:str = "", ExampleInput:st
         The y coordinate of the bottom right corner.
     DefaultInput : str
         The default text in the input.
-    ExampleInput : str
-        The example input for the input.
+    Placeholder : str
+        The placeholder for the input.
     TextAlign : str
         The alignment of the text. (Left, Right, Center)
     TextAlignPadding : int
@@ -318,7 +318,7 @@ def Input(X1:int, Y1:int, X2:int, Y2:int, DefaultInput:str = "", ExampleInput:st
                                     "X2": X2,
                                     "Y2": Y2,
                                     "DefaultInput": DefaultInput,
-                                    "ExampleInput": ExampleInput,
+                                    "Placeholder": Placeholder,
                                     "TextAlign": TextAlign,
                                     "TextAlignPadding": TextAlignPadding,
                                     "Layer": Layer,
@@ -621,6 +621,8 @@ def Update(WindowHWND:int, Frame:np.ndarray):
         States.LeftPressed = LeftPressed
         States.RightPressed = RightPressed
         if LastLeftPressed == False and LeftPressed == False and LastRightPressed == False and RightPressed == False:
+            if ForegroundWindow != States.ForegroundWindow:
+                Variables.ForceSingleRender = True
             States.ForegroundWindow = ForegroundWindow
 
         if LeftPressed == False and LastLeftPressed == True:
