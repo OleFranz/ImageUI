@@ -15,7 +15,7 @@ import time
 
 
 # MARK: Label
-def Label(Text:str, X1:int, Y1:int, X2:int, Y2:int, Align:str = "Center", AlignPadding:int = 10, Layer:int = 0, FontSize:float = Defaults.FontSize, FontType:str = Defaults.FontType, TextColor:tuple = Defaults.TextColor):
+def Label(Text:str, X1:int, Y1:int, X2:int, Y2:int, Align:str = "Center", AlignPadding:int = 10, Layer:int = 0, FontSize:float = Defaults.FontSize, FontType:str = Defaults.FontType, Translate:bool = True, TextColor:tuple = Defaults.TextColor):
     """
     Creates a label.
 
@@ -65,13 +65,14 @@ def Label(Text:str, X1:int, Y1:int, X2:int, Y2:int, Align:str = "Center", AlignP
                                     "Layer": Layer,
                                     "FontSize": FontSize,
                                     "FontType": FontType,
+                                    "Translate": Translate,
                                     "TextColor": TextColor}])
     except:
         Errors.ShowError("ImageUI - Error in function Label.", str(traceback.format_exc()))
 
 
 # MARK: Button
-def Button(Text:str, X1:int, Y1:int, X2:int, Y2:int, Layer:int = 0, OnPress:callable = None, FontSize:float = Defaults.FontSize, FontType:str = Defaults.FontType, RoundCorners:float = Defaults.CornerRoundness, TextColor:tuple = Defaults.TextColor, Color:tuple = Defaults.ButtonColor, HoverColor:tuple = Defaults.ButtonHoverColor):
+def Button(Text:str, X1:int, Y1:int, X2:int, Y2:int, Layer:int = 0, OnPress:callable = None, FontSize:float = Defaults.FontSize, FontType:str = Defaults.FontType, RoundCorners:float = Defaults.CornerRoundness, Translate:bool = True, TextColor:tuple = Defaults.TextColor, Color:tuple = Defaults.ButtonColor, HoverColor:tuple = Defaults.ButtonHoverColor):
     """
     Creates a button.
 
@@ -144,6 +145,7 @@ def Button(Text:str, X1:int, Y1:int, X2:int, Y2:int, Layer:int = 0, OnPress:call
                                     "FontSize": FontSize,
                                     "FontType": FontType,
                                     "RoundCorners": RoundCorners,
+                                    "Translate": Translate,
                                     "TextColor": TextColor,
                                     "Color": Color,
                                     "HoverColor": HoverColor}])
@@ -152,7 +154,7 @@ def Button(Text:str, X1:int, Y1:int, X2:int, Y2:int, Layer:int = 0, OnPress:call
 
 
 # MARK: Switch
-def Switch(Text:str, X1:int, Y1:int, X2:int, Y2:int, State:bool = False, SwitchWidth:int = 40, SwitchHeight:int = 20, TextPadding:int = 10, Layer:int = 0, OnChange:callable = None, FontSize:float = Defaults.FontSize, FontType:str = Defaults.FontType, TextColor:tuple = Defaults.TextColor, SwitchColor=Defaults.SwitchColor, SwitchKnobColor=Defaults.SwitchKnobColor, SwitchHoverColor=Defaults.SwitchHoverColor, SwitchEnabledColor=Defaults.SwitchEnabledColor, SwitchEnabledHoverColor=Defaults.SwitchEnabledHoverColor):
+def Switch(Text:str, X1:int, Y1:int, X2:int, Y2:int, State:bool = False, SwitchWidth:int = 40, SwitchHeight:int = 20, TextPadding:int = 10, Layer:int = 0, OnChange:callable = None, FontSize:float = Defaults.FontSize, FontType:str = Defaults.FontType, Translate:bool = True, TextColor:tuple = Defaults.TextColor, SwitchColor=Defaults.SwitchColor, SwitchKnobColor=Defaults.SwitchKnobColor, SwitchHoverColor=Defaults.SwitchHoverColor, SwitchEnabledColor=Defaults.SwitchEnabledColor, SwitchEnabledHoverColor=Defaults.SwitchEnabledHoverColor):
     """
     Creates a switch.
 
@@ -245,6 +247,7 @@ def Switch(Text:str, X1:int, Y1:int, X2:int, Y2:int, State:bool = False, SwitchW
                                     "Layer": Layer,
                                     "FontSize": FontSize,
                                     "FontType": FontType,
+                                    "Translate": Translate,
                                     "TextColor": TextColor,
                                     "SwitchColor": SwitchColor,
                                     "SwitchKnobColor": SwitchKnobColor,
@@ -256,7 +259,7 @@ def Switch(Text:str, X1:int, Y1:int, X2:int, Y2:int, State:bool = False, SwitchW
 
 
 # MARK: Input
-def Input(X1:int, Y1:int, X2:int, Y2:int, DefaultInput:str = "", Placeholder:str = "", TextAlign:str = "Left", TextAlignPadding:int = 10, Layer:int = 0, OnChange:callable = None, FontSize:float = Defaults.FontSize, FontType:str = Defaults.FontType, RoundCorners:float = Defaults.CornerRoundness, TextColor:tuple = Defaults.TextColor, SecondaryTextColor:tuple = Defaults.GrayTextColor, Color:tuple = Defaults.InputColor, HoverColor:tuple = Defaults.InputHoverColor, ThemeColor:tuple = Defaults.InputThemeColor):
+def Input(X1:int, Y1:int, X2:int, Y2:int, DefaultInput:str = "", Placeholder:str = "", TextAlign:str = "Left", TextAlignPadding:int = 10, Layer:int = 0, OnChange:callable = None, FontSize:float = Defaults.FontSize, FontType:str = Defaults.FontType, RoundCorners:float = Defaults.CornerRoundness, Translate:bool = True, TextColor:tuple = Defaults.TextColor, SecondaryTextColor:tuple = Defaults.GrayTextColor, Color:tuple = Defaults.InputColor, HoverColor:tuple = Defaults.InputHoverColor, ThemeColor:tuple = Defaults.InputThemeColor):
     """
     Creates an input box.
 
@@ -325,6 +328,7 @@ def Input(X1:int, Y1:int, X2:int, Y2:int, DefaultInput:str = "", Placeholder:str
                                     "FontSize": FontSize,
                                     "FontType": FontType,
                                     "RoundCorners": RoundCorners,
+                                    "Translate": Translate,
                                     "TextColor": TextColor,
                                     "SecondaryTextColor": SecondaryTextColor,
                                     "Color": Color,
@@ -335,7 +339,7 @@ def Input(X1:int, Y1:int, X2:int, Y2:int, DefaultInput:str = "", Placeholder:str
 
 
 # MARK: Dropdown
-def Dropdown(Title:str, Items:list, DefaultItem:any, X1:int, Y1:int, X2:int, Y2:int, DropdownHeight:int = 100, DropdownPadding:int = 5, Layer:int = 0, OnChange:callable = None, FontSize:float = Defaults.FontSize, FontType:str = Defaults.FontType, RoundCorners:float = Defaults.CornerRoundness, TextColor:tuple = Defaults.TextColor, SecondaryTextColor:tuple = Defaults.GrayTextColor, Color:tuple = Defaults.DropdownColor, HoverColor:tuple = Defaults.DropdownHoverColor):
+def Dropdown(Title:str, Items:list, DefaultItem:any, X1:int, Y1:int, X2:int, Y2:int, DropdownHeight:int = 100, DropdownPadding:int = 5, Layer:int = 0, OnChange:callable = None, FontSize:float = Defaults.FontSize, FontType:str = Defaults.FontType, RoundCorners:float = Defaults.CornerRoundness, Translate:bool = True, TextColor:tuple = Defaults.TextColor, SecondaryTextColor:tuple = Defaults.GrayTextColor, Color:tuple = Defaults.DropdownColor, HoverColor:tuple = Defaults.DropdownHoverColor):
     """
     Creates a dropdown.
 
@@ -423,6 +427,7 @@ def Dropdown(Title:str, Items:list, DefaultItem:any, X1:int, Y1:int, X2:int, Y2:
                                     "FontSize": FontSize,
                                     "FontType": FontType,
                                     "RoundCorners": RoundCorners,
+                                    "Translate": Translate,
                                     "TextColor": TextColor,
                                     "SecondaryTextColor": SecondaryTextColor,
                                     "Color": Color,
@@ -476,7 +481,7 @@ def Image(Image:np.ndarray, X1:int, Y1:int, X2:int, Y2:int, Layer:int = 0, OnPre
 
 
 # MARK: Popup
-def Popup(Text:str, StartX1:int, StartY1:int, StartX2:int, StartY2:int, EndX1:int, EndY1:int, EndX2:int, EndY2:int, Progress:float = 0, DoAnimation:bool = True, AnimationDuration:float = Defaults.PopupAnimationDuration, ShowDuration:float = Defaults.PopupShowDuration, Layer:int = 0, FontSize:float = Defaults.FontSize, FontType:str = Defaults.FontType, RoundCorners:float = Defaults.CornerRoundness, TextColor:tuple = Defaults.TextColor, Color:tuple = Defaults.PopupColor, OutlineColor:tuple = Defaults.PopupOutlineColor, ProgressBarColor:tuple = Defaults.PopupProgressBarColor):
+def Popup(Text:str, StartX1:int, StartY1:int, StartX2:int, StartY2:int, EndX1:int, EndY1:int, EndX2:int, EndY2:int, Progress:float = 0, DoAnimation:bool = True, AnimationDuration:float = Defaults.PopupAnimationDuration, ShowDuration:float = Defaults.PopupShowDuration, Layer:int = 0, FontSize:float = Defaults.FontSize, FontType:str = Defaults.FontType, RoundCorners:float = Defaults.CornerRoundness, Translate:bool = True, TextColor:tuple = Defaults.TextColor, Color:tuple = Defaults.PopupColor, OutlineColor:tuple = Defaults.PopupOutlineColor, ProgressBarColor:tuple = Defaults.PopupProgressBarColor):
     """
     Creates a popup.
 
@@ -565,6 +570,7 @@ def Popup(Text:str, StartX1:int, StartY1:int, StartX2:int, StartY2:int, EndX1:in
                                     "FontSize": FontSize,
                                     "FontType": FontType,
                                     "RoundCorners": RoundCorners,
+                                    "Translate": Translate,
                                     "TextColor": TextColor,
                                     "Color": Color,
                                     "OutlineColor": OutlineColor,
