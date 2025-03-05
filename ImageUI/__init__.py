@@ -18,3 +18,7 @@ from .ImageUI import Image
 from .ImageUI import Popup
 from .ImageUI import Update
 from .ImageUI import Exit
+
+import Settings
+import Colors
+import States
