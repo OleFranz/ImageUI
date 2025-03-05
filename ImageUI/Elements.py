@@ -179,14 +179,13 @@ def Input(X1, Y1, X2, Y2, DefaultInput, Placeholder, TextAlign, TextAlignPadding
             Hovered = False
             Pressed = False
 
-            if States.LastLeftPressed == True and States.LeftPressed == False and States.AnyDropdownOpen == False:
+            if Selected and States.LastLeftPressed == True and States.LeftPressed == False and States.AnyDropdownOpen == False:
                 Selected = False
                 Changed = True
 
-        if Selected:
-            if States.ForegroundWindow == False or States.TopMostLayer != Layer or States.AnyDropdownOpen == True:
-                Selected = False
-                Changed = True
+        if Selected and (States.ForegroundWindow == False or States.TopMostLayer != Layer or States.AnyDropdownOpen == True):
+            Selected = False
+            Changed = True
 
         if Hovered and Pressed:
             Selected = True
@@ -216,11 +215,22 @@ def Input(X1, Y1, X2, Y2, DefaultInput, Placeholder, TextAlign, TextAlignPadding
             else:
                 cv2.rectangle(Variables.Frame, (round(X1) + 2, round(Y1) + 2), (round(X2) - 2, round(Y2) - 2), Color, - 1, Settings.RectangleLineType)
 
-        CursorX = X1 + TextAlignPadding
+        if TextAlign.lower() == "left":
+            CursorX = X1 + TextAlignPadding
+        elif TextAlign.lower() == "right":
+            CursorX = X2 - TextAlignPadding
+        else:
+            CursorX = (X1 + X2) / 2
         if Input != "":
             _, _, CursorX, _ = Label(Input, X1, Y1, X2, Y2, TextAlign, TextAlignPadding, Layer, FontSize, FontType, False, TextColor)
         elif Placeholder != "":
-            Label(Placeholder, X1 + 3, Y1, X2 + 3, Y2, TextAlign, TextAlignPadding, Layer, FontSize, FontType, Translate, SecondaryTextColor)
+            if TextAlign.lower() == "left":
+                Offset = 3
+            elif TextAlign.lower() == "right":
+                Offset = -3
+            else:
+                Offset = 0
+            Label(Placeholder, X1 + Offset, Y1, X2 + Offset, Y2, TextAlign, TextAlignPadding, Layer, FontSize, FontType, Translate, SecondaryTextColor)
 
         if Selected:
             for Key in States.KeyboardEventQueue:
