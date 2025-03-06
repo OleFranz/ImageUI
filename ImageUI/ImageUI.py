@@ -618,8 +618,11 @@ def SetSwitch(ID:str, State:bool):
     None
     """
     try:
-        if Variables.Switches[ID][0] != State:
-            Variables.Switches[ID] = State, time.time()
+        if ID in Variables.Switches:
+            if Variables.Switches[ID][0] != State:
+                Variables.Switches[ID] = State, time.time()
+        else:
+            Variables.Switches[ID] = State, 0
     except:
         Errors.ShowError("ImageUI - Error in function SetSwitch.", str(traceback.format_exc()))
 
@@ -642,8 +645,11 @@ def SetInput(ID:str, Input:str):
     None
     """
     try:
-        if Variables.Inputs[ID][1] != Input:
-            Variables.Inputs[ID] = Variables.Inputs[ID][0], Input
+        if ID in Variables.Inputs:
+            if Variables.Inputs[ID][1] != Input:
+                Variables.Inputs[ID] = Variables.Inputs[ID][0], Input
+        else:
+            Variables.Inputs[ID] = False, Input
     except:
         Errors.ShowError("ImageUI - Error in function SetInput.", str(traceback.format_exc()))
 
@@ -668,14 +674,21 @@ def SetDropdown(ID:str, Items:list, SelectedItem:any):
     None
     """
     try:
-        if Variables.Dropdowns[ID][1] != Items:
-            Variables.Dropdowns[ID] = Variables.Dropdowns[ID][0], Items, Variables.Dropdowns[ID][2]
-        if Variables.Dropdowns[ID][2] != SelectedItem:
+        if ID in Variables.Dropdowns:
+            if Variables.Dropdowns[ID][1] != Items:
+                Variables.Dropdowns[ID] = Variables.Dropdowns[ID][0], Items, Variables.Dropdowns[ID][2]
+            if Variables.Dropdowns[ID][2] != SelectedItem:
+                try:
+                    SelectedItem = Variables.Dropdowns[ID][1].index(SelectedItem)
+                except ValueError:
+                    SelectedItem = 0
+                Variables.Dropdowns[ID] = Variables.Dropdowns[ID][0], Variables.Dropdowns[ID][1], SelectedItem
+        else:
             try:
-                SelectedItem = Variables.Dropdowns[ID][1].index(SelectedItem)
+                SelectedItem = Items.index(SelectedItem)
             except ValueError:
                 SelectedItem = 0
-            Variables.Dropdowns[ID] = Variables.Dropdowns[ID][0], Variables.Dropdowns[ID][1], SelectedItem
+            Variables.Dropdowns[ID] = False, Items, SelectedItem
     except:
         Errors.ShowError("ImageUI - Error in function SetInput.", str(traceback.format_exc()))
 
