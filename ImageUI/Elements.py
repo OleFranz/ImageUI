@@ -13,14 +13,14 @@ import cv2
 
 
 # MARK: Label
-def Label(Text, X1, Y1, X2, Y2, Align, AlignPadding, Layer, FontSize, FontType, Translate, TextColor):
+def Label(Text, X1, Y1, X2, Y2, ID, Align, AlignPadding, Layer, FontSize, FontType, Translate, TextColor):
     try:
         if Text == "": return X1, Y1, X2, Y2
         if Translate:
             Text = Translations.Translate(Text)
         Frame = Variables.Frame.copy()
         for CachedText in Variables.TextCache:
-            if CachedText[0] != f"{Text}-{X1}-{Y1}-{X2}-{Y2}-{FontSize}-{FontType}-{Translate}-{TextColor}":
+            if CachedText[0] != f"{Text}-{X1}-{Y1}-{X2}-{Y2}-{ID}-{Align}-{AlignPadding}-{FontSize}-{FontType}-{Translate}-{TextColor}":
                 continue
             EmptyFrame, TextFrame, BBoxX1, BBoxY1, BBoxX2, BBoxY2 = CachedText[1]
             CurrentFrame = Frame[BBoxY1:BBoxY2, BBoxX1:BBoxX2].copy()
@@ -53,7 +53,7 @@ def Label(Text, X1, Y1, X2, Y2, Align, AlignPadding, Layer, FontSize, FontType, 
         Frame = numpy.array(Frame)
         Variables.Frame = Frame.copy()
         TextFrame = Frame[BBoxY1:BBoxY2, BBoxX1:BBoxX2]
-        Variables.TextCache.append([f"{Text}-{X1}-{Y1}-{X2}-{Y2}-{FontSize}-{FontType}-{Translate}-{TextColor}", [EmptyFrame, TextFrame, BBoxX1, BBoxY1, BBoxX2, BBoxY2]])
+        Variables.TextCache.append([f"{Text}-{X1}-{Y1}-{X2}-{Y2}-{ID}-{Align}-{AlignPadding}-{FontSize}-{FontType}-{Translate}-{TextColor}", [EmptyFrame, TextFrame, BBoxX1, BBoxY1, BBoxX2, BBoxY2]])
         return BBoxX1 + 2, BBoxX1 + 2, BBoxX2 - 2, BBoxY2 - 2
     except:
         Errors.ShowError("Elements - Error in function Label.", str(traceback.format_exc()))
@@ -61,7 +61,7 @@ def Label(Text, X1, Y1, X2, Y2, Align, AlignPadding, Layer, FontSize, FontType, 
 
 
 # MARK: Button
-def Button(Text, X1, Y1, X2, Y2, Layer, FontSize, FontType, RoundCorners, Translate, TextColor, Color, HoverColor):
+def Button(Text, X1, Y1, X2, Y2, ID, Layer, FontSize, FontType, RoundCorners, Translate, TextColor, Color, HoverColor):
     try:
         if X1 <= States.MouseX * Variables.Frame.shape[1] <= X2 and Y1 <= States.MouseY * Variables.Frame.shape[0] <= Y2 and States.ForegroundWindow and States.TopMostLayer == Layer and States.AnyDropdownOpen == False and States.AnyInputsOpen == False:
             Hovered = True
@@ -79,7 +79,7 @@ def Button(Text, X1, Y1, X2, Y2, Layer, FontSize, FontType, RoundCorners, Transl
                 cv2.rectangle(Variables.Frame, (round(X1 + RoundCorners / 2), round(Y1 + RoundCorners / 2)), (round(X2 - RoundCorners / 2), round(Y2 - RoundCorners / 2)), Color, - 1, Settings.RectangleLineType)
             else:
                 cv2.rectangle(Variables.Frame, (round(X1), round(Y1)), (round(X2), round(Y2)), Color, - 1, Settings.RectangleLineType)
-        Label(Text, X1, Y1, X2, Y2, "Center", 0, Layer, FontSize, FontType, Translate, TextColor)
+        Label(Text, X1, Y1, X2, Y2, ID + "#LABEL", "Center", 0, Layer, FontSize, FontType, Translate, TextColor)
         if X1 <= States.MouseX * Variables.Frame.shape[1] <= X2 and Y1 <= States.MouseY * Variables.Frame.shape[0] <= Y2 and States.LeftPressed == False and States.LastLeftPressed == True and States.ForegroundWindow and States.TopMostLayer == Layer and States.AnyDropdownOpen == False and States.AnyInputsOpen == False:
             return True, States.LeftPressed and Hovered, Hovered
         else:
@@ -90,16 +90,16 @@ def Button(Text, X1, Y1, X2, Y2, Layer, FontSize, FontType, RoundCorners, Transl
 
 
 # MARK: Switch
-def Switch(Text, X1, Y1, X2, Y2, Layer, SwitchWidth, SwitchHeight, TextPadding, State, FontSize, FontType, Translate, TextColor, SwitchColor, SwitchKnobColor, SwitchHoverColor, SwitchEnabledColor, SwitchEnabledHoverColor):
+def Switch(Text, X1, Y1, X2, Y2, ID, Layer, SwitchWidth, SwitchHeight, TextPadding, State, FontSize, FontType, Translate, TextColor, SwitchColor, SwitchKnobColor, SwitchHoverColor, SwitchEnabledColor, SwitchEnabledHoverColor):
     try:
         CurrentTime = time.time()
 
-        if Text in Variables.Switches:
-            State = Variables.Switches[Text][0]
+        if ID in Variables.Switches:
+            State = Variables.Switches[ID][0]
         else:
-            Variables.Switches[Text] = State, 0
+            Variables.Switches[ID] = State, 0
 
-        x = CurrentTime - Variables.Switches[Text][1]
+        x = CurrentTime - Variables.Switches[ID][1]
         if x < Settings.SwitchAnimationDuration:
             x *= 1/Settings.SwitchAnimationDuration
             AnimationState = 1 - math.pow(2, -10 * x)
@@ -151,9 +151,9 @@ def Switch(Text, X1, Y1, X2, Y2, Layer, SwitchWidth, SwitchHeight, TextPadding, 
                     cv2.circle(Variables.Frame, (round(X1 + SwitchHeight / 2 + (SwitchWidth - SwitchHeight) * (1 - AnimationState)), round((Y1 + Y2) / 2)), round(SwitchHeight / 2.5), SwitchKnobColor, -1, Settings.CircleLineType)
                 else:
                     cv2.circle(Variables.Frame, (round(X1 + SwitchHeight / 2), round((Y1 + Y2) / 2)), round(SwitchHeight / 2.5), SwitchKnobColor, -1, Settings.CircleLineType)
-        Label(Text, X1, Y1, X2, Y2, "Left", SwitchWidth + TextPadding, Layer, FontSize, FontType, Translate, TextColor)
+        Label(Text, X1, Y1, X2, Y2, ID + "#LABEL", "Left", SwitchWidth + TextPadding, Layer, FontSize, FontType, Translate, TextColor)
         if X1 <= States.MouseX * States.FrameWidth <= X2 and Y1 <= States.MouseY * States.FrameHeight <= Y2 and States.LeftPressed == False and States.LastLeftPressed == True and States.ForegroundWindow and States.TopMostLayer == Layer and States.AnyDropdownOpen == False and States.AnyInputsOpen == False:
-            Variables.Switches[Text] = not State, CurrentTime
+            Variables.Switches[ID] = not State, CurrentTime
             return not State, True, States.LeftPressed and SwitchHovered, SwitchHovered
         else:
             return State, False, States.LeftPressed and SwitchHovered, SwitchHovered
@@ -163,12 +163,12 @@ def Switch(Text, X1, Y1, X2, Y2, Layer, SwitchWidth, SwitchHeight, TextPadding, 
 
 
 # MARK: Input
-def Input(X1, Y1, X2, Y2, DefaultInput, Placeholder, TextAlign, TextAlignPadding, Layer, FontSize, FontType, RoundCorners, Translate, TextColor, SecondaryTextColor, Color, HoverColor, ThemeColor):
+def Input(X1, Y1, X2, Y2, ID, DefaultInput, Placeholder, TextAlign, TextAlignPadding, Layer, FontSize, FontType, RoundCorners, Translate, TextColor, SecondaryTextColor, Color, HoverColor, ThemeColor):
     try:
-        if f"{DefaultInput}#{Placeholder}" not in Variables.Inputs:
-            Variables.Inputs[f"{DefaultInput}#{Placeholder}"] = False, DefaultInput
+        if ID not in Variables.Inputs:
+            Variables.Inputs[ID] = False, DefaultInput
 
-        Selected, Input = Variables.Inputs[f"{DefaultInput}#{Placeholder}"]
+        Selected, Input = Variables.Inputs[ID]
 
         Changed = False
 
@@ -222,7 +222,7 @@ def Input(X1, Y1, X2, Y2, DefaultInput, Placeholder, TextAlign, TextAlignPadding
         else:
             CursorX = (X1 + X2) / 2
         if Input != "":
-            _, _, CursorX, _ = Label(Input, X1, Y1, X2, Y2, TextAlign, TextAlignPadding, Layer, FontSize, FontType, False, TextColor)
+            _, _, CursorX, _ = Label(Input, X1, Y1, X2, Y2, ID + "#LABEL", TextAlign, TextAlignPadding, Layer, FontSize, FontType, False, TextColor)
         elif Placeholder != "":
             if TextAlign.lower() == "left":
                 Offset = 3
@@ -230,7 +230,7 @@ def Input(X1, Y1, X2, Y2, DefaultInput, Placeholder, TextAlign, TextAlignPadding
                 Offset = -3
             else:
                 Offset = 0
-            Label(Placeholder, X1 + Offset, Y1, X2 + Offset, Y2, TextAlign, TextAlignPadding, Layer, FontSize, FontType, Translate, SecondaryTextColor)
+            Label(Placeholder, X1 + Offset, Y1, X2 + Offset, Y2, ID + "#LABEL", TextAlign, TextAlignPadding, Layer, FontSize, FontType, Translate, SecondaryTextColor)
 
         if Selected:
             for Key in States.KeyboardEventQueue:
@@ -257,7 +257,7 @@ def Input(X1, Y1, X2, Y2, DefaultInput, Placeholder, TextAlign, TextAlignPadding
 
             cv2.line(Variables.Frame, (round(CursorX), round(Y1 + (Y2 - Y1) * 0.3)), (round(CursorX), round(Y2 - (Y2 - Y1) * 0.3)), TextColor, 1, Settings.LineType)
 
-        Variables.Inputs[f"{DefaultInput}#{Placeholder}"] = Selected, Input
+        Variables.Inputs[ID] = Selected, Input
 
         return Input, Changed, Selected, Pressed, Hovered
     except:
@@ -266,16 +266,16 @@ def Input(X1, Y1, X2, Y2, DefaultInput, Placeholder, TextAlign, TextAlignPadding
 
 
 # MARK: Dropdown
-def Dropdown(Title, Items, DefaultItem, X1, Y1, X2, Y2, DropdownHeight, DropdownPadding, Layer, FontSize, FontType, RoundCorners, Translate, TextColor, SecondaryTextColor, Color, HoverColor):
+def Dropdown(Title, Items, DefaultItem, X1, Y1, X2, Y2, ID, DropdownHeight, DropdownPadding, Layer, FontSize, FontType, RoundCorners, Translate, TextColor, SecondaryTextColor, Color, HoverColor):
     try:
-        if Title + str(Items) not in Variables.Dropdowns:
+        if ID not in Variables.Dropdowns:
             try:
                 DefaultItem = Items.index(DefaultItem)
             except ValueError:
                 DefaultItem = 0
-            Variables.Dropdowns[Title + str(Items)] = False, DefaultItem
+            Variables.Dropdowns[ID] = False, Items, DefaultItem
 
-        DropdownSelected, SelectedItem = Variables.Dropdowns[Title + str(Items)]
+        DropdownSelected, Items, SelectedItem = Variables.Dropdowns[ID]
 
         if X1 <= States.MouseX * States.FrameWidth <= X2 and Y1 <= States.MouseY * States.FrameHeight <= Y2 + ((DropdownHeight + DropdownPadding) if DropdownSelected else 0) and States.ForegroundWindow and States.TopMostLayer == Layer and States.AnyInputsOpen == False:
             DropdownHovered = True
@@ -333,7 +333,7 @@ def Dropdown(Title, Items, DefaultItem, X1, Y1, X2, Y2, DropdownHeight, Dropdown
                     ItemText = "> " + Item + " <"
                 else:
                     ItemText = Item
-                Label(ItemText, X1, Y2 + DropdownPadding + DropdownHeight / 3 * i, X2, Y2 + DropdownPadding + DropdownHeight / 3 * (i + 1), "Center", 0, Layer, FontSize, FontType, Translate, TextColor if i == 1 else SecondaryTextColor)
+                Label(ItemText, X1, Y2 + DropdownPadding + DropdownHeight / 3 * i, X2, Y2 + DropdownPadding + DropdownHeight / 3 * (i + 1), ID + "#LABEL", "Center", 0, Layer, FontSize, FontType, Translate, TextColor if i == 1 else SecondaryTextColor)
 
         else:
 
@@ -342,9 +342,9 @@ def Dropdown(Title, Items, DefaultItem, X1, Y1, X2, Y2, DropdownHeight, Dropdown
             cv2.line(Variables.Frame, (round(X2 - Padding - Height), round(Y2 - Padding)), (round(X2 - Padding), round(Y1 + Padding)), TextColor, max(round(FontSize / 15), 1), Settings.LineType)
             cv2.line(Variables.Frame, (round(X2 - Padding - Height), round(Y2 - Padding)), (round(X2 - Padding - Height * 2), round(Y1 + Padding)), TextColor, max(round(FontSize / 15), 1), Settings.LineType)
 
-        Label(Title, X1, Y1, X2, Y2, "Center", 0, Layer, FontSize, FontType, Translate, TextColor)
+        Label(Title, X1, Y1, X2, Y2, ID + "#LABEL", "Center", 0, Layer, FontSize, FontType, Translate, TextColor)
 
-        Variables.Dropdowns[Title + str(Items)] = DropdownSelected, SelectedItem
+        Variables.Dropdowns[ID] = DropdownSelected, Items, SelectedItem
 
         return Items[SelectedItem], DropdownChanged, DropdownSelected, DropdownPressed, DropdownHovered
     except:
@@ -353,7 +353,7 @@ def Dropdown(Title, Items, DefaultItem, X1, Y1, X2, Y2, DropdownHeight, Dropdown
 
 
 # MARK: Image
-def Image(Image, X1, Y1, X2, Y2, Layer, RoundCorners):
+def Image(Image, X1, Y1, X2, Y2, ID, Layer, RoundCorners):
     try:
         if type(Image) == type(None): return
         if Image.shape[1] <= 0 or Image.shape[0] <= 0: return
@@ -375,50 +375,58 @@ def Image(Image, X1, Y1, X2, Y2, Layer, RoundCorners):
 
 
 # MARK: Popup
-def Popup(Text, StartX1, StartY1, StartX2, StartY2, EndX1, EndY1, EndX2, EndY2, Progress, DoAnimation, AnimationDuration, ShowDuration, Layer, FontSize, FontType, RoundCorners, Translate, TextColor, Color, OutlineColor, ProgressBarColor):
+def Popup(Text, StartX1, StartY1, StartX2, StartY2, EndX1, EndY1, EndX2, EndY2, ID, Progress, DoAnimation, AnimationDuration, ShowDuration, Layer, FontSize, FontType, RoundCorners, Translate, TextColor, Color, OutlineColor, ProgressBarColor):
     try:
-        Key = f"{StartX1}-{StartY1}-{StartX2}-{StartY2}-{EndX1}-{EndY1}-{EndX2}-{EndY2}-{Layer}"
-        if Key not in Variables.Popups:
-            Variables.Popups[Key] = {"Key": Key,
-                                     "Time": time.time(),
-                                     "Text": Text,
-                                     "StartX1": StartX1,
-                                     "StartY1": StartY1,
-                                     "StartX2": StartX2,
-                                     "StartY2": StartY2,
-                                     "EndX1": EndX1,
-                                     "EndY1": EndY1,
-                                     "EndX2": EndX2,
-                                     "EndY2": EndY2,
-                                     "Progress": Progress,
-                                     "DoAnimation": DoAnimation,
-                                     "AnimationDuration": AnimationDuration,
-                                     "ShowDuration": ShowDuration,
-                                     "Layer": Layer,
-                                     "FontSize": FontSize,
-                                     "FontType": FontType,
-                                     "RoundCorners": RoundCorners,
-                                     "Translate": Translate,
-                                     "TextColor": TextColor,
-                                     "Color": Color,
-                                     "OutlineColor": OutlineColor,
-                                     "ProgressBarColor": ProgressBarColor}
+        if ID not in Variables.Popups:
+            Variables.Popups[ID] = {"ID": ID,
+                                    "Time": time.time(),
+                                    "Text": Text,
+                                    "StartX1": StartX1,
+                                    "StartY1": StartY1,
+                                    "StartX2": StartX2,
+                                    "StartY2": StartY2,
+                                    "EndX1": EndX1,
+                                    "EndY1": EndY1,
+                                    "EndX2": EndX2,
+                                    "EndY2": EndY2,
+                                    "Progress": Progress,
+                                    "DoAnimation": DoAnimation,
+                                    "AnimationDuration": AnimationDuration,
+                                    "ShowDuration": ShowDuration,
+                                    "Layer": Layer,
+                                    "FontSize": FontSize,
+                                    "FontType": FontType,
+                                    "RoundCorners": RoundCorners,
+                                    "Translate": Translate,
+                                    "TextColor": TextColor,
+                                    "Color": Color,
+                                    "OutlineColor": OutlineColor,
+                                    "ProgressBarColor": ProgressBarColor}
         else:
-            if Variables.Popups[Key]["DoAnimation"] and Variables.Popups[Key]["Time"] + Variables.Popups[Key]["AnimationDuration"] <= time.time():
-                Variables.Popups[Key]["Time"] = time.time() - Variables.Popups[Key]["AnimationDuration"]
-            Variables.Popups[Key]["Text"] = Text
-            Variables.Popups[Key]["Progress"] = Progress
-            Variables.Popups[Key]["DoAnimation"] = DoAnimation
-            Variables.Popups[Key]["AnimationDuration"] = AnimationDuration
-            Variables.Popups[Key]["ShowDuration"] = ShowDuration
-            Variables.Popups[Key]["FontSize"] = FontSize
-            Variables.Popups[Key]["FontType"] = FontType
-            Variables.Popups[Key]["RoundCorners"] = RoundCorners
-            Variables.Popups[Key]["Translate"] = Translate
-            Variables.Popups[Key]["TextColor"] = TextColor
-            Variables.Popups[Key]["Color"] = Color
-            Variables.Popups[Key]["OutlineColor"] = OutlineColor
-            Variables.Popups[Key]["ProgressBarColor"] = ProgressBarColor
+            if Variables.Popups[ID]["DoAnimation"] and Variables.Popups[ID]["Time"] + Variables.Popups[ID]["AnimationDuration"] <= time.time():
+                Variables.Popups[ID]["Time"] = time.time() - Variables.Popups[ID]["AnimationDuration"]
+            Variables.Popups[ID]["Text"] = Text
+            Variables.Popups[ID]["StartX1"] = StartX1
+            Variables.Popups[ID]["StartY1"] = StartY1
+            Variables.Popups[ID]["StartX2"] = StartX2
+            Variables.Popups[ID]["StartY2"] = StartY2
+            Variables.Popups[ID]["EndX1"] = EndX1
+            Variables.Popups[ID]["EndY1"] = EndY1
+            Variables.Popups[ID]["EndX2"] = EndX2
+            Variables.Popups[ID]["EndY2"] = EndY2
+            Variables.Popups[ID]["Progress"] = Progress
+            Variables.Popups[ID]["DoAnimation"] = DoAnimation
+            Variables.Popups[ID]["AnimationDuration"] = AnimationDuration
+            Variables.Popups[ID]["ShowDuration"] = ShowDuration
+            Variables.Popups[ID]["Layer"] = Layer
+            Variables.Popups[ID]["FontSize"] = FontSize
+            Variables.Popups[ID]["FontType"] = FontType
+            Variables.Popups[ID]["RoundCorners"] = RoundCorners
+            Variables.Popups[ID]["Translate"] = Translate
+            Variables.Popups[ID]["TextColor"] = TextColor
+            Variables.Popups[ID]["Color"] = Color
+            Variables.Popups[ID]["OutlineColor"] = OutlineColor
+            Variables.Popups[ID]["ProgressBarColor"] = ProgressBarColor
     except:
         Errors.ShowError("Elements - Error in function Popup.", str(traceback.format_exc()))
 
@@ -428,6 +436,7 @@ def CheckAndRenderPopups():
         for Popup in list(Variables.Popups.values()):
             Render = False
             CurrentTime = time.time()
+            ID = Popup["ID"]
             Time = Popup["Time"]
             Text = Popup["Text"]
             StartX1 = Popup["StartX1"]
@@ -475,13 +484,13 @@ def CheckAndRenderPopups():
                     Y2 = round(EndY2 * (1 - X) + StartY2 * X)
                     Render = True
             if Time + (AnimationDuration if DoAnimation else 0) <= CurrentTime <= Time + ShowDuration + (AnimationDuration if DoAnimation else 0):
-                X1 = round(Popup["EndX1"])
-                Y1 = round(Popup["EndY1"])
-                X2 = round(Popup["EndX2"])
-                Y2 = round(Popup["EndY2"])
+                X1 = round(EndX1)
+                Y1 = round(EndY1)
+                X2 = round(EndX2)
+                Y2 = round(EndY2)
                 Render = True
             elif Time + ShowDuration + (AnimationDuration * 2 if DoAnimation else 0) <= CurrentTime:
-                del Variables.Popups[Popup["Key"]]
+                del Variables.Popups[Popup["ID"]]
                 Variables.ForceSingleRender = True
             if Render:
 
@@ -509,7 +518,7 @@ def CheckAndRenderPopups():
                         Right = 0.5 + math.cos(X ** 2 * math.pi) / 2
                     cv2.line(Variables.Frame, (round(X1 + RoundCorners / 2 + (X2 - X1 - RoundCorners) * Right), round(Y2)), (round(X1 + RoundCorners / 2 + (X2 - X1 - RoundCorners) * Left), round(Y2)), ProgressBarColor, 1, Settings.LineType)
 
-                Label(Text, X1, Y1, X2, Y2, "Center", 0, Layer, FontSize, FontType, Translate, TextColor)
+                Label(Text, X1, Y1, X2, Y2, ID + "#LABEL", "Center", 0, Layer, FontSize, FontType, Translate, TextColor)
 
     except:
         Errors.ShowError("Elements - Error in function CheckAndRenderPopups.", str(traceback.format_exc()))

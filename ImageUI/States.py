@@ -39,10 +39,9 @@ def HandleScrollEvents():
             while Variables.Exit == False:
                 Event = Events.get()
                 if isinstance(Event, pynput.mouse.Events.Scroll):
-                    if 0 <= MouseX <= 1 and 0 <= MouseY <= 1 and ForegroundWindow:
-                        if ForegroundWindow == True:
-                            ScrollEventQueue.append(Event)
-                            Variables.ForceSingleRender = True
+                    if 0 <= MouseX <= 1 and 0 <= MouseY <= 1 and AnyDropdownOpen:
+                        ScrollEventQueue.append(Event)
+                        Variables.ForceSingleRender = True
     except:
         Errors.ShowError("States - Error in function HandleScrollEvents.", str(traceback.format_exc()))
 ScrollEventThread = threading.Thread(target=HandleScrollEvents, daemon=True).start()
@@ -52,7 +51,7 @@ def HandleKeyboardEvents():
     try:
         global KeyboardEventQueue
         def OnEvent(event):
-            if event.event_type == keyboard.KEY_DOWN:
+            if event.event_type == keyboard.KEY_DOWN and AnyInputsOpen:
                 EventName = event.name
                 if keyboard.is_pressed("ctrl+v"):
                     KeyboardEventQueue.append("Paste")

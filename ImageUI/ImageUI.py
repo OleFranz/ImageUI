@@ -15,7 +15,7 @@ import time
 
 
 # MARK: Label
-def Label(Text:str, X1:int, Y1:int, X2:int, Y2:int, Align:str = "Center", AlignPadding:int = 10, Layer:int = 0, FontSize:float = Defaults.FontSize, FontType:str = Defaults.FontType, Translate:bool = True, TextColor:tuple = Defaults.TextColor):
+def Label(Text:str, X1:int, Y1:int, X2:int, Y2:int, ID:str, Align:str = "Center", AlignPadding:int = 10, Layer:int = 0, FontSize:float = Defaults.FontSize, FontType:str = Defaults.FontType, Translate:bool = True, TextColor:tuple = Defaults.TextColor):
     """
     Creates a label.
 
@@ -31,6 +31,8 @@ def Label(Text:str, X1:int, Y1:int, X2:int, Y2:int, Align:str = "Center", AlignP
         The x coordinate of the bottom right corner.
     Y2 : int
         The y coordinate of the bottom right corner.
+    ID : str
+        A unique identifier for the label.
     Align : str
         The alignment of the text. (Left, Right, Center)
     AlignPadding : int
@@ -60,6 +62,7 @@ def Label(Text:str, X1:int, Y1:int, X2:int, Y2:int, Align:str = "Center", AlignP
                                     "Y1": Y1,
                                     "X2": X2,
                                     "Y2": Y2,
+                                    "ID": ID,
                                     "Align": Align,
                                     "AlignPadding": AlignPadding,
                                     "Layer": Layer,
@@ -72,7 +75,7 @@ def Label(Text:str, X1:int, Y1:int, X2:int, Y2:int, Align:str = "Center", AlignP
 
 
 # MARK: Button
-def Button(Text:str, X1:int, Y1:int, X2:int, Y2:int, Layer:int = 0, OnPress:callable = None, FontSize:float = Defaults.FontSize, FontType:str = Defaults.FontType, RoundCorners:float = Defaults.CornerRoundness, Translate:bool = True, TextColor:tuple = Defaults.TextColor, Color:tuple = Defaults.ButtonColor, HoverColor:tuple = Defaults.ButtonHoverColor):
+def Button(Text:str, X1:int, Y1:int, X2:int, Y2:int, ID:str, Layer:int = 0, OnPress:callable = None, FontSize:float = Defaults.FontSize, FontType:str = Defaults.FontType, RoundCorners:float = Defaults.CornerRoundness, Translate:bool = True, TextColor:tuple = Defaults.TextColor, Color:tuple = Defaults.ButtonColor, HoverColor:tuple = Defaults.ButtonHoverColor):
     """
     Creates a button.
 
@@ -105,6 +108,8 @@ def Button(Text:str, X1:int, Y1:int, X2:int, Y2:int, Layer:int = 0, OnPress:call
         The x coordinate of the bottom right corner.
     Y2 : int
         The y coordinate of the bottom right corner.
+    ID : str
+        A unique identifier for the button.
     Layer : int
         The layer of the button in the UI.
     OnPress : callable
@@ -141,6 +146,7 @@ def Button(Text:str, X1:int, Y1:int, X2:int, Y2:int, Layer:int = 0, OnPress:call
                                     "Y1": Y1,
                                     "X2": X2,
                                     "Y2": Y2,
+                                    "ID": ID,
                                     "Layer": Layer,
                                     "FontSize": FontSize,
                                     "FontType": FontType,
@@ -154,7 +160,7 @@ def Button(Text:str, X1:int, Y1:int, X2:int, Y2:int, Layer:int = 0, OnPress:call
 
 
 # MARK: Switch
-def Switch(Text:str, X1:int, Y1:int, X2:int, Y2:int, State:bool = False, SwitchWidth:int = 40, SwitchHeight:int = 20, TextPadding:int = 10, Layer:int = 0, OnChange:callable = None, FontSize:float = Defaults.FontSize, FontType:str = Defaults.FontType, Translate:bool = True, TextColor:tuple = Defaults.TextColor, SwitchColor=Defaults.SwitchColor, SwitchKnobColor=Defaults.SwitchKnobColor, SwitchHoverColor=Defaults.SwitchHoverColor, SwitchEnabledColor=Defaults.SwitchEnabledColor, SwitchEnabledHoverColor=Defaults.SwitchEnabledHoverColor):
+def Switch(Text:str, X1:int, Y1:int, X2:int, Y2:int, ID:str, State:bool = False, SwitchWidth:int = 40, SwitchHeight:int = 20, TextPadding:int = 10, Layer:int = 0, OnChange:callable = None, FontSize:float = Defaults.FontSize, FontType:str = Defaults.FontType, Translate:bool = True, TextColor:tuple = Defaults.TextColor, SwitchColor=Defaults.SwitchColor, SwitchKnobColor=Defaults.SwitchKnobColor, SwitchHoverColor=Defaults.SwitchHoverColor, SwitchEnabledColor=Defaults.SwitchEnabledColor, SwitchEnabledHoverColor=Defaults.SwitchEnabledHoverColor):
     """
     Creates a switch.
 
@@ -190,6 +196,8 @@ def Switch(Text:str, X1:int, Y1:int, X2:int, Y2:int, State:bool = False, SwitchW
         The x coordinate of the bottom right corner.
     Y2 : int
         The y coordinate of the bottom right corner.
+    ID : str
+        A unique identifier for the switch.
     State : bool
         The state of the switch.
     SwitchWidth : int
@@ -240,6 +248,7 @@ def Switch(Text:str, X1:int, Y1:int, X2:int, Y2:int, State:bool = False, SwitchW
                                     "Y1": Y1,
                                     "X2": X2,
                                     "Y2": Y2,
+                                    "ID": ID,
                                     "State": State,
                                     "SwitchWidth": SwitchWidth,
                                     "SwitchHeight": SwitchHeight,
@@ -259,7 +268,7 @@ def Switch(Text:str, X1:int, Y1:int, X2:int, Y2:int, State:bool = False, SwitchW
 
 
 # MARK: Input
-def Input(X1:int, Y1:int, X2:int, Y2:int, DefaultInput:str = "", Placeholder:str = "", TextAlign:str = "Left", TextAlignPadding:int = 10, Layer:int = 0, OnChange:callable = None, FontSize:float = Defaults.FontSize, FontType:str = Defaults.FontType, RoundCorners:float = Defaults.CornerRoundness, Translate:bool = True, TextColor:tuple = Defaults.TextColor, SecondaryTextColor:tuple = Defaults.GrayTextColor, Color:tuple = Defaults.InputColor, HoverColor:tuple = Defaults.InputHoverColor, ThemeColor:tuple = Defaults.InputThemeColor):
+def Input(X1:int, Y1:int, X2:int, Y2:int, ID:str, DefaultInput:str = "", Placeholder:str = "", TextAlign:str = "Left", TextAlignPadding:int = 10, Layer:int = 0, OnChange:callable = None, FontSize:float = Defaults.FontSize, FontType:str = Defaults.FontType, RoundCorners:float = Defaults.CornerRoundness, Translate:bool = True, TextColor:tuple = Defaults.TextColor, SecondaryTextColor:tuple = Defaults.GrayTextColor, Color:tuple = Defaults.InputColor, HoverColor:tuple = Defaults.InputHoverColor, ThemeColor:tuple = Defaults.InputThemeColor):
     """
     Creates an input box.
 
@@ -273,6 +282,8 @@ def Input(X1:int, Y1:int, X2:int, Y2:int, DefaultInput:str = "", Placeholder:str
         The x coordinate of the bottom right corner.
     Y2 : int
         The y coordinate of the bottom right corner.
+    ID : str
+        A unique identifier for the input box.
     DefaultInput : str
         The default text in the input.
     Placeholder : str
@@ -320,6 +331,7 @@ def Input(X1:int, Y1:int, X2:int, Y2:int, DefaultInput:str = "", Placeholder:str
                                     "Y1": Y1,
                                     "X2": X2,
                                     "Y2": Y2,
+                                    "ID": ID,
                                     "DefaultInput": DefaultInput,
                                     "Placeholder": Placeholder,
                                     "TextAlign": TextAlign,
@@ -339,7 +351,7 @@ def Input(X1:int, Y1:int, X2:int, Y2:int, DefaultInput:str = "", Placeholder:str
 
 
 # MARK: Dropdown
-def Dropdown(Title:str, Items:list, DefaultItem:any, X1:int, Y1:int, X2:int, Y2:int, DropdownHeight:int = 100, DropdownPadding:int = 5, Layer:int = 0, OnChange:callable = None, FontSize:float = Defaults.FontSize, FontType:str = Defaults.FontType, RoundCorners:float = Defaults.CornerRoundness, Translate:bool = True, TextColor:tuple = Defaults.TextColor, SecondaryTextColor:tuple = Defaults.GrayTextColor, Color:tuple = Defaults.DropdownColor, HoverColor:tuple = Defaults.DropdownHoverColor):
+def Dropdown(Title:str, Items:list, DefaultItem:any, X1:int, Y1:int, X2:int, Y2:int, ID:str, DropdownHeight:int = 100, DropdownPadding:int = 5, Layer:int = 0, OnChange:callable = None, FontSize:float = Defaults.FontSize, FontType:str = Defaults.FontType, RoundCorners:float = Defaults.CornerRoundness, Translate:bool = True, TextColor:tuple = Defaults.TextColor, SecondaryTextColor:tuple = Defaults.GrayTextColor, Color:tuple = Defaults.DropdownColor, HoverColor:tuple = Defaults.DropdownHoverColor):
     """
     Creates a dropdown.
 
@@ -376,6 +388,8 @@ def Dropdown(Title:str, Items:list, DefaultItem:any, X1:int, Y1:int, X2:int, Y2:
         The x coordinate of the bottom right corner.
     Y2 : int
         The y coordinate of the bottom right corner.
+    ID : str
+        A unique identifier for the dropdown.
     DropdownHeight : int
         The height of the dropdown.
     DropdownPadding : int
@@ -421,6 +435,7 @@ def Dropdown(Title:str, Items:list, DefaultItem:any, X1:int, Y1:int, X2:int, Y2:
                                     "Y1": Y1,
                                     "X2": X2,
                                     "Y2": Y2,
+                                    "ID": ID,
                                     "DropdownHeight": DropdownHeight,
                                     "DropdownPadding": DropdownPadding,
                                     "Layer": Layer,
@@ -437,7 +452,7 @@ def Dropdown(Title:str, Items:list, DefaultItem:any, X1:int, Y1:int, X2:int, Y2:
 
 
 # MARK: Image
-def Image(Image:np.ndarray, X1:int, Y1:int, X2:int, Y2:int, Layer:int = 0, OnPress:callable = None, RoundCorners:float = Defaults.CornerRoundness):
+def Image(Image:np.ndarray, X1:int, Y1:int, X2:int, Y2:int, ID:str, Layer:int = 0, OnPress:callable = None, RoundCorners:float = Defaults.CornerRoundness):
     """
     Creates an image.
 
@@ -453,6 +468,8 @@ def Image(Image:np.ndarray, X1:int, Y1:int, X2:int, Y2:int, Layer:int = 0, OnPre
         The x coordinate of the bottom right corner.
     Y2 : int
         The y coordinate of the bottom right corner.
+    ID : str
+        A unique identifier for the image.
     Layer : int
         The layer of the image in the UI.
     OnPress : callable
@@ -474,6 +491,7 @@ def Image(Image:np.ndarray, X1:int, Y1:int, X2:int, Y2:int, Layer:int = 0, OnPre
                                     "Y1": Y1,
                                     "X2": X2,
                                     "Y2": Y2,
+                                    "ID": ID,
                                     "Layer": Layer,
                                     "RoundCorners": RoundCorners}])
     except:
@@ -481,7 +499,7 @@ def Image(Image:np.ndarray, X1:int, Y1:int, X2:int, Y2:int, Layer:int = 0, OnPre
 
 
 # MARK: Popup
-def Popup(Text:str, StartX1:int, StartY1:int, StartX2:int, StartY2:int, EndX1:int, EndY1:int, EndX2:int, EndY2:int, Progress:float = 0, DoAnimation:bool = True, AnimationDuration:float = Defaults.PopupAnimationDuration, ShowDuration:float = Defaults.PopupShowDuration, Layer:int = 0, FontSize:float = Defaults.FontSize, FontType:str = Defaults.FontType, RoundCorners:float = Defaults.CornerRoundness, Translate:bool = True, TextColor:tuple = Defaults.TextColor, Color:tuple = Defaults.PopupColor, OutlineColor:tuple = Defaults.PopupOutlineColor, ProgressBarColor:tuple = Defaults.PopupProgressBarColor):
+def Popup(Text:str, StartX1:int, StartY1:int, StartX2:int, StartY2:int, EndX1:int, EndY1:int, EndX2:int, EndY2:int, ID:str, Progress:float = 0, DoAnimation:bool = True, AnimationDuration:float = Defaults.PopupAnimationDuration, ShowDuration:float = Defaults.PopupShowDuration, Layer:int = 0, FontSize:float = Defaults.FontSize, FontType:str = Defaults.FontType, RoundCorners:float = Defaults.CornerRoundness, Translate:bool = True, TextColor:tuple = Defaults.TextColor, Color:tuple = Defaults.PopupColor, OutlineColor:tuple = Defaults.PopupOutlineColor, ProgressBarColor:tuple = Defaults.PopupProgressBarColor):
     """
     Creates a popup.
 
@@ -511,6 +529,8 @@ def Popup(Text:str, StartX1:int, StartY1:int, StartX2:int, StartY2:int, EndX1:in
         The x coordinate of the bottom right corner at the end of the animation.
     EndY2 : int
         The y coordinate of the bottom right corner at the end of the animation.
+    ID : str
+        A unique identifier for the popup.
     Progress : float
         The progress shown in the progress bar.
     DoAnimation : bool
@@ -562,6 +582,7 @@ def Popup(Text:str, StartX1:int, StartY1:int, StartX2:int, StartY2:int, EndX1:in
                                     "EndY1": EndY1,
                                     "EndX2": EndX2,
                                     "EndY2": EndY2,
+                                    "ID": ID,
                                     "Progress": min(Progress, 100),
                                     "DoAnimation": DoAnimation,
                                     "AnimationDuration": AnimationDuration,
@@ -577,6 +598,86 @@ def Popup(Text:str, StartX1:int, StartY1:int, StartX2:int, StartY2:int, EndX1:in
                                     "ProgressBarColor": ProgressBarColor}])
     except:
         Errors.ShowError("ImageUI - Error in function Popup.", str(traceback.format_exc()))
+
+
+# MARK: SetSwitch
+def SetSwitch(ID:str, State:bool):
+    """
+    Set the state of a switch.
+    Won't call the OnChange callback.
+
+    Parameters
+    ----------
+    ID : str
+        The ID of the switch to set.
+    State : bool
+        The state to set the switch to.
+
+    Returns
+    -------
+    None
+    """
+    try:
+        if Variables.Switches[ID][0] != State:
+            Variables.Switches[ID] = State, time.time()
+    except:
+        Errors.ShowError("ImageUI - Error in function SetSwitch.", str(traceback.format_exc()))
+
+
+# MARK: SetInput
+def SetInput(ID:str, Input:str):
+    """
+    Set the text of an input.
+    Won't call the OnChange callback.
+
+    Parameters
+    ----------
+    ID : str
+        The ID of the input to set.
+    Input : str
+        The text to set the input to.
+
+    Returns
+    -------
+    None
+    """
+    try:
+        if Variables.Inputs[ID][1] != Input:
+            Variables.Inputs[ID] = Variables.Inputs[ID][0], Input
+    except:
+        Errors.ShowError("ImageUI - Error in function SetInput.", str(traceback.format_exc()))
+
+
+# MARK: SetDropdown
+def SetDropdown(ID:str, Items:list, SelectedItem:any):
+    """
+    Set the available items and selected item of a dropdown.
+    Won't call the OnChange callback.
+
+    Parameters
+    ----------
+    ID : str
+        The ID of the dropdown to set.
+    Items : list
+        The items of the dropdown.
+    SelectedItem : any
+        The selected item of the dropdown.
+
+    Returns
+    -------
+    None
+    """
+    try:
+        if Variables.Dropdowns[ID][1] != Items:
+            Variables.Dropdowns[ID] = Variables.Dropdowns[ID][0], Items, Variables.Dropdowns[ID][2]
+        if Variables.Dropdowns[ID][2] != SelectedItem:
+            try:
+                SelectedItem = Variables.Dropdowns[ID][1].index(SelectedItem)
+            except ValueError:
+                SelectedItem = 0
+            Variables.Dropdowns[ID] = Variables.Dropdowns[ID][0], Variables.Dropdowns[ID][1], SelectedItem
+    except:
+        Errors.ShowError("ImageUI - Error in function SetInput.", str(traceback.format_exc()))
 
 
 # MARK: Update
@@ -663,8 +764,33 @@ def Update(WindowHWND:int, Frame:np.ndarray):
 
         Variables.Elements = sorted(Variables.Elements, key=lambda Item: (Item[2]["Layer"], {"Image": 1, "Button": 2, "Switch": 3, "Input": 4, "Label": 5, "Dropdown": 6, "Popup": 7}.get(Item[0], 0)))
 
-        if [[Item[0], Item[2]] for Item in Variables.Elements] != [[Item[0], Item[2]] for Item in Variables.LastElements]:
+        List1 = [[Item[0], Item[2]] for Item in Variables.Elements]
+        List2 = [[Item[0], Item[2]] for Item in Variables.LastElements]
+        if len(List1) != len(List2):
             RenderFrame = True
+        else:
+            for i in range(len(List1)):
+                Element1 = List1[i]
+                Element2 = List2[i]
+                if Element1[0] != Element2[0]:
+                    RenderFrame = True
+                else:
+                    Dict1 = Element1[1]
+                    Dict2 = Element2[1]
+
+                    if Dict1.keys() != Dict2.keys():
+                        RenderFrame = True
+                    else:
+                        for Key in Dict1:
+                            Value1 = Dict1[Key]
+                            Value2 = Dict2[Key]
+
+                            if isinstance(Value1, np.ndarray) and isinstance(Value2, np.ndarray):
+                                if not np.array_equal(Value1, Value2):
+                                    RenderFrame = True
+                            else:
+                                if Value1 != Value2:
+                                    RenderFrame = True
 
         if RenderFrame or Variables.ForceSingleRender or LastLeftPressed != LeftPressed:
             Variables.ForceSingleRender = False

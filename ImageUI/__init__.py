@@ -16,5 +16,8 @@ from .ImageUI import Input
 from .ImageUI import Dropdown
 from .ImageUI import Image
 from .ImageUI import Popup
+from .ImageUI import SetSwitch
+from .ImageUI import SetInput
+from .ImageUI import SetDropdown
 from .ImageUI import Update
 from .ImageUI import Exit
