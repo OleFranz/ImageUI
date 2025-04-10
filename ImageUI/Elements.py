@@ -365,7 +365,7 @@ def Image(Image, X1, Y1, X2, Y2, ID, Layer, RoundCorners):
             cv2.rectangle(Mask, (round(RoundCorners / 2), round(RoundCorners / 2)), (round(Mask.shape[1] - RoundCorners / 2 - 1), round(Mask.shape[0] - RoundCorners / 2 - 1)), 1, RoundCorners, Settings.RectangleLineType)
             cv2.rectangle(Mask, (round(RoundCorners / 2), round(RoundCorners / 2)), (round(Mask.shape[1] - RoundCorners / 2 - 1), round(Mask.shape[0] - RoundCorners / 2 - 1)), 1, -1, Settings.RectangleLineType)
             Image = cv2.bitwise_and(Image, Image, mask=Mask)
-        Frame[Y1:Y2, X1:X2] = Image
+        Frame[Y1:Y2 + 1, X1:X2 + 1] = Image
         Variables.Frame = Frame
         if X1 <= States.MouseX * Variables.Frame.shape[1] <= X2 and Y1 <= States.MouseY * Variables.Frame.shape[0] <= Y2 and States.LeftPressed == False and States.LastLeftPressed == True and States.ForegroundWindow and States.TopMostLayer == Layer and States.AnyDropdownOpen == False and States.AnyInputsOpen == False:
             return True
