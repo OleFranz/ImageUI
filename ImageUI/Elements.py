@@ -187,7 +187,7 @@ def Input(X1, Y1, X2, Y2, ID, DefaultInput, Placeholder, TextAlign, TextAlignPad
             Selected = False
             Changed = True
 
-        if Hovered and Pressed:
+        if Hovered and States.LastLeftPressed == True and States.LeftPressed == False:
             Selected = True
             States.KeyboardEventQueue = []
             Variables.ForceSingleRender = True
@@ -278,6 +278,7 @@ def Dropdown(Title, Items, DefaultItem, X1, Y1, X2, Y2, ID, DropdownHeight, Drop
         DropdownSelected, Items, SelectedItem = Variables.Dropdowns[ID]
 
         if X1 <= States.MouseX * States.FrameWidth <= X2 and Y1 <= States.MouseY * States.FrameHeight <= Y2 + ((DropdownHeight + DropdownPadding) if DropdownSelected else 0) and States.ForegroundWindow and States.TopMostLayer == Layer and States.AnyInputsOpen == False:
+            if DropdownSelected == False and States.LastLeftPressed == True and States.LeftPressed == False: Variables.ForceSingleRender = True
             DropdownHovered = True
             DropdownPressed = States.LeftPressed
             DropdownChanged = True if States.LastLeftPressed == True and States.LeftPressed == False and DropdownSelected == True else False

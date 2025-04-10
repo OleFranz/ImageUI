@@ -711,6 +711,9 @@ def Update(WindowHWND:int, Frame:np.ndarray):
         The new frame with the UI drawn on it.
     """
     try:
+        if WindowHWND == None or WindowHWND == 0:
+            return Frame
+
         RECT = win32gui.GetClientRect(WindowHWND)
         X1, Y1 = win32gui.ClientToScreen(WindowHWND, (RECT[0], RECT[1]))
         X2, Y2 = win32gui.ClientToScreen(WindowHWND, (RECT[2], RECT[3]))
