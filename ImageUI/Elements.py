@@ -359,13 +359,18 @@ def Image(Image, X1, Y1, X2, Y2, ID, Layer, RoundCorners):
         if type(Image) == type(None): return
         if Image.shape[1] <= 0 or Image.shape[0] <= 0: return
         Frame = Variables.Frame.copy()
-        Image = cv2.resize(Image, (X2 - X1, Y2 - Y1))
+        Image = cv2.resize(Image, (X2 - X1 + 1, Y2 - Y1 + 1))
         if RoundCorners > 0:
-            Mask = numpy.zeros((Image.shape[0], Image.shape[1], 1), dtype=numpy.uint8)
-            cv2.rectangle(Mask, (round(RoundCorners / 2), round(RoundCorners / 2)), (round(Mask.shape[1] - RoundCorners / 2 - 1), round(Mask.shape[0] - RoundCorners / 2 - 1)), 1, RoundCorners, Settings.RectangleLineType)
-            cv2.rectangle(Mask, (round(RoundCorners / 2), round(RoundCorners / 2)), (round(Mask.shape[1] - RoundCorners / 2 - 1), round(Mask.shape[0] - RoundCorners / 2 - 1)), 1, -1, Settings.RectangleLineType)
-            Image = cv2.bitwise_and(Image, Image, mask=Mask)
-        Frame[Y1:Y2 + 1, X1:X2 + 1] = Image
+            Mask = numpy.zeros(Frame.shape, dtype=numpy.float32)
+            ImageFull = numpy.zeros_like(Frame)
+            ImageFull[Y1:Y2 + 1, X1:X2 + 1] = Image
+            cv2.rectangle(Mask, (round(X1 + RoundCorners / 2), round(Y1 + RoundCorners / 2)), (round(X2 - RoundCorners / 2), round(Y2 - RoundCorners / 2)), (1, 1, 1), RoundCorners, Settings.RectangleLineType)
+            cv2.rectangle(Mask, (round(X1 + RoundCorners / 2), round(Y1 + RoundCorners / 2)), (round(X2 - RoundCorners / 2), round(Y2 - RoundCorners / 2)), (1, 1, 1), -1, Settings.RectangleLineType)
+            Frame = cv2.multiply(Frame, 1.0 - Mask, dtype=cv2.CV_8UC3)
+            ImageFull = cv2.multiply(ImageFull, Mask, dtype=cv2.CV_8UC3)
+            Frame = cv2.add(Frame, ImageFull)
+        else:
+            Frame[Y1:Y2 + 1, X1:X2 + 1] = Image
         Variables.Frame = Frame
         if X1 <= States.MouseX * Variables.Frame.shape[1] <= X2 and Y1 <= States.MouseY * Variables.Frame.shape[0] <= Y2 and States.LeftPressed == False and States.LastLeftPressed == True and States.ForegroundWindow and States.TopMostLayer == Layer and States.AnyDropdownOpen == False and States.AnyInputsOpen == False:
             return True
