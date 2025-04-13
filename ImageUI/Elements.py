@@ -359,6 +359,10 @@ def Image(Image, X1, Y1, X2, Y2, ID, Layer, RoundCorners):
         if type(Image) == type(None): return
         if Image.shape[1] <= 0 or Image.shape[0] <= 0: return
         Frame = Variables.Frame.copy()
+        X1 = round(X1)
+        Y1 = round(Y1)
+        X2 = round(X2)
+        Y2 = round(Y2)
         Image = cv2.resize(Image, (X2 - X1 + 1, Y2 - Y1 + 1))
         if RoundCorners > 0:
             Mask = numpy.zeros(Frame.shape, dtype=numpy.float32)
