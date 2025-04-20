@@ -13,22 +13,22 @@ import cv2
 
 
 # MARK: Label
-def Label(Text, X1, Y1, X2, Y2, ID, Align, AlignPadding, Layer, FontSize, FontType, Translate, TextColor):
+def Label(Text, X1, Y1, X2, Y2, ID, Align, AlignPadding, Layer, FontSize, FontType, Translate, TextColor, NoCache):
     try:
         if Text == "": return X1, Y1, X2, Y2
         if Translate:
             Text = Translations.Translate(Text)
         Frame = Variables.Frame.copy()
-        for CachedText in Variables.TextCache:
-            if CachedText[0] != f"{Text}-{X1}-{Y1}-{X2}-{Y2}-{ID}-{Align}-{AlignPadding}-{FontSize}-{FontType}-{Translate}-{TextColor}":
-                continue
-            EmptyFrame, TextFrame, BBoxX1, BBoxY1, BBoxX2, BBoxY2 = CachedText[1]
-            CurrentFrame = Frame[BBoxY1:BBoxY2, BBoxX1:BBoxX2].copy()
-            if (CurrentFrame == EmptyFrame).all():
-                Frame[BBoxY1:BBoxY2, BBoxX1:BBoxX2] = TextFrame
-                Variables.Frame = Frame.copy()
-                return BBoxX1 + 2, BBoxX1 + 2, BBoxX2 - 2, BBoxY2 - 2
-
+        if NoCache == False:
+            for CachedText in Variables.TextCache:
+                if CachedText[0] != f"{Text}-{X1}-{Y1}-{X2}-{Y2}-{ID}-{Align}-{AlignPadding}-{FontSize}-{FontType}-{Translate}-{TextColor}":
+                    continue
+                EmptyFrame, TextFrame, BBoxX1, BBoxY1, BBoxX2, BBoxY2 = CachedText[1]
+                CurrentFrame = Frame[BBoxY1:BBoxY2, BBoxX1:BBoxX2].copy()
+                if (CurrentFrame == EmptyFrame).all():
+                    Frame[BBoxY1:BBoxY2, BBoxX1:BBoxX2] = TextFrame
+                    Variables.Frame = Frame.copy()
+                    return BBoxX1 + 2, BBoxX1 + 2, BBoxX2 - 2, BBoxY2 - 2
         if f"{FontSize}-{FontType}" in Variables.Fonts:
             Font = Variables.Fonts[f"{FontSize}-{FontType}"]
         else:
@@ -53,7 +53,8 @@ def Label(Text, X1, Y1, X2, Y2, ID, Align, AlignPadding, Layer, FontSize, FontTy
         Frame = numpy.array(Frame)
         Variables.Frame = Frame.copy()
         TextFrame = Frame[BBoxY1:BBoxY2, BBoxX1:BBoxX2]
-        Variables.TextCache.append([f"{Text}-{X1}-{Y1}-{X2}-{Y2}-{ID}-{Align}-{AlignPadding}-{FontSize}-{FontType}-{Translate}-{TextColor}", [EmptyFrame, TextFrame, BBoxX1, BBoxY1, BBoxX2, BBoxY2]])
+        if NoCache == False:
+            Variables.TextCache.append([f"{Text}-{X1}-{Y1}-{X2}-{Y2}-{ID}-{Align}-{AlignPadding}-{FontSize}-{FontType}-{Translate}-{TextColor}", [EmptyFrame, TextFrame, BBoxX1, BBoxY1, BBoxX2, BBoxY2]])
         return BBoxX1 + 2, BBoxX1 + 2, BBoxX2 - 2, BBoxY2 - 2
     except:
         Errors.ShowError("Elements - Error in function Label.", str(traceback.format_exc()))
@@ -79,7 +80,7 @@ def Button(Text, X1, Y1, X2, Y2, ID, Layer, FontSize, FontType, RoundCorners, Tr
                 cv2.rectangle(Variables.Frame, (round(X1 + RoundCorners / 2), round(Y1 + RoundCorners / 2)), (round(X2 - RoundCorners / 2), round(Y2 - RoundCorners / 2)), Color, - 1, Settings.RectangleLineType)
             else:
                 cv2.rectangle(Variables.Frame, (round(X1), round(Y1)), (round(X2), round(Y2)), Color, - 1, Settings.RectangleLineType)
-        Label(Text, X1, Y1, X2, Y2, ID + "#LABEL", "Center", 0, Layer, FontSize, FontType, Translate, TextColor)
+        Label(Text, X1, Y1, X2, Y2, ID + "#LABEL", "Center", 0, Layer, FontSize, FontType, Translate, TextColor, False)
         if X1 <= States.MouseX * Variables.Frame.shape[1] <= X2 and Y1 <= States.MouseY * Variables.Frame.shape[0] <= Y2 and States.LeftPressed == False and States.LastLeftPressed == True and States.ForegroundWindow and States.TopMostLayer == Layer and States.AnyDropdownOpen == False and States.AnyInputsOpen == False:
             return True, States.LeftPressed and Hovered, Hovered
         else:
@@ -151,7 +152,7 @@ def Switch(Text, X1, Y1, X2, Y2, ID, Layer, SwitchWidth, SwitchHeight, TextPaddi
                     cv2.circle(Variables.Frame, (round(X1 + SwitchHeight / 2 + (SwitchWidth - SwitchHeight) * (1 - AnimationState)), round((Y1 + Y2) / 2)), round(SwitchHeight / 2.5), SwitchKnobColor, -1, Settings.CircleLineType)
                 else:
                     cv2.circle(Variables.Frame, (round(X1 + SwitchHeight / 2), round((Y1 + Y2) / 2)), round(SwitchHeight / 2.5), SwitchKnobColor, -1, Settings.CircleLineType)
-        Label(Text, X1, Y1, X2, Y2, ID + "#LABEL", "Left", SwitchWidth + TextPadding, Layer, FontSize, FontType, Translate, TextColor)
+        Label(Text, X1, Y1, X2, Y2, ID + "#LABEL", "Left", SwitchWidth + TextPadding, Layer, FontSize, FontType, Translate, TextColor, False)
         if X1 <= States.MouseX * States.FrameWidth <= X2 and Y1 <= States.MouseY * States.FrameHeight <= Y2 and States.LeftPressed == False and States.LastLeftPressed == True and States.ForegroundWindow and States.TopMostLayer == Layer and States.AnyDropdownOpen == False and States.AnyInputsOpen == False:
             Variables.Switches[ID] = not State, CurrentTime
             return not State, True, States.LeftPressed and SwitchHovered, SwitchHovered
@@ -222,7 +223,7 @@ def Input(X1, Y1, X2, Y2, ID, DefaultInput, Placeholder, TextAlign, TextAlignPad
         else:
             CursorX = (X1 + X2) / 2
         if Input != "":
-            _, _, CursorX, _ = Label(Input, X1, Y1, X2, Y2, ID + "#LABEL", TextAlign, TextAlignPadding, Layer, FontSize, FontType, False, TextColor)
+            _, _, CursorX, _ = Label(Input, X1, Y1, X2, Y2, ID + "#LABEL", TextAlign, TextAlignPadding, Layer, FontSize, FontType, False, TextColor, False)
         elif Placeholder != "":
             if TextAlign.lower() == "left":
                 Offset = 3
@@ -230,7 +231,7 @@ def Input(X1, Y1, X2, Y2, ID, DefaultInput, Placeholder, TextAlign, TextAlignPad
                 Offset = -3
             else:
                 Offset = 0
-            Label(Placeholder, X1 + Offset, Y1, X2 + Offset, Y2, ID + "#LABEL", TextAlign, TextAlignPadding, Layer, FontSize, FontType, Translate, SecondaryTextColor)
+            Label(Placeholder, X1 + Offset, Y1, X2 + Offset, Y2, ID + "#LABEL", TextAlign, TextAlignPadding, Layer, FontSize, FontType, Translate, SecondaryTextColor, False)
 
         if Selected:
             for Key in States.KeyboardEventQueue:
@@ -334,7 +335,7 @@ def Dropdown(Title, Items, DefaultItem, X1, Y1, X2, Y2, ID, DropdownHeight, Drop
                     ItemText = "> " + Item + " <"
                 else:
                     ItemText = Item
-                Label(ItemText, X1, Y2 + DropdownPadding + DropdownHeight / 3 * i, X2, Y2 + DropdownPadding + DropdownHeight / 3 * (i + 1), ID + "#LABEL", "Center", 0, Layer, FontSize, FontType, Translate, TextColor if i == 1 else SecondaryTextColor)
+                Label(ItemText, X1, Y2 + DropdownPadding + DropdownHeight / 3 * i, X2, Y2 + DropdownPadding + DropdownHeight / 3 * (i + 1), ID + "#LABEL", "Center", 0, Layer, FontSize, FontType, Translate, TextColor if i == 1 else SecondaryTextColor, False)
 
         else:
 
@@ -343,7 +344,7 @@ def Dropdown(Title, Items, DefaultItem, X1, Y1, X2, Y2, ID, DropdownHeight, Drop
             cv2.line(Variables.Frame, (round(X2 - Padding - Height), round(Y2 - Padding)), (round(X2 - Padding), round(Y1 + Padding)), TextColor, max(round(FontSize / 15), 1), Settings.LineType)
             cv2.line(Variables.Frame, (round(X2 - Padding - Height), round(Y2 - Padding)), (round(X2 - Padding - Height * 2), round(Y1 + Padding)), TextColor, max(round(FontSize / 15), 1), Settings.LineType)
 
-        Label(Title, X1, Y1, X2, Y2, ID + "#LABEL", "Center", 0, Layer, FontSize, FontType, Translate, TextColor)
+        Label(Title, X1, Y1, X2, Y2, ID + "#LABEL", "Center", 0, Layer, FontSize, FontType, Translate, TextColor, False)
 
         Variables.Dropdowns[ID] = DropdownSelected, Items, SelectedItem
 
@@ -528,7 +529,7 @@ def CheckAndRenderPopups():
                         Right = 0.5 + math.cos(X ** 2 * math.pi) / 2
                     cv2.line(Variables.Frame, (round(X1 + RoundCorners / 2 + (X2 - X1 - RoundCorners) * Right), round(Y2)), (round(X1 + RoundCorners / 2 + (X2 - X1 - RoundCorners) * Left), round(Y2)), ProgressBarColor, 1, Settings.LineType)
 
-                Label(Text, X1, Y1, X2, Y2, ID + "#LABEL", "Center", 0, Layer, FontSize, FontType, Translate, TextColor)
+                Label(Text, X1, Y1, X2, Y2, ID + "#LABEL", "Center", 0, Layer, FontSize, FontType, Translate, TextColor, False)
 
     except:
         Errors.ShowError("Elements - Error in function CheckAndRenderPopups.", str(traceback.format_exc()))

@@ -15,7 +15,7 @@ import time
 
 
 # MARK: Label
-def Label(Text:str, X1:int, Y1:int, X2:int, Y2:int, ID:str, Align:str = "Center", AlignPadding:int = 10, Layer:int = 0, FontSize:float = Defaults.FontSize, FontType:str = Defaults.FontType, Translate:bool = True, TextColor:tuple = Defaults.TextColor):
+def Label(Text:str, X1:int, Y1:int, X2:int, Y2:int, ID:str, Align:str = "Center", AlignPadding:int = 10, Layer:int = 0, FontSize:float = Defaults.FontSize, FontType:str = Defaults.FontType, Translate:bool = True, TextColor:tuple = Defaults.TextColor, NoCache:bool = False):
     """
     Creates a label.
 
@@ -45,6 +45,8 @@ def Label(Text:str, X1:int, Y1:int, X2:int, Y2:int, ID:str, Align:str = "Center"
         The font type of the text.
     TextColor : tuple
         The color of the text.
+    NoCache : bool
+        Whether to cache the label, improves performance by a lot but might cause high memory usage in some cases.
 
     Returns
     -------
@@ -69,7 +71,8 @@ def Label(Text:str, X1:int, Y1:int, X2:int, Y2:int, ID:str, Align:str = "Center"
                                     "FontSize": FontSize,
                                     "FontType": FontType,
                                     "Translate": Translate,
-                                    "TextColor": TextColor}])
+                                    "TextColor": TextColor,
+                                    "NoCache": NoCache}])
     except:
         Errors.ShowError("ImageUI - Error in function Label.", str(traceback.format_exc()))
 
