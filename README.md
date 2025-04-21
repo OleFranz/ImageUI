@@ -21,17 +21,18 @@ Background = numpy.zeros((250, 400, 3), dtype=numpy.uint8)
 Background[:] = (28, 28, 28)
 
 # Initialize a window could be a OpenCV window too
-SimpleWindow.Initialize(Name="Example UI",
-                        Size=(Background.shape[1], Background.shape[0]),
-                        Position=(100, 100),
-                        TitleBarColor=(28, 28, 28),
-                        Resizable=False,
-                        TopMost=False,
-                        Foreground=True,
-                        Minimized=False,
-                        Undestroyable=False,
-                        Icon="",
-                        NoWarnings=False)
+window = SimpleWindow.Window(name="Example Window",
+                             size=(Background.shape[1], Background.shape[0]),
+                             position=(100, 100),
+                             title_bar_color=(28, 28, 28),
+                             border_color=(None, None, None),
+                             resizable=False,
+                             topmost=False,
+                             foreground=True,
+                             minimized=False,
+                             undestroyable=False,
+                             icon="",
+                             no_warnings=False)
 
 # Get all available translation languages
 TranslationLanguages = list(ImageUI.Translations.GetAvailableLanguages().keys())
@@ -45,7 +46,7 @@ def SetTheme(Theme):
     Background[:] = ThemeColor
     # Set the ImageUI theme, either "Dark" or "Light"
     ImageUI.SetTheme(Theme)
-    SimpleWindow.SetTitleBarColor(Name="Example UI", Color=ThemeColor)
+    window.set_title_bar_color(color=ThemeColor)
 
 while True:
     # Add a button to the UI
@@ -105,15 +106,14 @@ while True:
                   ID="Input",
                   OnChange=lambda Text: print("Input changed to:", Text))
 
-    # Get the window handle
-    WindowHandle = SimpleWindow.GetHandle(Name="Example UI")
-
     # Render the UI on the background
-    Frame = ImageUI.Update(WindowHWND=WindowHandle, Frame=Background)
+    Frame = ImageUI.Update(WindowHWND=window.get_handle(), Frame=Background)
 
     # Show the background with the UI rendered on it
-    SimpleWindow.Show(Name="Example UI", Frame=Frame)
-    if SimpleWindow.GetOpen(Name="Example UI") != True:
+    window.show(frame=Frame)
+
+    # Check if the window is closed
+    if window.get_open() != True:
         # Saves cache like translations
         ImageUI.Exit()
         break
